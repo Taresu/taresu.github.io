@@ -3,7 +3,7 @@
 > Portfólio profissional (recrutadores/empregadores) — DevSecOps · Purple Team.
 > Bilíngue PT-BR / EN, tema dark cyber/terminal, página única e autocontida.
 
-Distinto do `WebDev-Portfolio/` (site de vendas freelance): este é o perfil pessoal, com sobre, experiência, projetos, skills, certificações e contato.
+Este é o perfil pessoal, com sobre, experiência, projetos, skills, certificações e contato.
 
 ---
 
