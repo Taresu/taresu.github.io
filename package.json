@@ -1,0 +1,15 @@
+{
+  "name": "personal-portfolio",
+  "version": "1.0.0",
+  "description": "Portfólio pessoal de Thales Sgarbi Salata — DevSecOps / Purple Team",
+  "scripts": {
+    "start": "node serve.mjs",
+    "screenshot": "node screenshot.mjs"
+  },
+  "author": "Thales Sgarbi Salata",
+  "license": "ISC",
+  "type": "module",
+  "dependencies": {
+    "puppeteer": "^24.40.0"
+  }
+}
