@@ -219,7 +219,10 @@
           Trabalho na interseção entre segurança ofensiva, monitoramento defensivo e automação de infraestrutura — emulando ataques, validando detecções e fortalecendo sistemas.
         </p>
         <div class="rise flex flex-wrap items-center gap-3" style="animation-delay:.45s">
-          <a href="assets/resume-thales-salata-en.pdf" download class="btn-primary font-mono text-sm text-white px-5 py-3 rounded-md">
+          <a id="cv-link" href="assets/curriculo-thales-salata.pdf" download
+             data-cv-pt="assets/curriculo-thales-salata.pdf"
+             data-cv-en="assets/resume-thales-salata-en.pdf"
+             class="btn-primary font-mono text-sm text-white px-5 py-3 rounded-md">
             <span data-i18n="hero.cv">Baixar CV</span> <span aria-hidden="true">↓</span>
           </a>
           <a href="#projetos" class="btn-ghost font-mono text-sm text-fog px-5 py-3 rounded-md">
@@ -703,6 +706,8 @@
         const key = el.getAttribute('data-i18n');
         if (I18N[lang][key] !== undefined) el.textContent = I18N[lang][key];
       });
+      const cvLink = document.getElementById('cv-link');
+      if (cvLink) cvLink.href = cvLink.dataset[lang === 'pt' ? 'cvPt' : 'cvEn'];
       document.getElementById('lang-pt').classList.toggle('active', lang === 'pt');
       document.getElementById('lang-en').classList.toggle('active', lang === 'en');
       document.getElementById('lang-pt').setAttribute('aria-pressed', lang === 'pt');
