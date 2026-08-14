@@ -37,6 +37,7 @@ async function gotoSection(page, id) {
 }
 
 const results = {};
+results.iconNetworkRequests = [];
 const browser = await puppeteer.launch({
   executablePath: process.env.CHROME_PATH || '/usr/bin/google-chrome',
   args: ['--no-sandbox', '--disable-setuid-sandbox'],
@@ -44,6 +45,12 @@ const browser = await puppeteer.launch({
 
 // ── Desktop ──
 const page = await browser.newPage();
+page.on('request', request => {
+  const url = request.url();
+  if (/lucide|tabler|iconify|\/icons\//i.test(url) && !url.startsWith(BASE)) {
+    results.iconNetworkRequests.push(url);
+  }
+});
 await page.setViewport({ width: 1440, height: 900 });
 await page.goto(BASE, { waitUntil: 'networkidle0', timeout: 30000 });
 await sleep(9000); // animação de digitação do terminal
@@ -88,6 +95,37 @@ results.profile = await page.evaluate(() => ({
     /Estagiário de TI|IT Intern|Assistant Webmaster/i.test(article.textContent)
   ).length,
   skills: document.querySelector('#skills')?.textContent,
+  lineIcons: [...document.querySelectorAll('svg.line-icon')].map(icon => ({
+    name: icon.dataset.icon,
+    context: icon.dataset.iconContext,
+    ariaHidden: icon.getAttribute('aria-hidden'),
+    focusable: icon.getAttribute('focusable'),
+    href: icon.querySelector('use')?.getAttribute('href'),
+  })),
+  iconMap: [...document.querySelectorAll('svg.line-icon')]
+    .map(icon => `${icon.dataset.iconContext}:${icon.dataset.icon}`)
+    .sort()
+    .join('|'),
+  projectIcons: [...document.querySelectorAll('svg.line-icon[data-icon-context="project"]')].map(icon => ({
+    project: icon.closest('[data-project]')?.dataset.project,
+    name: icon.dataset.icon,
+    href: icon.querySelector('use')?.getAttribute('href'),
+  })),
+  skillPrompts: [...document.querySelectorAll('#skills > div > .grid > div > h3')].map(heading => heading.textContent.trim()),
+  spriteSymbols: [...document.querySelectorAll('#line-icon-sprite symbol')].map(symbol => symbol.id),
+  aiSkillGroup: (() => {
+    const group = document.querySelector('[data-skill-group="ai"]');
+    const grid = group?.parentElement;
+    const heading = group?.querySelector('h3');
+    const groupBounds = group?.getBoundingClientRect();
+    const gridBounds = grid?.getBoundingClientRect();
+    const headingBounds = heading?.getBoundingClientRect();
+    return {
+      spansGrid: Boolean(groupBounds && gridBounds && Math.abs(groupBounds.width - gridBounds.width) < 1),
+      headingCentered: Boolean(groupBounds && headingBounds &&
+        Math.abs((headingBounds.left + headingBounds.width / 2) - (groupBounds.left + groupBounds.width / 2)) < 1),
+    };
+  })(),
   credentials: [...document.querySelectorAll('[data-credential-link]')].map(link => ({
     title: link.closest('[data-credential]')?.querySelector('h4')?.textContent.trim(),
     href: link.href,
@@ -99,6 +137,7 @@ results.profile = await page.evaluate(() => ({
     cardIsLink: link.matches('[data-credential]'),
     keyboardFocusable: link.tabIndex === 0,
     nestedLinkCount: link.querySelectorAll('a').length,
+    lineIconCount: link.querySelectorAll('.line-icon').length,
   })),
   credentialGroups: {
     cisco: Boolean(document.querySelector('[data-credential-group="cisco"]')),
@@ -116,6 +155,12 @@ results.profile = await page.evaluate(() => ({
     cardIsLink: card.matches('a'),
     keyboardFocusable: card.tabIndex === 0,
     nestedLinkCount: card.querySelectorAll('a').length,
+    icon: card.querySelector('.line-icon')?.dataset.icon,
+  })),
+  contactIcons: [...document.querySelectorAll('[data-contact]')].map(control => ({
+    channel: control.dataset.contact,
+    name: control.querySelector('.line-icon')?.dataset.icon,
+    visibleText: control.textContent.trim(),
   })),
 }));
 await shot(page, 'desktop-01-hero-pt');
@@ -143,6 +188,10 @@ results.en = await page.evaluate(() => ({
   credentials: document.querySelector('[data-credentials]')?.textContent,
   saved: localStorage.getItem('lang'),
   untranslated: [...document.querySelectorAll('[data-i18n]')].filter(el => !el.textContent.trim()).length,
+  iconMap: [...document.querySelectorAll('svg.line-icon')]
+    .map(icon => `${icon.dataset.iconContext}:${icon.dataset.icon}`)
+    .sort()
+    .join('|'),
 }));
 await shot(page, 'desktop-03-hero-en');
 await gotoSection(page, '#experiencia');
@@ -189,6 +238,16 @@ results.mobileMenu = await mob.evaluate(async () => {
 });
 await shot(mob, 'mobile-01-hero-pt');
 await revealAll(mob);
+await gotoSection(mob, '#skills');
+results.mobileAiSkillGroup = await mob.evaluate(() => {
+  const group = document.querySelector('[data-skill-group="ai"]');
+  const heading = group?.querySelector('h3');
+  const groupBounds = group?.getBoundingClientRect();
+  const headingBounds = heading?.getBoundingClientRect();
+  return {
+    headingLeftAligned: Boolean(groupBounds && headingBounds && Math.abs(headingBounds.left - groupBounds.left) < 1),
+  };
+});
 for (const [id, name] of [['#sobre', 'sobre'], ['#experiencia', 'experiencia'], ['#projetos', 'projetos'], ['#skills', 'skills'], ['#contato', 'contato']]) {
   await gotoSection(mob, id);
   await shot(mob, `mobile-02-${name}-pt`);
@@ -201,7 +260,20 @@ await gotoSection(mob, '[data-credential-group="professional"]');
 await shot(mob, 'mobile-03-credentials-professional-pt');
 results.mobileOverflowX = await mob.evaluate(() => document.body.scrollWidth > window.innerWidth);
 
+// ── Reduced motion ──
+const reducedMotion = await browser.newPage();
+await reducedMotion.emulateMediaFeatures([{ name: 'prefers-reduced-motion', value: 'reduce' }]);
+await reducedMotion.setViewport({ width: 1440, height: 900 });
+await reducedMotion.goto(BASE, { waitUntil: 'networkidle0', timeout: 30000 });
+await reducedMotion.hover('[data-project="tcc"]');
+results.reducedMotion = await reducedMotion.$eval(
+  '[data-project="tcc"] .line-icon--project',
+  icon => ({ iconTransform: getComputedStyle(icon).transform }),
+);
+
 await browser.close();
+
+const expectedSkillIcons = ['crosshair', 'shield-check', 'cloud-cog', 'code-xml', 'brain-circuit'];
 
 const assertions = [
   [results.profile.title.includes('Full Stack'), 'title positions the profile as Full Stack'],
@@ -238,6 +310,38 @@ const assertions = [
   ],
   [results.profile.oldExperienceCount === 0, 'legacy IT and Webmaster entries are absent'],
   [['React Native', 'NestJS', 'PostgreSQL', 'Active Directory', 'MCP'].every(skill => results.profile.skills.includes(skill)), 'current development, IAM and agentic AI skills are present'],
+  [
+    expectedSkillIcons.every(name => results.profile.lineIcons.some(icon =>
+      icon.name === name && icon.context === 'skill' && icon.href === `#icon-${name}`
+    )),
+    'the five skill categories use their specified semantic icons',
+  ],
+  [
+    [
+      ['tcc', 'graduation-cap'],
+      ['nerdz', 'smartphone'],
+      ['voip', 'phone-call'],
+      ['portal', 'panels-top-left'],
+      ['vespas', 'flag'],
+    ].every(([project, iconName]) => results.profile.projectIcons.some(icon =>
+      icon.project === project && icon.name === iconName && icon.href === `#icon-${iconName}`
+    )),
+    'each featured project has its specified semantic type marker',
+  ],
+  [
+    results.profile.lineIcons.filter(icon => icon.context === 'skill').length === 5 &&
+      results.profile.skillPrompts.every(text => !text.startsWith('$')),
+    'skill icons replace all five visual dollar prompts',
+  ],
+  [
+    results.profile.lineIcons.every(icon => icon.ariaHidden === 'true' && icon.focusable === 'false'),
+    'all line icons are decorative and removed from the accessibility tree',
+  ],
+  [
+    results.profile.aiSkillGroup.spansGrid && results.profile.aiSkillGroup.headingCentered &&
+      results.mobileAiSkillGroup.headingLeftAligned,
+    'the applied-AI skill group spans and centers on desktop while remaining left-aligned on mobile',
+  ],
   [results.profile.credentials.length === 4, 'the four Cisco courses are presented as separate verifiable credentials'],
   [
     results.profile.credentials.every(credential => credential.cardIsLink && credential.keyboardFocusable && credential.nestedLinkCount === 0),
@@ -284,6 +388,32 @@ const assertions = [
     'each additional credential links to its matching verification page in the correct group',
   ],
   [
+    [
+      ['Trilha Digital Back-End — Santander Tech+', 'code-xml'],
+      ['Fundamentos em Cibersegurança', 'shield-check'],
+      ['Inteligência Emocional 2.0', 'brain'],
+      ['Produtividade e Gestão do Tempo', 'timer'],
+    ].every(([title, iconName]) => results.profile.additionalCredentials.some(credential =>
+      credential.title === title && credential.icon === iconName
+    )),
+    'compact credentials use their specified semantic icons',
+  ],
+  [
+    results.profile.credentials.every(credential => credential.lineIconCount === 0),
+    'Cisco badge cards do not receive redundant line icons',
+  ],
+  [
+    [
+      ['email', 'mail'],
+      ['linkedin', 'briefcase-business'],
+      ['github', 'git-branch'],
+      ['discord', 'message-circle'],
+    ].every(([channel, iconName]) => results.profile.contactIcons.some(icon =>
+      icon.channel === channel && icon.name === iconName && icon.visibleText.length > 0
+    )),
+    'all four contact channels keep text labels and use semantic icons',
+  ],
+  [
     ['Education in Cybersecurity', 'Portal Sophia-CT', '7.54 → 9.85', 'Generative AI', 'Mixed methods', 'Access course', 'Sophia-CT login'].every(text => results.en.tcc?.includes(text)),
     'the TCC content, course access and technical labels are translated in the English portfolio',
   ],
@@ -299,6 +429,17 @@ const assertions = [
   [results.mobileMenu.before.expanded === 'false' && results.mobileMenu.before.hidden === true, 'mobile navigation starts collapsed'],
   [results.mobileMenu.after.expanded === 'true' && results.mobileMenu.after.hidden === false, 'mobile navigation opens'],
   [results.mobileOverflowX === false, 'mobile layout has no horizontal overflow'],
+  [
+    results.profile.lineIcons.length === 18 && results.profile.spriteSymbols.length === 16,
+    'the page renders 18 semantic instances from 16 unique local symbols',
+  ],
+  [
+    results.profile.lineIcons.every(icon => icon.href?.startsWith('#icon-')),
+    'every line icon references the local inline sprite',
+  ],
+  [results.iconNetworkRequests.length === 0, 'no runtime request is made to an external icon service'],
+  [results.en.iconMap === results.profile.iconMap, 'switching to English preserves the semantic icon map'],
+  [results.reducedMotion.iconTransform === 'none', 'reduced-motion mode disables icon hover translation'],
 ];
 
 const failures = assertions.filter(([passed]) => !passed).map(([, message]) => message);

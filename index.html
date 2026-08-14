@@ -137,6 +137,27 @@
     }
     .chip:hover { border-color: rgba(124,58,237,.6); color: #C4B5FD; }
 
+    /* ── Shared line icons ── */
+    .line-icon {
+      display: inline-block;
+      flex: 0 0 auto;
+      width: 1em;
+      height: 1em;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 1.75;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      vertical-align: -0.15em;
+      transition: transform 160ms cubic-bezier(.22,1,.36,1), filter 160ms cubic-bezier(.22,1,.36,1);
+    }
+    .line-icon--skill { width: 18px; height: 18px; }
+    .line-icon--credential, .line-icon--contact { width: 18px; height: 18px; }
+    .line-icon--project { width: 20px; height: 20px; color: #8B98AC; }
+    [data-project]:hover .line-icon--project { color: #00FF87; transform: translateY(-1px); filter: drop-shadow(0 0 5px currentColor); }
+    .icon-label { display: inline-flex; align-items: center; gap: .5rem; }
+    .icon-label:hover .line-icon { transform: translateY(-1px); filter: drop-shadow(0 0 5px currentColor); }
+
     /* ── Links ── */
     .nav-link { position: relative; }
     .nav-link::after {
@@ -174,10 +195,113 @@
       .reveal, .rise { opacity: 1 !important; transform: none !important; animation: none !important; transition: none !important; }
       .cursor-blink { animation: none; }
       .card-hover, .btn-primary, .btn-ghost { transition: none; }
+      .line-icon { transition: none; }
+      .icon-label:hover .line-icon { transform: none; }
+      [data-project]:hover .line-icon--project { transform: none; filter: none; }
     }
   </style>
 </head>
 <body class="noise antialiased">
+  <svg id="line-icon-sprite" aria-hidden="true" width="0" height="0" class="absolute pointer-events-none" style="position:absolute;width:0;height:0;overflow:hidden">
+    <!-- symbols contain the unmodified child geometry from the pinned Lucide files -->
+    <symbol id="icon-crosshair" viewBox="0 0 24 24">
+      <circle cx="12" cy="12" r="10" />
+      <line x1="22" x2="18" y1="12" y2="12" />
+      <line x1="6" x2="2" y1="12" y2="12" />
+      <line x1="12" x2="12" y1="6" y2="2" />
+      <line x1="12" x2="12" y1="22" y2="18" />
+    </symbol>
+    <symbol id="icon-shield-check" viewBox="0 0 24 24">
+      <path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z" />
+      <path d="m9 12 2 2 4-4" />
+    </symbol>
+    <symbol id="icon-cloud-cog" viewBox="0 0 24 24">
+      <path d="m10.852 19.772-.383.924" />
+      <path d="m13.148 14.228.383-.923" />
+      <path d="M13.148 19.772a3 3 0 1 0-2.296-5.544l-.383-.923" />
+      <path d="m13.53 20.696-.382-.924a3 3 0 1 1-2.296-5.544" />
+      <path d="m14.772 15.852.923-.383" />
+      <path d="m14.772 18.148.923.383" />
+      <path d="M4.2 15.1a7 7 0 1 1 9.93-9.858A7 7 0 0 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.2" />
+      <path d="m9.228 15.852-.923-.383" />
+      <path d="m9.228 18.148-.923.383" />
+    </symbol>
+    <symbol id="icon-code-xml" viewBox="0 0 24 24">
+      <path d="m18 16 4-4-4-4" />
+      <path d="m6 8-4 4 4 4" />
+      <path d="m14.5 4-5 16" />
+    </symbol>
+    <symbol id="icon-brain-circuit" viewBox="0 0 24 24">
+      <path d="M12 5a3 3 0 1 0-5.997.125 4 4 0 0 0-2.526 5.77 4 4 0 0 0 .556 6.588A4 4 0 1 0 12 18Z" />
+      <path d="M9 13a4.5 4.5 0 0 0 3-4" />
+      <path d="M6.003 5.125A3 3 0 0 0 6.401 6.5" />
+      <path d="M3.477 10.896a4 4 0 0 1 .585-.396" />
+      <path d="M6 18a4 4 0 0 1-1.967-.516" />
+      <path d="M12 13h4" />
+      <path d="M12 18h6a2 2 0 0 1 2 2v1" />
+      <path d="M12 8h8" />
+      <path d="M16 8V5a2 2 0 0 1 2-2" />
+      <circle cx="16" cy="13" r=".5" />
+      <circle cx="18" cy="3" r=".5" />
+      <circle cx="20" cy="21" r=".5" />
+      <circle cx="20" cy="8" r=".5" />
+    </symbol>
+    <symbol id="icon-graduation-cap" viewBox="0 0 24 24">
+      <path d="M21.42 10.922a1 1 0 0 0-.019-1.838L12.83 5.18a2 2 0 0 0-1.66 0L2.6 9.08a1 1 0 0 0 0 1.832l8.57 3.908a2 2 0 0 0 1.66 0z" />
+      <path d="M22 10v6" />
+      <path d="M6 12.5V16a6 3 0 0 0 12 0v-3.5" />
+    </symbol>
+    <symbol id="icon-smartphone" viewBox="0 0 24 24">
+      <rect width="14" height="20" x="5" y="2" rx="2" ry="2" />
+      <path d="M12 18h.01" />
+    </symbol>
+    <symbol id="icon-phone-call" viewBox="0 0 24 24">
+      <path d="M13 2a9 9 0 0 1 9 9" />
+      <path d="M13 6a5 5 0 0 1 5 5" />
+      <path d="M13.832 16.568a1 1 0 0 0 1.213-.303l.355-.465A2 2 0 0 1 17 15h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2A18 18 0 0 1 2 4a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v3a2 2 0 0 1-.8 1.6l-.468.351a1 1 0 0 0-.292 1.233 14 14 0 0 0 6.392 6.384" />
+    </symbol>
+    <symbol id="icon-panels-top-left" viewBox="0 0 24 24">
+      <rect width="18" height="18" x="3" y="3" rx="2" />
+      <path d="M3 9h18" />
+      <path d="M9 21V9" />
+    </symbol>
+    <symbol id="icon-flag" viewBox="0 0 24 24">
+      <path d="M4 22V4a1 1 0 0 1 .4-.8A6 6 0 0 1 8 2c3 0 5 2 7.333 2q2 0 3.067-.8A1 1 0 0 1 20 4v10a1 1 0 0 1-.4.8A6 6 0 0 1 16 16c-3 0-5-2-8-2a6 6 0 0 0-4 1.528" />
+    </symbol>
+    <symbol id="icon-brain" viewBox="0 0 24 24">
+      <path d="M12 18V5" />
+      <path d="M15 13a4.17 4.17 0 0 1-3-4 4.17 4.17 0 0 1-3 4" />
+      <path d="M17.598 6.5A3 3 0 1 0 12 5a3 3 0 1 0-5.598 1.5" />
+      <path d="M17.997 5.125a4 4 0 0 1 2.526 5.77" />
+      <path d="M18 18a4 4 0 0 0 2-7.464" />
+      <path d="M19.967 17.483A4 4 0 1 1 12 18a4 4 0 1 1-7.967-.517" />
+      <path d="M6 18a4 4 0 0 1-2-7.464" />
+      <path d="M6.003 5.125a4 4 0 0 0-2.526 5.77" />
+    </symbol>
+    <symbol id="icon-timer" viewBox="0 0 24 24">
+      <line x1="10" x2="14" y1="2" y2="2" />
+      <line x1="12" x2="15" y1="14" y2="11" />
+      <circle cx="12" cy="14" r="8" />
+    </symbol>
+    <symbol id="icon-mail" viewBox="0 0 24 24">
+      <path d="m22 7-8.991 5.727a2 2 0 0 1-2.009 0L2 7" />
+      <rect x="2" y="4" width="20" height="16" rx="2" />
+    </symbol>
+    <symbol id="icon-briefcase-business" viewBox="0 0 24 24">
+      <path d="M12 12h.01" />
+      <path d="M16 6V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2" />
+      <path d="M22 13a18.15 18.15 0 0 1-20 0" />
+      <rect width="20" height="14" x="2" y="6" rx="2" />
+    </symbol>
+    <symbol id="icon-git-branch" viewBox="0 0 24 24">
+      <path d="M15 6a9 9 0 0 0-9 9V3" />
+      <circle cx="18" cy="6" r="3" />
+      <circle cx="6" cy="18" r="3" />
+    </symbol>
+    <symbol id="icon-message-circle" viewBox="0 0 24 24">
+      <path d="M2.992 16.342a2 2 0 0 1 .094 1.167l-1.065 3.29a1 1 0 0 0 1.236 1.168l3.413-.998a2 2 0 0 1 1.099.092 10 10 0 1 0-4.777-4.719" />
+    </symbol>
+  </svg>
 
   <!-- ═══════════ NAV ═══════════ -->
   <header id="navbar" class="fixed top-0 left-0 right-0 z-40 border-b border-transparent transition-all duration-300">
@@ -441,7 +565,10 @@
         <div class="grid gap-8 lg:grid-cols-[minmax(0,1fr)_18rem] lg:items-stretch">
           <div class="min-w-0">
             <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-5">
-              <p class="font-mono text-[11px] uppercase tracking-[0.14em] text-terminal" data-i18n="proj.tcc.kicker">pesquisa acadêmica · TCC · UTFPR · 2026</p>
+              <div class="flex min-w-0 items-start gap-2">
+                <svg class="line-icon line-icon--project shrink-0" data-icon="graduation-cap" data-icon-context="project" aria-hidden="true" focusable="false"><use href="#icon-graduation-cap"></use></svg>
+                <p class="min-w-0 break-words font-mono text-[11px] uppercase tracking-[0.14em] text-terminal" data-i18n="proj.tcc.kicker">pesquisa acadêmica · TCC · UTFPR · 2026</p>
+              </div>
               <div class="flex flex-wrap items-center gap-x-4 gap-y-2">
                 <a data-tcc-link href="assets/TCC_Thales_Sgarbi_Salata_corrigido_revisado-1.pdf" target="_blank" rel="noopener noreferrer" class="inline-flex shrink-0 items-center gap-1.5 font-mono text-[11px] text-purple-light hover:text-purple transition-colors">
                   <span data-i18n="proj.tcc.cta">Ler pesquisa (PDF)</span> <span aria-hidden="true">↗</span>
@@ -483,7 +610,11 @@
 
       <!-- Nerdz -->
       <a href="https://landing.nerdz.aurasec.dev/" target="_blank" rel="noopener noreferrer" class="group reveal card-hover block bg-card border border-line rounded-xl p-6 focus:outline-none focus-visible:ring-2 focus-visible:ring-purple focus-visible:ring-offset-2 focus-visible:ring-offset-ink" data-project="nerdz">
-        <p class="font-mono text-[11px] text-fog mb-4">~/projects/<span class="text-terminal">nerdz</span> <span class="text-purple-light group-hover:text-purple float-right font-mono text-[11px] transition-colors">ver produto ↗</span></p>
+        <div class="flex min-w-0 flex-wrap items-start gap-x-2 gap-y-1 mb-4">
+          <svg class="line-icon line-icon--project shrink-0" data-icon="smartphone" data-icon-context="project" aria-hidden="true" focusable="false"><use href="#icon-smartphone"></use></svg>
+          <p class="min-w-0 flex-1 break-words font-mono text-[11px] text-fog">~/projects/<span class="text-terminal">nerdz</span></p>
+          <span class="ml-auto shrink-0 text-purple-light group-hover:text-purple font-mono text-[11px] transition-colors">ver produto ↗</span>
+        </div>
         <h3 class="font-display font-semibold text-lg text-paper mb-2" data-i18n="proj.nerdz.t">Nerdz - Aplicação mobile e web</h3>
         <p class="text-fog font-light text-[15px] mb-5" data-i18n="proj.nerdz.d">
           Manutenção e evolução de um produto de estudo em grupo para web, Android e iOS, com frontend React Native/Expo, API NestJS, Prisma/PostgreSQL, autenticação Clerk e distribuição por AWS S3/CloudFront.
@@ -497,8 +628,11 @@
       </a>
 
       <!-- VoIP -->
-      <article class="reveal card-hover bg-card border border-line rounded-xl p-6">
-        <p class="font-mono text-[11px] text-fog mb-4">~/projects/<span class="text-terminal">voip-migration</span></p>
+      <article class="reveal card-hover bg-card border border-line rounded-xl p-6" data-project="voip">
+        <div class="flex min-w-0 flex-wrap items-start gap-x-2 gap-y-1 mb-4">
+          <svg class="line-icon line-icon--project shrink-0" data-icon="phone-call" data-icon-context="project" aria-hidden="true" focusable="false"><use href="#icon-phone-call"></use></svg>
+          <p class="min-w-0 flex-1 break-words font-mono text-[11px] text-fog">~/projects/<span class="text-terminal">voip-migration</span></p>
+        </div>
         <h3 class="font-display font-semibold text-lg text-paper mb-2" data-i18n="proj.voip.t">Migração VoIP em escala</h3>
         <p class="text-fog font-light text-[15px] mb-5" data-i18n="proj.voip.d">
           Bot em Python que reconfigurou ~370 telefones VoIP da Câmara Municipal de Curitiba, migrando de IP estático para DHCP — Selenium para automação web e requests com cookies de sessão para os métodos POST.
@@ -512,7 +646,11 @@
 
       <!-- Portal UTFPR -->
       <a href="https://www.utfpr.edu.br/" target="_blank" rel="noopener noreferrer" class="group reveal card-hover block bg-card border border-line rounded-xl p-6 focus:outline-none focus-visible:ring-2 focus-visible:ring-purple focus-visible:ring-offset-2 focus-visible:ring-offset-ink" data-project="portal">
-        <p class="font-mono text-[11px] text-fog mb-4">~/projects/<span class="text-terminal">portal-utfpr</span> <span class="text-purple-light group-hover:text-purple float-right font-mono text-[11px] transition-colors">utfpr.edu.br ↗</span></p>
+        <div class="flex min-w-0 flex-wrap items-start gap-x-2 gap-y-1 mb-4">
+          <svg class="line-icon line-icon--project shrink-0" data-icon="panels-top-left" data-icon-context="project" aria-hidden="true" focusable="false"><use href="#icon-panels-top-left"></use></svg>
+          <p class="min-w-0 flex-1 break-words font-mono text-[11px] text-fog">~/projects/<span class="text-terminal">portal-utfpr</span></p>
+          <span class="ml-auto shrink-0 text-purple-light group-hover:text-purple font-mono text-[11px] transition-colors">utfpr.edu.br ↗</span>
+        </div>
         <h3 class="font-display font-semibold text-lg text-paper mb-2" data-i18n="proj.portal.t">Reestruturação do Portal UTFPR</h3>
         <p class="text-fog font-light text-[15px] mb-5" data-i18n="proj.portal.d">
           Novos componentes Volto / Plone 6 para o portal institucional da universidade, alinhados ao Design System 4.0 do Gov.br — migração de código deprecado, documentação contínua e CI/CD no GitLab.
@@ -526,7 +664,11 @@
 
       <!-- VESPAS -->
       <a href="https://linktr.ee/vespas_utfpr" target="_blank" rel="noopener noreferrer" class="group reveal card-hover block bg-card border border-line rounded-xl p-6 focus:outline-none focus-visible:ring-2 focus-visible:ring-purple focus-visible:ring-offset-2 focus-visible:ring-offset-ink" data-project="vespas">
-        <p class="font-mono text-[11px] text-fog mb-4">~/projects/<span class="text-terminal">vespas-ctf</span> <span class="text-purple-light group-hover:text-purple float-right font-mono text-[11px] transition-colors">linktr.ee ↗</span></p>
+        <div class="flex min-w-0 flex-wrap items-start gap-x-2 gap-y-1 mb-4">
+          <svg class="line-icon line-icon--project shrink-0" data-icon="flag" data-icon-context="project" aria-hidden="true" focusable="false"><use href="#icon-flag"></use></svg>
+          <p class="min-w-0 flex-1 break-words font-mono text-[11px] text-fog">~/projects/<span class="text-terminal">vespas-ctf</span></p>
+          <span class="ml-auto shrink-0 text-purple-light group-hover:text-purple font-mono text-[11px] transition-colors">linktr.ee ↗</span>
+        </div>
         <h3 class="font-display font-semibold text-lg text-paper mb-2" data-i18n="proj.vespas.t">VESPAS — Labs de CTF &amp; Alertas</h3>
         <p class="text-fog font-light text-[15px] mb-5" data-i18n="proj.vespas.d">
           Desenvolvimento de labs e challenges para CTFs próprios do VESPAS e coordenação do canal público de alertas de segurança — de CVEs críticas a dicas práticas de proteção para a comunidade.
@@ -552,7 +694,10 @@
 
       <div class="grid md:grid-cols-2 gap-x-12 gap-y-10">
         <div class="reveal">
-          <h3 class="font-mono text-sm text-danger mb-4"><span class="text-fog">$</span> <span data-i18n="skills.g1">segurança ofensiva</span></h3>
+          <h3 class="icon-label font-mono text-sm text-danger mb-4">
+            <svg class="line-icon line-icon--skill" data-icon="crosshair" data-icon-context="skill" aria-hidden="true" focusable="false"><use href="#icon-crosshair"></use></svg>
+            <span data-i18n="skills.g1">segurança ofensiva</span>
+          </h3>
           <div class="flex flex-wrap gap-2">
             <span class="chip font-mono text-xs px-3 py-1.5 rounded-md text-fog">Kali Linux</span>
             <span class="chip font-mono text-xs px-3 py-1.5 rounded-md text-fog">Nmap</span>
@@ -562,7 +707,10 @@
           </div>
         </div>
         <div class="reveal">
-          <h3 class="font-mono text-sm text-terminal mb-4"><span class="text-fog">$</span> <span data-i18n="skills.g2">defesa &amp; detecção</span></h3>
+          <h3 class="icon-label font-mono text-sm text-terminal mb-4">
+            <svg class="line-icon line-icon--skill" data-icon="shield-check" data-icon-context="skill" aria-hidden="true" focusable="false"><use href="#icon-shield-check"></use></svg>
+            <span data-i18n="skills.g2">defesa &amp; detecção</span>
+          </h3>
           <div class="flex flex-wrap gap-2">
             <span class="chip font-mono text-xs px-3 py-1.5 rounded-md text-fog">Axur</span>
             <span class="chip font-mono text-xs px-3 py-1.5 rounded-md text-fog">Prisma Cloud</span>
@@ -576,7 +724,10 @@
           </div>
         </div>
         <div class="reveal">
-          <h3 class="font-mono text-sm text-purple-light mb-4"><span class="text-fog">$</span> devops &amp; cloud</h3>
+          <h3 class="icon-label font-mono text-sm text-purple-light mb-4">
+            <svg class="line-icon line-icon--skill" data-icon="cloud-cog" data-icon-context="skill" aria-hidden="true" focusable="false"><use href="#icon-cloud-cog"></use></svg>
+            <span>devops &amp; cloud</span>
+          </h3>
           <div class="flex flex-wrap gap-2">
             <span class="chip font-mono text-xs px-3 py-1.5 rounded-md text-fog">Ansible</span>
             <span class="chip font-mono text-xs px-3 py-1.5 rounded-md text-fog">Terraform</span>
@@ -590,7 +741,10 @@
           </div>
         </div>
         <div class="reveal">
-          <h3 class="font-mono text-sm text-amber mb-4"><span class="text-fog">$</span> <span data-i18n="skills.g4">desenvolvimento</span></h3>
+          <h3 class="icon-label font-mono text-sm text-amber mb-4">
+            <svg class="line-icon line-icon--skill" data-icon="code-xml" data-icon-context="skill" aria-hidden="true" focusable="false"><use href="#icon-code-xml"></use></svg>
+            <span data-i18n="skills.g4">desenvolvimento</span>
+          </h3>
           <div class="flex flex-wrap gap-2">
             <span class="chip font-mono text-xs px-3 py-1.5 rounded-md text-fog">Python</span>
             <span class="chip font-mono text-xs px-3 py-1.5 rounded-md text-fog">JavaScript</span>
@@ -602,9 +756,12 @@
             <span class="chip font-mono text-xs px-3 py-1.5 rounded-md text-fog">APIs REST</span>
           </div>
         </div>
-        <div class="reveal md:col-span-2">
-          <h3 class="font-mono text-sm text-purple-light mb-4"><span class="text-fog">$</span> <span data-i18n="skills.g5">IA aplicada ao desenvolvimento</span></h3>
-          <div class="flex flex-wrap gap-2">
+        <div class="reveal md:col-span-2 md:flex md:flex-col md:items-center" data-skill-group="ai">
+          <h3 class="icon-label font-mono text-sm text-purple-light mb-4">
+            <svg class="line-icon line-icon--skill" data-icon="brain-circuit" data-icon-context="skill" aria-hidden="true" focusable="false"><use href="#icon-brain-circuit"></use></svg>
+            <span data-i18n="skills.g5">IA aplicada ao desenvolvimento</span>
+          </h3>
+          <div class="flex flex-wrap gap-2 md:justify-center">
             <span class="chip font-mono text-xs px-3 py-1.5 rounded-md text-fog">Anthropic API</span>
             <span class="chip font-mono text-xs px-3 py-1.5 rounded-md text-fog">MCP</span>
             <span class="chip font-mono text-xs px-3 py-1.5 rounded-md text-fog">LLMs</span>
@@ -680,7 +837,7 @@
           <div class="grid gap-4 md:grid-cols-2">
             <a data-compact-credential href="https://ada.tech/certificado?code=de946b1e-6997-80f6-49ba-26078f14bbb3" target="_blank" rel="noopener noreferrer" class="group card-hover flex min-h-44 flex-col rounded-xl border border-line bg-card p-5 focus:outline-none focus-visible:ring-2 focus-visible:ring-purple focus-visible:ring-offset-2 focus-visible:ring-offset-ink">
               <div class="mb-5 flex items-start justify-between gap-4">
-                <p class="font-mono text-[11px] text-fog">~/credentials/<span class="text-terminal">ada-backend</span></p>
+              <p class="icon-label font-mono text-[11px] text-fog"><svg class="line-icon line-icon--credential" data-icon="code-xml" data-icon-context="credential" aria-hidden="true" focusable="false"><use href="#icon-code-xml"></use></svg>~/credentials/<span class="text-terminal">ada-backend</span></p>
                 <span class="shrink-0 rounded-full border border-terminal/30 bg-terminal/10 px-2 py-1 font-mono text-[9px] uppercase tracking-wider text-terminal" data-i18n="credentials.verified">verificável</span>
               </div>
               <p class="mb-2 font-mono text-xs text-terminal">Ada · 2025</p>
@@ -692,7 +849,7 @@
 
             <a data-compact-credential href="https://apl.utfpr.edu.br/extensao/validar/D194E4D801ECCEB67D8F29742731D299" target="_blank" rel="noopener noreferrer" class="group card-hover flex min-h-44 flex-col rounded-xl border border-line bg-card p-5 focus:outline-none focus-visible:ring-2 focus-visible:ring-purple focus-visible:ring-offset-2 focus-visible:ring-offset-ink">
               <div class="mb-5 flex items-start justify-between gap-4">
-                <p class="font-mono text-[11px] text-fog">~/credentials/<span class="text-terminal">utfpr-cyber</span></p>
+              <p class="icon-label font-mono text-[11px] text-fog"><svg class="line-icon line-icon--credential" data-icon="shield-check" data-icon-context="credential" aria-hidden="true" focusable="false"><use href="#icon-shield-check"></use></svg>~/credentials/<span class="text-terminal">utfpr-cyber</span></p>
                 <span class="shrink-0 rounded-full border border-terminal/30 bg-terminal/10 px-2 py-1 font-mono text-[9px] uppercase tracking-wider text-terminal" data-i18n="credentials.verified">verificável</span>
               </div>
               <p class="mb-2 font-mono text-xs text-terminal">UTFPR · 2021</p>
@@ -710,7 +867,7 @@
           <div class="grid gap-4 md:grid-cols-2">
             <a data-compact-credential href="https://conquerplus.com.br/certificates/362c41cd-3800-4a28-9bb1-c816f0c484f8" target="_blank" rel="noopener noreferrer" class="group card-hover flex min-h-44 flex-col rounded-xl border border-line bg-card p-5 focus:outline-none focus-visible:ring-2 focus-visible:ring-purple focus-visible:ring-offset-2 focus-visible:ring-offset-ink">
               <div class="mb-5 flex items-start justify-between gap-4">
-                <p class="font-mono text-[11px] text-fog">~/credentials/<span class="text-purple-light">emotional-intelligence</span></p>
+              <p class="icon-label font-mono text-[11px] text-fog"><svg class="line-icon line-icon--credential" data-icon="brain" data-icon-context="credential" aria-hidden="true" focusable="false"><use href="#icon-brain"></use></svg>~/credentials/<span class="text-purple-light">emotional-intelligence</span></p>
                 <span class="shrink-0 rounded-full border border-purple/30 bg-purple/10 px-2 py-1 font-mono text-[9px] uppercase tracking-wider text-purple-light" data-i18n="credentials.verified">verificável</span>
               </div>
               <p class="mb-2 font-mono text-xs text-purple-light">Escola Conquer · 2022</p>
@@ -723,7 +880,7 @@
 
             <a data-compact-credential href="https://www.conquerplus.com.br/certificates/efc5142f-0c55-4e3d-a8be-623bf706f61c" target="_blank" rel="noopener noreferrer" class="group card-hover flex min-h-44 flex-col rounded-xl border border-line bg-card p-5 focus:outline-none focus-visible:ring-2 focus-visible:ring-purple focus-visible:ring-offset-2 focus-visible:ring-offset-ink">
               <div class="mb-5 flex items-start justify-between gap-4">
-                <p class="font-mono text-[11px] text-fog">~/credentials/<span class="text-purple-light">productivity</span></p>
+              <p class="icon-label font-mono text-[11px] text-fog"><svg class="line-icon line-icon--credential" data-icon="timer" data-icon-context="credential" aria-hidden="true" focusable="false"><use href="#icon-timer"></use></svg>~/credentials/<span class="text-purple-light">productivity</span></p>
                 <span class="shrink-0 rounded-full border border-purple/30 bg-purple/10 px-2 py-1 font-mono text-[9px] uppercase tracking-wider text-purple-light" data-i18n="credentials.verified">verificável</span>
               </div>
               <p class="mb-2 font-mono text-xs text-purple-light">Escola Conquer · 2022</p>
@@ -747,12 +904,12 @@
       Aberto a oportunidades em desenvolvimento Full Stack, DevSecOps e Segurança da Informação. Se o seu time precisa integrar produto, operação e segurança, vamos conversar.
     </p>
     <div class="reveal flex flex-wrap justify-center items-center gap-3">
-      <a href="mailto:thales.salata@gmail.com" class="btn-primary font-mono text-sm text-white px-6 py-3.5 rounded-md">
-        <span data-i18n="contact.cta">Enviar e-mail</span> <span aria-hidden="true">→</span>
+      <a data-contact="email" href="mailto:thales.salata@gmail.com" class="btn-primary inline-flex items-center gap-2 font-mono text-sm text-white px-6 py-3.5 rounded-md">
+        <svg class="line-icon line-icon--contact" data-icon="mail" data-icon-context="contact" aria-hidden="true" focusable="false"><use href="#icon-mail"></use></svg><span data-i18n="contact.cta">Enviar e-mail</span> <span aria-hidden="true">→</span>
       </a>
-      <a href="https://www.linkedin.com/in/thales-sgarbi-salata/" target="_blank" rel="noopener" class="btn-ghost font-mono text-sm text-fog px-6 py-3.5 rounded-md">LinkedIn ↗</a>
-      <a href="https://github.com/Taresu" target="_blank" rel="noopener" class="btn-ghost font-mono text-sm text-fog px-6 py-3.5 rounded-md">GitHub ↗</a>
-      <span class="btn-ghost font-mono text-sm text-fog px-6 py-3.5 rounded-md cursor-default" title="Discord">Discord: tsalada</span>
+      <a data-contact="linkedin" href="https://www.linkedin.com/in/thales-sgarbi-salata/" target="_blank" rel="noopener" class="btn-ghost inline-flex items-center gap-2 font-mono text-sm text-fog px-6 py-3.5 rounded-md"><svg class="line-icon line-icon--contact" data-icon="briefcase-business" data-icon-context="contact" aria-hidden="true" focusable="false"><use href="#icon-briefcase-business"></use></svg>LinkedIn ↗</a>
+      <a data-contact="github" href="https://github.com/Taresu" target="_blank" rel="noopener" class="btn-ghost inline-flex items-center gap-2 font-mono text-sm text-fog px-6 py-3.5 rounded-md"><svg class="line-icon line-icon--contact" data-icon="git-branch" data-icon-context="contact" aria-hidden="true" focusable="false"><use href="#icon-git-branch"></use></svg>GitHub ↗</a>
+      <span data-contact="discord" class="btn-ghost inline-flex items-center gap-2 font-mono text-sm text-fog px-6 py-3.5 rounded-md cursor-default" title="Discord"><svg class="line-icon line-icon--contact" data-icon="message-circle" data-icon-context="contact" aria-hidden="true" focusable="false"><use href="#icon-message-circle"></use></svg>Discord: tsalada</span>
     </div>
   </section>
 
