@@ -447,7 +447,7 @@ const assertions = [
   [results.reducedMotion.iconTransform === 'none', 'reduced-motion mode disables icon hover translation'],
   [results.profile.employerLogos.length === 5, 'all five experience entries have an employer logo'],
   [results.profile.employerLogos.every(l => l.alt && l.alt.length > 0), 'all employer logos have alt text'],
-  [results.profile.employerLogos.filter(l => l.bg === 'dark').length === 1, 'exactly one employer logo uses the dark pill (VESPAS)'],
+  [results.profile.employerLogos.filter(l => l.bg === 'light').length === 1, 'only Volkswagen uses the light pill'],
 ];
 
 const failures = assertions.filter(([passed]) => !passed).map(([, message]) => message);
