@@ -157,6 +157,11 @@ results.profile = await page.evaluate(() => ({
     nestedLinkCount: card.querySelectorAll('a').length,
     icon: card.querySelector('.line-icon')?.dataset.icon,
   })),
+  employerLogos: [...document.querySelectorAll('#experiencia article img.employer-logo')].map(img => ({
+    src: img.getAttribute('src'),
+    alt: img.alt,
+    bg: img.dataset.logoBg,
+  })),
   contactIcons: [...document.querySelectorAll('[data-contact]')].map(control => ({
     channel: control.dataset.contact,
     name: control.querySelector('.line-icon')?.dataset.icon,
@@ -440,6 +445,9 @@ const assertions = [
   [results.iconNetworkRequests.length === 0, 'no runtime request is made to an external icon service'],
   [results.en.iconMap === results.profile.iconMap, 'switching to English preserves the semantic icon map'],
   [results.reducedMotion.iconTransform === 'none', 'reduced-motion mode disables icon hover translation'],
+  [results.profile.employerLogos.length === 5, 'all five experience entries have an employer logo'],
+  [results.profile.employerLogos.every(l => l.alt && l.alt.length > 0), 'all employer logos have alt text'],
+  [results.profile.employerLogos.filter(l => l.bg === 'dark').length === 1, 'exactly one employer logo uses the dark pill (VESPAS)'],
 ];
 
 const failures = assertions.filter(([passed]) => !passed).map(([, message]) => message);
