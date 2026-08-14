@@ -1,9 +1,9 @@
 # Thales Sgarbi Salata — Portfólio Pessoal
 
-> Portfólio profissional (recrutadores/empregadores) — DevSecOps · Purple Team.
+> Portfólio profissional (recrutadores/empregadores) — Full Stack · DevSecOps · Segurança da Informação.
 > Bilíngue PT-BR / EN, tema dark cyber/terminal, página única e autocontida.
 
-Este é o perfil pessoal, com sobre, experiência, projetos, skills, certificações e contato.
+Distinto do `WebDev-Portfolio/` (site de vendas freelance): este é o perfil pessoal, com sobre, experiência, projetos, skills, certificações e contato.
 
 ---
 

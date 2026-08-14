@@ -1,7 +1,7 @@
 {
   "name": "personal-portfolio",
   "version": "1.0.0",
-  "description": "Portfólio pessoal de Thales Sgarbi Salata — DevSecOps / Purple Team",
+  "description": "Portfólio pessoal de Thales Sgarbi Salata — Full Stack / DevSecOps / Segurança da Informação",
   "scripts": {
     "start": "node serve.mjs",
     "screenshot": "node screenshot.mjs"
