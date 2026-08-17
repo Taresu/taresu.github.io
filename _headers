@@ -1,0 +1,10 @@
+# Cloudflare Pages — custom response headers
+# https://developers.cloudflare.com/pages/configuration/headers/
+
+/
+  Link: </index.md>; rel="alternate"; type="text/markdown", </sitemap.xml>; rel="sitemap", </.well-known/mcp/server-card.json>; rel="service-desc", </.well-known/agent-skills/index.json>; rel="agent-skills"
+  Vary: Accept
+
+/index.html
+  Link: </index.md>; rel="alternate"; type="text/markdown", </sitemap.xml>; rel="sitemap", </.well-known/mcp/server-card.json>; rel="service-desc", </.well-known/agent-skills/index.json>; rel="agent-skills"
+  Vary: Accept
