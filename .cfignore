@@ -1,0 +1,5 @@
+node_modules/
+.githooks/
+temporary screenshots/
+.superpowers/
+docs/
