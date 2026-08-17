@@ -1,0 +1,36 @@
+# robots.txt — Thales Sgarbi Salata · Personal Portfolio
+# https://taresu.github.io/
+
+# Default: allow all crawlers (indexing and search welcome)
+User-agent: *
+Allow: /
+Disallow: /assets/
+
+# AI training: opt out — content may be read but not used in training datasets
+User-agent: GPTBot
+Allow: /
+Disallow: /assets/
+
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: Claude-Web
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Bytespider
+Disallow: /
+
+User-agent: CCBot
+Disallow: /
+
+# Content Signals — declare AI usage preferences
+# https://contentsignals.org/
+Content-Signal: ai-train=no, search=yes, ai-input=yes
+
+Sitemap: https://taresu.github.io/sitemap.xml

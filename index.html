@@ -1179,5 +1179,70 @@
 
     document.getElementById('year').textContent = new Date().getFullYear();
   </script>
+
+  <!-- WebMCP: expose portfolio tools to AI agents via browser -->
+  <script>
+    if ('modelContext' in navigator) {
+      const CONTACT_EMAIL = 'tsalata@alunos.utfpr.edu.br';
+      const BASE = 'https://taresu.github.io';
+      navigator.modelContext.provideContext({
+        tools: [
+          {
+            name: 'get_overview',
+            description: 'Returns a concise summary of who Thales Sgarbi Salata is, his role and location.',
+            inputSchema: { type: 'object', properties: {} },
+            execute: async () => ({
+              name: 'Thales Sgarbi Salata',
+              role: 'Full Stack · DevSecOps · Information Security',
+              location: 'Curitiba, Brazil',
+              summary: 'Builds and maintains web/mobile applications, integrates services and automates infrastructure with security embedded in the development lifecycle.',
+              markdownProfile: `${BASE}/index.md`,
+            }),
+          },
+          {
+            name: 'get_experience',
+            description: 'Returns the list of professional and volunteer roles with dates and responsibilities.',
+            inputSchema: { type: 'object', properties: {} },
+            execute: async () => ({
+              roles: [
+                { title: 'Full Stack Developer', org: 'UTFPR', period: 'Jul 2025 – present', stack: ['React', 'Volto', 'Plone 6', 'Python', 'GitLab CI/CD'] },
+                { title: 'DevSecOps Intern', org: 'Câmara Municipal de Curitiba', period: 'Mar 2024 – Dec 2024', stack: ['Ansible', 'Vagrant', 'Python', 'Selenium', 'Linux', 'SSO', 'LDAP'] },
+                { title: 'Web | Frontend Developer', org: 'UTFPR', period: 'Aug 2023 – Feb 2024', stack: ['React', 'Volto'] },
+                { title: 'Volunteer Coordinator', org: 'VESPAS / UTFPR', period: '2022 – present', focus: 'Cybersecurity, CTF competitions, OWASP Top 10:2025, LLM Risks' },
+                { title: 'Information Security Intern', org: 'Volkswagen do Brasil', period: 'Jun 2022 – Jan 2023', stack: ['Active Directory', 'Axur', 'Prisma Cloud', 'ISO 27001'] },
+              ],
+            }),
+          },
+          {
+            name: 'get_projects',
+            description: 'Returns featured projects with description and technology stack.',
+            inputSchema: { type: 'object', properties: {} },
+            execute: async () => ({
+              projects: [
+                { name: 'Education in Cybersecurity (TCC)', type: 'Academic research', year: 2026, description: 'Mixed-methods research developing a cybersecurity education intervention combining MOOC, phishing simulations (MITRE ATT&CK). Pilot: mean score 7.54 → 9.85.' },
+                { name: 'Nerdz', type: 'Mobile & web app', stack: ['React Native', 'Expo', 'NestJS', 'PostgreSQL', 'Clerk', 'AWS'], description: 'Cross-platform group-study app for web, Android and iOS.' },
+                { name: 'VoIP migration at scale', type: 'Automation', stack: ['Python', 'Selenium'], description: '~370 VoIP phones migrated from static IP to DHCP at Curitiba City Council.' },
+                { name: 'UTFPR Portal restructuring', type: 'Web development', stack: ['Volto', 'Plone 6', 'GitLab CI/CD'], description: "New components for UTFPR's institutional portal aligned with Gov.br Design System 4.0." },
+                { name: 'VESPAS — CTF Labs & Alerts', type: 'Security', description: 'CTF labs and challenges, plus public cybersecurity alerts channel.' },
+              ],
+            }),
+          },
+          {
+            name: 'get_contact',
+            description: 'Returns contact information and links for reaching Thales.',
+            inputSchema: { type: 'object', properties: {} },
+            execute: async () => ({
+              email: CONTACT_EMAIL,
+              github: 'https://github.com/Taresu',
+              linkedin: 'https://linkedin.com/in/thales-salata',
+              cv_pt: `${BASE}/assets/curriculo-thales-salata.pdf`,
+              resume_en: `${BASE}/assets/resume-thales-salata.pdf`,
+              openTo: ['Full Stack', 'DevSecOps', 'Information Security'],
+            }),
+          },
+        ],
+      });
+    }
+  </script>
 </body>
 </html>

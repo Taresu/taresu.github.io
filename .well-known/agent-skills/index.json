@@ -1,0 +1,19 @@
+{
+  "$schema": "https://agentskills.io/schema/v0.2.0/index.json",
+  "skills": [
+    {
+      "name": "portfolio-overview",
+      "type": "read",
+      "description": "Read the full portfolio in Markdown — about, experience, projects, skills and contact",
+      "url": "https://taresu.github.io/index.md",
+      "sha256": ""
+    },
+    {
+      "name": "sitemap",
+      "type": "read",
+      "description": "XML sitemap listing all canonical URLs",
+      "url": "https://taresu.github.io/sitemap.xml",
+      "sha256": ""
+    }
+  ]
+}

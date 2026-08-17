@@ -1,0 +1,40 @@
+{
+  "schemaVersion": "1.0",
+  "serverInfo": {
+    "name": "Thales Sgarbi Salata — Personal Portfolio",
+    "version": "1.0.0",
+    "description": "Read-only portfolio site for Thales Sgarbi Salata. Full Stack · DevSecOps · Information Security. Contact: tsalata@alunos.utfpr.edu.br",
+    "author": "Thales Sgarbi Salata",
+    "homepage": "https://taresu.github.io/"
+  },
+  "transport": null,
+  "capabilities": {
+    "resources": [
+      {
+        "name": "portfolio-markdown",
+        "uri": "https://taresu.github.io/index.md",
+        "mimeType": "text/markdown",
+        "description": "Full portfolio content in Markdown"
+      },
+      {
+        "name": "portfolio-html",
+        "uri": "https://taresu.github.io/",
+        "mimeType": "text/html",
+        "description": "Interactive portfolio page"
+      },
+      {
+        "name": "cv-pt",
+        "uri": "https://taresu.github.io/assets/curriculo-thales-salata.pdf",
+        "mimeType": "application/pdf",
+        "description": "Curriculum Vitae (Portuguese)"
+      },
+      {
+        "name": "resume-en",
+        "uri": "https://taresu.github.io/assets/resume-thales-salata.pdf",
+        "mimeType": "application/pdf",
+        "description": "Résumé (English)"
+      }
+    ]
+  },
+  "note": "This is a static read-only site. No MCP tool endpoints are exposed. Resources are available via direct HTTP GET."
+}
