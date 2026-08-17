@@ -7,8 +7,8 @@ I build and maintain web and mobile applications, integrate services and automat
 - Email: tsalata@alunos.utfpr.edu.br
 - GitHub: https://github.com/Taresu
 - LinkedIn: https://linkedin.com/in/thales-salata
-- CV (PT): https://taresu.github.io/assets/curriculo-thales-salata.pdf
-- Résumé (EN): https://taresu.github.io/assets/resume-thales-salata.pdf
+- CV (PT): https://tsalata.pages.dev/assets/curriculo-thales-salata.pdf
+- Résumé (EN): https://tsalata.pages.dev/assets/resume-thales-salata.pdf
 
 ---
 
