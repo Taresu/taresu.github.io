@@ -4,7 +4,11 @@
   "description": "Portfólio pessoal de Thales Sgarbi Salata — Full Stack / DevSecOps / Segurança da Informação",
   "scripts": {
     "start": "node serve.mjs",
-    "screenshot": "node screenshot.mjs"
+    "screenshot": "node screenshot.mjs",
+    "hooks:install": "git config core.hooksPath .githooks",
+    "test:hooks": "node test/hooks.test.mjs",
+    "verify:static": "node --check serve.mjs && node --check verify.mjs && node --check screenshot.mjs",
+    "build:pages": "rm -rf public && mkdir -p public && cp -r index.html assets robots.txt sitemap.xml index.md _headers .well-known public/"
   },
   "author": "Thales Sgarbi Salata",
   "license": "ISC",
