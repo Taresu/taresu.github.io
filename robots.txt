@@ -1,5 +1,5 @@
 # robots.txt — Thales Sgarbi Salata · Personal Portfolio
-# https://tsalata.pages.dev/
+# https://taresu.github.io/
 
 # Default: allow all crawlers (indexing and search welcome)
 User-agent: *
@@ -33,4 +33,4 @@ Disallow: /
 # https://contentsignals.org/
 Content-Signal: ai-train=no, search=yes, ai-input=yes
 
-Sitemap: https://tsalata.pages.dev/sitemap.xml
+Sitemap: https://taresu.github.io/sitemap.xml

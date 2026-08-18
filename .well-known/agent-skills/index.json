@@ -5,14 +5,14 @@
       "name": "portfolio-overview",
       "type": "read",
       "description": "Read the full portfolio in Markdown — about, experience, projects, skills and contact",
-      "url": "https://tsalata.pages.dev/index.md",
+      "url": "https://taresu.github.io/index.md",
       "sha256": ""
     },
     {
       "name": "sitemap",
       "type": "read",
       "description": "XML sitemap listing all canonical URLs",
-      "url": "https://tsalata.pages.dev/sitemap.xml",
+      "url": "https://taresu.github.io/sitemap.xml",
       "sha256": ""
     }
   ]
