@@ -137,7 +137,15 @@
       transition: border-color .25s, color .25s, background .25s, box-shadow .25s;
     }
     .chip:hover { border-color: rgba(124,58,237,.6); color: #C4B5FD; }
+    a.chip {
+      display: inline-flex;
+      align-items: center;
+      text-decoration: none;
+      cursor: pointer;
+    }
+    a.chip:focus-visible { outline: 2px solid #C4B5FD; outline-offset: 3px; }
     .chip[data-skill] { position: relative; z-index: 1; cursor: crosshair; outline: none; }
+    a.chip[data-skill] { cursor: pointer; }
     .chip[data-skill]:focus-visible { outline: 2px solid #C4B5FD; outline-offset: 3px; }
     .chip.skill-active {
       border-color: rgba(0,255,135,.85);
@@ -146,9 +154,37 @@
       box-shadow: 0 0 0 1px rgba(0,255,135,.12), 0 0 16px rgba(0,255,135,.12);
     }
     .chip.skill-related {
-      border-color: rgba(0,255,135,.5);
       color: #B8FFD8;
-      box-shadow: 0 0 12px rgba(0,255,135,.08);
+    }
+    .chip.skill-related[data-related-strength="strong"] {
+      border-color: rgba(0,255,135,.68);
+      background: rgba(0,255,135,.055);
+      box-shadow: 0 0 14px rgba(0,255,135,.1);
+    }
+    .chip.skill-related[data-related-strength="medium"] {
+      border-color: rgba(0,255,135,.42);
+      box-shadow: 0 0 10px rgba(0,255,135,.06);
+    }
+    .chip.skill-related[data-related-strength="weak"] {
+      border-color: rgba(0,255,135,.22);
+      color: #9FC8B2;
+    }
+    .skill-legend-line {
+      display: inline-block;
+      width: 30px;
+      height: 1px;
+      color: #00FF87;
+      background: currentColor;
+      opacity: .8;
+    }
+    .skill-legend-item[data-strength="strong"] .skill-legend-line { height: 2px; }
+    .skill-legend-item[data-strength="medium"] .skill-legend-line {
+      background: repeating-linear-gradient(90deg, currentColor 0 5px, transparent 5px 9px);
+      opacity: .58;
+    }
+    .skill-legend-item[data-strength="weak"] .skill-legend-line {
+      background: repeating-linear-gradient(90deg, currentColor 0 2px, transparent 2px 7px);
+      opacity: .32;
     }
 
     /* ── Shared line icons ── */
@@ -263,7 +299,7 @@
       height: 40vh;
       background: linear-gradient(180deg, transparent, rgba(124,58,237,.10) 60%, rgba(0,255,135,.14));
       pointer-events: none;
-      animation: scanSweep 1.15s cubic-bezier(.4,0,.2,1) 1 forwards;
+      animation: scanSweep 2.4s cubic-bezier(.4,0,.2,1) 1 forwards;
     }
     @keyframes scanSweep { from { transform: translateY(-45vh); } to { transform: translateY(115vh); } }
 
@@ -297,14 +333,38 @@
     .netgraph .relation-edge {
       fill: none;
       stroke: rgba(0,255,135,.9);
-      stroke-width: 1.25;
-      stroke-dasharray: 4 7;
       stroke-linecap: round;
-      opacity: 0;
-      filter: drop-shadow(0 0 4px rgba(0,255,135,.45));
-      transition: opacity .2s ease;
+      transition: opacity .2s ease, stroke-width .2s ease, filter .2s ease;
     }
-    .netgraph .relation-edge.hot { opacity: .88; animation: relationFlow 1.1s linear infinite; }
+    .netgraph .relation-edge[data-strength="strong"] {
+      stroke-width: 1.35;
+      opacity: .16;
+    }
+    .netgraph .relation-edge[data-strength="medium"] {
+      stroke-width: 1.05;
+      stroke-dasharray: 5 7;
+      opacity: .07;
+    }
+    .netgraph .relation-edge[data-strength="weak"] {
+      stroke-width: .85;
+      stroke-dasharray: 1 8;
+      opacity: .025;
+    }
+    .netgraph.relations-active .relation-edge:not(.hot) { opacity: .01; }
+    .netgraph .relation-edge.hot {
+      filter: drop-shadow(0 0 4px rgba(0,255,135,.45));
+    }
+    .netgraph .relation-edge.hot[data-strength="strong"] {
+      stroke-width: 1.65;
+      opacity: .96;
+      animation: relationFlow 1.1s linear infinite;
+    }
+    .netgraph .relation-edge.hot[data-strength="medium"] {
+      stroke-width: 1.25;
+      opacity: .68;
+      animation: relationFlow 1.35s linear infinite;
+    }
+    .netgraph .relation-edge.hot[data-strength="weak"] { opacity: .34; }
     @keyframes relationFlow { to { stroke-dashoffset: -11; } }
     .netgraph .net-node {
       fill: #0A0E14;
@@ -360,14 +420,34 @@
       #scan-intro { display: none !important; }
       .node-badge::after, .tl-item::after { animation: none !important; }
       .netgraph .net-edge { stroke-dasharray: none; }
-      .netgraph .relation-edge.hot { animation: none; stroke-dasharray: none; }
+      .netgraph .relation-edge.hot { animation: none !important; stroke-dasharray: none; }
     }
-  .employer-logo {
+  /* ── Organization link graphs ── */
+  .org-network-control {
     position: absolute;
     top: 0;
     right: 0;
     width: 52px;
     height: 52px;
+    z-index: 4;
+  }
+  .org-logo-link {
+    display: block;
+    width: 52px;
+    height: 52px;
+    border-radius: 8px;
+    transition: transform 180ms cubic-bezier(.22,1,.36,1), filter 180ms ease;
+  }
+  .org-logo-link:hover,
+  .org-logo-link:focus-visible {
+    transform: translateY(-2px);
+    filter: drop-shadow(0 0 8px rgba(0,255,135,.24));
+    outline: none;
+  }
+  .org-logo-link:focus-visible { box-shadow: 0 0 0 2px #7C3AED; }
+  .employer-logo {
+    width: 100%;
+    height: 100%;
     object-fit: contain;
     padding: 6px;
     border-radius: 8px;
@@ -375,6 +455,177 @@
   }
   .employer-logo[data-logo-bg="light"] { background: #fff; }
   .employer-logo[data-logo-bg="dark"]  { background: #0f1523; border: 1px solid #2d3550; }
+  .org-primary-name {
+    border-radius: 3px;
+    text-decoration: none;
+    transition: color 160ms ease, text-shadow 160ms ease;
+  }
+  .org-primary-name:hover { color: #00FF87; text-shadow: 0 0 8px rgba(0,255,135,.2); }
+  .org-primary-name:focus-visible { outline: 2px solid #7C3AED; outline-offset: 3px; }
+  .org-network-toggle {
+    position: absolute;
+    right: -8px;
+    bottom: -8px;
+    display: grid;
+    place-items: center;
+    width: 25px;
+    height: 25px;
+    border: 1px solid rgba(124,58,237,.65);
+    border-radius: 999px;
+    background: #0A0E14;
+    color: #C4B5FD;
+    box-shadow: 0 0 0 3px #0A0E14, 0 0 10px rgba(124,58,237,.28);
+    transition: border-color 160ms ease, color 160ms ease, transform 180ms cubic-bezier(.22,1,.36,1);
+  }
+  .org-network-toggle::before,
+  .org-network-toggle::after {
+    content: '';
+    position: absolute;
+    border-radius: 999px;
+    background: currentColor;
+  }
+  .org-network-toggle::before { width: 3px; height: 3px; box-shadow: -5px 4px 0 currentColor, 5px 4px 0 currentColor; }
+  .org-network-toggle::after { top: 10px; width: 12px; height: 1px; transform: rotate(18deg); opacity: .7; }
+  [data-org-network][data-open="true"] .org-network-toggle {
+    color: #00FF87;
+    border-color: rgba(0,255,135,.68);
+    transform: rotate(8deg) scale(1.06);
+  }
+  .org-network-toggle:focus-visible { outline: 2px solid #00FF87; outline-offset: 3px; }
+  .org-branches {
+    position: relative;
+    z-index: 3;
+    display: grid;
+    gap: 7px;
+    width: min(100%, 23rem);
+    max-height: 0;
+    margin-top: 0;
+    padding-left: 20px;
+    overflow: hidden;
+    visibility: hidden;
+    opacity: 0;
+    transform: translateY(-5px);
+    transition: max-height 220ms cubic-bezier(.22,1,.36,1), margin 220ms ease,
+      opacity 160ms ease, transform 220ms cubic-bezier(.22,1,.36,1), visibility 0s linear 220ms;
+  }
+  [data-org-network][data-open="true"] > .org-branches {
+    max-height: 13rem;
+    margin-top: 14px;
+    visibility: visible;
+    opacity: 1;
+    transform: translateY(0);
+    transition-delay: 0s;
+  }
+  .org-branches::before {
+    content: '';
+    position: absolute;
+    left: 5px;
+    top: 13px;
+    bottom: 13px;
+    width: 1px;
+    background: linear-gradient(180deg, #00FF87, rgba(124,58,237,.58));
+    box-shadow: 0 0 7px rgba(0,255,135,.2);
+  }
+  .org-branch-link {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: fit-content;
+    max-width: 100%;
+    min-height: 29px;
+    gap: 7px;
+    padding: 5px 9px;
+    border: 1px solid #1E2A3A;
+    border-radius: 6px;
+    background: rgba(15,21,35,.96);
+    color: #8B98AC;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    line-height: 1.25;
+    text-decoration: none;
+    box-shadow: 0 7px 20px rgba(0,0,0,.18);
+    transition: color 150ms ease, border-color 150ms ease, transform 150ms ease;
+  }
+  .org-branch-link::before {
+    content: '';
+    position: absolute;
+    right: 100%;
+    top: 50%;
+    width: 15px;
+    height: 1px;
+    background: rgba(124,58,237,.55);
+  }
+  .org-branch-link::after {
+    content: '';
+    position: absolute;
+    right: calc(100% + 12px);
+    top: calc(50% - 3px);
+    width: 6px;
+    height: 6px;
+    border: 1px solid #7C3AED;
+    border-radius: 999px;
+    background: #0A0E14;
+    box-shadow: 0 0 6px rgba(124,58,237,.55);
+  }
+  .org-branch-link[data-org-link="project"] { color: #C4B5FD; }
+  .org-branch-link[data-org-link="resource"]:hover { color: #00FF87; border-color: rgba(0,255,135,.46); }
+  .org-branch-link[data-org-link="project"]:hover { color: #A78BFA; border-color: rgba(124,58,237,.7); }
+  .org-branch-link:hover { transform: translateX(2px); }
+  .org-branch-link:focus-visible { outline: 2px solid #00FF87; outline-offset: 2px; }
+  .org-branch-arrow { margin-left: auto; color: currentColor; opacity: .72; }
+  .experience-employer { min-height: 52px; padding-right: 76px; }
+  .experience-role-stack {
+    position: relative;
+    margin-top: 1.25rem;
+    margin-left: .125rem;
+    padding-left: 1.25rem;
+    border-left: 1px solid rgba(124,58,237,.34);
+  }
+  .experience-role { position: relative; }
+  .experience-role + .experience-role { margin-top: 2rem; }
+  .experience-role::before {
+    content: '';
+    position: absolute;
+    top: .35rem;
+    left: calc(-1.25rem - 4px);
+    width: 7px;
+    height: 7px;
+    border: 1.5px solid #7C3AED;
+    border-radius: 999px;
+    background: #0A0E14;
+    box-shadow: 0 0 8px rgba(124,58,237,.42);
+  }
+  .experience-role:first-child::before { border-color: #00FF87; box-shadow: 0 0 8px rgba(0,255,135,.34); }
+  #project-portal, #project-voip { scroll-margin-top: 88px; }
+
+  @media (min-width: 1100px) {
+    .org-branches {
+      position: absolute;
+      left: calc(100% + 18px);
+      top: 0;
+      width: 205px;
+      max-height: none;
+      margin-top: 0;
+      overflow: visible;
+      transform: translateX(-7px);
+      transition: opacity 160ms ease, transform 220ms cubic-bezier(.22,1,.36,1), visibility 0s linear 220ms;
+    }
+    [data-org-network][data-open="true"] > .org-branches {
+      max-height: none;
+      margin-top: 0;
+      transform: translateX(0);
+    }
+    .org-branches::after {
+      content: '';
+      position: absolute;
+      right: 100%;
+      top: 13px;
+      width: 18px;
+      height: 1px;
+      background: #00FF87;
+      box-shadow: 0 0 7px rgba(0,255,135,.28);
+    }
+  }
   @media (max-width: 639px) {
     #experiencia .tl-item {
       display: grid;
@@ -382,16 +633,54 @@
       column-gap: 16px;
       align-items: start;
     }
-    #experiencia .tl-item > .employer-logo {
-      position: static;
+    #experiencia .tl-item > .org-network-control {
+      position: relative;
       grid-column: 2;
       grid-row: 1 / 3;
       justify-self: end;
     }
     #experiencia .tl-item > p:first-of-type { grid-column: 1; grid-row: 1; }
     #experiencia .tl-item > h3 { grid-column: 1; grid-row: 2; }
+    #experiencia .tl-item > .experience-employer {
+      grid-column: 1;
+      grid-row: 1;
+      min-height: 52px;
+      padding-right: 0;
+    }
+    #experiencia .tl-item > .experience-role-stack {
+      grid-column: 1 / -1;
+      grid-row: 3;
+    }
+    #experiencia .tl-item[data-employer-group] > .org-branches { grid-column: 1 / -1; grid-row: 2; }
+    #experiencia .tl-item:not([data-employer-group]) > .org-branches { grid-column: 1 / -1; grid-row: 3; }
     #experiencia .tl-item > ul,
     #experiencia .tl-item > div { grid-column: 1 / -1; }
+    #experiencia .tl-item > .org-network-control { grid-column: 2; }
+  }
+  .contact-control { height: 50px; }
+  .linkedin-contact { position: relative; }
+  .linkedin-availability {
+    position: absolute;
+    left: 50%;
+    bottom: calc(100% + 8px);
+    width: max-content;
+    transform: translateX(-50%);
+  }
+  @media (max-width: 639px) {
+    .linkedin-contact { display: flex; width: 100%; flex-direction: column; align-items: center; }
+    .linkedin-availability {
+      position: static;
+      display: block;
+      width: min(100%, 22rem);
+      margin: 0 auto 8px;
+      white-space: normal !important;
+      text-align: center;
+      transform: none;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .org-logo-link, .org-network-toggle, .org-branches, .org-branch-link,
+    .org-primary-name { transition: none !important; }
   }
   </style>
 </head>
@@ -524,12 +813,12 @@
           <button id="lang-pt" class="lang-btn active px-2.5 py-1 rounded" aria-pressed="true">PT</button>
           <button id="lang-en" class="lang-btn px-2.5 py-1 rounded text-fog" aria-pressed="false">EN</button>
         </div>
-        <button id="mobile-menu-button" class="md:hidden btn-ghost w-9 h-9 rounded-md font-mono text-paper" aria-expanded="false" aria-controls="mobile-menu" aria-label="Abrir navegação">
+        <button id="mobile-menu-button" class="md:hidden btn-ghost w-9 h-9 rounded-md font-mono text-paper" aria-expanded="false" aria-controls="mobile-menu" aria-label="Abrir navegação" data-i18n-aria-label="nav.mobileOpen">
           <span aria-hidden="true">☰</span>
         </button>
       </div>
     </nav>
-    <nav id="mobile-menu" class="md:hidden border-t border-line/60 px-5 py-4 bg-ink/95 backdrop-blur" aria-label="Navegação mobile" hidden>
+    <nav id="mobile-menu" class="md:hidden border-t border-line/60 px-5 py-4 bg-ink/95 backdrop-blur" aria-label="Navegação mobile" data-i18n-aria-label="nav.mobileLabel" hidden>
       <div class="grid gap-3 font-mono text-sm text-fog">
         <a href="#sobre" data-mobile-link><span class="text-purple/70">01.</span> <span data-i18n="nav.about">sobre</span></a>
         <a href="#experiencia" data-mobile-link><span class="text-purple/70">02.</span> <span data-i18n="nav.exp">experiência</span></a>
@@ -591,11 +880,11 @@
             <span class="w-3 h-3 rounded-full bg-terminal/80"></span>
             <span class="ml-3 font-mono text-[11px] text-fog">tsalata@utfpr:~</span>
           </div>
-          <div class="p-5 font-mono text-[13px] leading-relaxed min-h-[280px]" id="terminal-body" aria-label="Terminal animado com resumo do perfil">
+          <div class="p-5 font-mono text-[13px] leading-relaxed min-h-[280px]" id="terminal-body" aria-label="Terminal animado com resumo do perfil" data-i18n-aria-label="hero.terminalLabel">
             <!-- typed by JS; static fallback for no-JS / reduced motion injected below -->
             <noscript>
               <p><span class="text-terminal">$</span> whoami<br/>th4l3s_s4l4t4</p>
-              <p class="mt-3"><span class="text-terminal">$</span> cat mission.txt<br/>Build products. Automate delivery. Secure systems.</p>
+              <p class="mt-3"><span class="text-terminal">$</span> cat mission.txt<br/>Build resilient products.<br/>Automate the path to production.<br/>Turn attack insight into defense.</p>
               <p class="mt-3"><span class="text-terminal">$</span> ./status --check<br/><span class="text-purple-light">[ ONLINE ]</span> fullstack_devsecops: active</p>
             </noscript>
           </div>
@@ -616,7 +905,7 @@
     <div class="grid lg:grid-cols-[1.15fr,0.85fr] gap-12 items-start">
       <div class="reveal space-y-5 text-fog font-light">
         <p data-i18n="about.p1">
-          Sou bacharel em Sistemas de Informação pela UTFPR. Atuo como desenvolvedor Full Stack no portal institucional da universidade e como um dos mantenedores do Nerdz, aplicação mobile e web multiplataforma. Também coordeno voluntariamente o VESPAS, projeto de extensão em cibersegurança e equipe de CTF da UTFPR.
+          Sou bacharel em Sistemas de Informação pela UTFPR. Atuo como desenvolvedor Full Stack no portal institucional da universidade e como um dos mantenedores do Nerdz, aplicação mobile e web multiplataforma. Também sou um dos coordenadores voluntários do Canal de Alertas do VESPAS, um dos mantenedores do site da iniciativa e colaboro no desenvolvimento de labs e desafios de CTF.
         </p>
         <p data-i18n="about.p2">
           Minha trajetória conecta desenvolvimento, operações e segurança: React/TypeScript e Python no Portal UTFPR; React Native, Expo e NestJS no Nerdz; automação, CI/CD, cloud e investigação de vulnerabilidades em ambientes corporativos.
@@ -666,30 +955,70 @@
       </div>
 
       <div class="max-w-3xl space-y-12 pl-5">
-        <!-- UTFPR Full Stack -->
-        <article class="tl-item tl-green reveal pl-8">
-          <img src="assets/utfpr1.png" alt="UTFPR" class="employer-logo" data-logo-bg="dark">
-          <p class="font-mono text-xs text-terminal mb-1.5">mar 2026 — <span data-i18n="exp.present4">presente</span> <span class="text-fog/60 ml-2">· 2e9f4b1</span></p>
-          <h3 class="font-display font-semibold text-xl text-paper"><span data-i18n="exp.utfsRole">Desenvolvedor Full Stack</span> <span class="text-purple-light font-normal">· UTFPR</span></h3>
-          <ul class="mt-3 space-y-2 text-fog font-light text-[15px] list-none">
-            <li class="flex gap-2"><span class="text-purple mt-0.5" aria-hidden="true">▹</span><span data-i18n="exp.utfs1">Desenvolvo e mantenho o Portal da UTFPR com Plone 6 e Volto — integrando o frontend em React/Volto ao backend em Plone, alinhando ao Design System Gov.br v4.0, com refatoração e modernização de código legado.</span></li>
-            <li class="flex gap-2"><span class="text-purple mt-0.5" aria-hidden="true">▹</span><span data-i18n="exp.utfs2">Investigo problemas entre aplicação, serviços e ambientes; realizo ajustes de segurança, documentação técnica e manutenção dos processos de CI/CD no GitLab.</span></li>
-            <li class="flex gap-2"><span class="text-purple mt-0.5" aria-hidden="true">▹</span><span data-i18n="exp.utfs3">Colaboro com equipes de UI/UX, infraestrutura e servidores na definição, implementação e disponibilização de novas soluções para o portal.</span></li>
-          </ul>
-          <div class="flex flex-wrap gap-2 mt-4">
-            <span class="chip font-mono text-[11px] px-2.5 py-1 rounded text-fog">React / Volto</span>
-            <span class="chip font-mono text-[11px] px-2.5 py-1 rounded text-fog">Plone 6</span>
-            <span class="chip font-mono text-[11px] px-2.5 py-1 rounded text-fog">Python</span>
-            <span class="chip font-mono text-[11px] px-2.5 py-1 rounded text-fog">GitLab CI/CD</span>
-            <span class="chip font-mono text-[11px] px-2.5 py-1 rounded text-fog">Gov.br DS</span>
+        <!-- UTFPR — progressão entre duas funções no Portal -->
+        <article class="tl-item tl-green reveal pl-8" data-employer-group="utfpr" data-org-network="utfpr" data-open="false">
+          <div class="org-network-control">
+            <a data-org-primary-logo href="https://www.utfpr.edu.br/" target="_blank" rel="noopener noreferrer" class="org-logo-link" aria-label="Abrir site da UTFPR" data-i18n-aria-label="exp.orgPrimary.utfpr">
+              <img src="assets/utfpr1.png" alt="UTFPR" class="employer-logo" data-logo-bg="dark">
+            </a>
+            <button type="button" class="org-network-toggle" data-org-toggle aria-expanded="false" aria-controls="org-branches-utfpr" aria-label="Mostrar links relacionados à UTFPR" data-i18n-aria-label="exp.orgLinks.utfpr"></button>
+          </div>
+          <header class="experience-employer">
+            <p class="font-mono text-[10px] uppercase tracking-[0.14em] text-terminal mb-1" data-i18n="exp.employer">organização</p>
+            <h3 class="font-display font-semibold text-xl text-paper" data-employer-name><a data-org-primary-name href="https://www.utfpr.edu.br/" target="_blank" rel="noopener noreferrer" class="org-primary-name">UTFPR</a></h3>
+          </header>
+          <nav id="org-branches-utfpr" class="org-branches" data-org-branches aria-hidden="true" aria-label="Links relacionados à UTFPR" data-i18n-aria-label="exp.orgLinks.utfpr" inert>
+            <a data-org-link="project" href="#project-portal" class="org-branch-link"><span data-i18n="exp.org.utfpr.project">Projeto Portal</span><span class="org-branch-arrow" aria-hidden="true">↓</span></a>
+            <a data-org-link="resource" href="https://www.utfpr.edu.br/comunicacao/asport" target="_blank" rel="noopener noreferrer" class="org-branch-link"><span data-i18n="exp.org.utfpr.team">Equipe ASport</span><span class="org-branch-arrow" aria-hidden="true">↗</span></a>
+          </nav>
+          <div class="experience-role-stack">
+            <section class="experience-role" data-experience-role="utfpr-full-stack">
+              <p class="font-mono text-xs text-terminal mb-1.5"><span data-experience-date="utfs" data-i18n="exp.utfsDate">mar 2026</span> — <span data-i18n="exp.present4">presente</span> <span class="text-fog/60 ml-2">· 2e9f4b1</span></p>
+              <h4 class="font-display font-semibold text-xl text-paper" data-role-title data-i18n="exp.utfsRole">Desenvolvedor Full Stack</h4>
+              <ul class="mt-3 space-y-2 text-fog font-light text-[15px] list-none">
+                <li class="flex gap-2"><span class="text-purple mt-0.5" aria-hidden="true">▹</span><span data-i18n="exp.utfs1">Desenvolvo e mantenho o Portal da UTFPR com Plone 6 e Volto — integrando o frontend em React/Volto ao backend em Plone, alinhando ao Design System Gov.br v4.0, com refatoração e modernização de código legado.</span></li>
+                <li class="flex gap-2"><span class="text-purple mt-0.5" aria-hidden="true">▹</span><span data-i18n="exp.utfs2">Investigo problemas entre aplicação, serviços e ambientes; realizo ajustes de segurança, documentação técnica e manutenção dos processos de CI/CD no GitLab.</span></li>
+                <li class="flex gap-2"><span class="text-purple mt-0.5" aria-hidden="true">▹</span><span data-i18n="exp.utfs3">Colaboro com equipes de UI/UX, infraestrutura e servidores na definição, implementação e disponibilização de novas soluções para o portal.</span></li>
+              </ul>
+              <div class="flex flex-wrap gap-2 mt-4">
+                <span class="chip font-mono text-[11px] px-2.5 py-1 rounded text-fog">React / Volto</span>
+                <span class="chip font-mono text-[11px] px-2.5 py-1 rounded text-fog">Plone 6</span>
+                <span class="chip font-mono text-[11px] px-2.5 py-1 rounded text-fog">Python</span>
+                <span class="chip font-mono text-[11px] px-2.5 py-1 rounded text-fog">GitLab CI/CD</span>
+                <span class="chip font-mono text-[11px] px-2.5 py-1 rounded text-fog">Gov.br DS</span>
+              </div>
+            </section>
+            <section class="experience-role" data-experience-role="utfpr-frontend">
+              <p class="font-mono text-xs text-fog mb-1.5"><span data-experience-date="utf" data-i18n="exp.utfDate">set 2025 — jul 2026</span> <span class="text-fog/60 ml-2">· 7e2b90d</span></p>
+              <h4 class="font-display font-semibold text-xl text-paper" data-role-title data-i18n="exp.utfRole">Desenvolvedor Web | Frontend</h4>
+              <ul class="mt-3 space-y-2 text-fog font-light text-[15px] list-none">
+                <li class="flex gap-2"><span class="text-purple mt-0.5" aria-hidden="true">▹</span><span data-i18n="exp.utf1">Desenvolvi componentes reutilizáveis em React e Volto, implementei layouts responsivos e acessíveis e refatorei componentes e códigos legados do projeto.</span></li>
+                <li class="flex gap-2"><span class="text-purple mt-0.5" aria-hidden="true">▹</span><span data-i18n="exp.utf2">Trabalhei na correção de inconsistências visuais e funcionais, documentação dos componentes e colaboração com a equipe de UI/UX para transformar protótipos em interfaces para produção.</span></li>
+              </ul>
+              <div class="flex flex-wrap gap-2 mt-4">
+                <span class="chip font-mono text-[11px] px-2.5 py-1 rounded text-fog">React / Volto</span>
+                <span class="chip font-mono text-[11px] px-2.5 py-1 rounded text-fog">Plone 6</span>
+                <span class="chip font-mono text-[11px] px-2.5 py-1 rounded text-fog">GitLab CI/CD</span>
+                <span class="chip font-mono text-[11px] px-2.5 py-1 rounded text-fog">Gov.br DS</span>
+              </div>
+            </section>
           </div>
         </article>
 
         <!-- CMC -->
-        <article class="tl-item reveal pl-8">
-          <img src="assets/camara-curitiba.png" alt="Câmara Municipal de Curitiba" class="employer-logo" data-logo-bg="dark">
-          <p class="font-mono text-xs text-fog mb-1.5">mar 2025 — <span data-i18n="exp.present">jul 2026</span> <span class="text-fog/60 ml-2">· a3f9c21</span></p>
-          <h3 class="font-display font-semibold text-xl text-paper"><span data-i18n="exp.cmcRole">Estagiário DevOps</span> <span class="text-purple-light font-normal">· Câmara Municipal de Curitiba</span></h3>
+        <article class="tl-item reveal pl-8" data-org-network="cmc" data-open="false">
+          <div class="org-network-control">
+            <a data-org-primary-logo href="https://www.curitiba.pr.leg.br/" target="_blank" rel="noopener noreferrer" class="org-logo-link" aria-label="Abrir site da Câmara Municipal de Curitiba" data-i18n-aria-label="exp.orgPrimary.cmc">
+              <img src="assets/camara-curitiba.png" alt="Câmara Municipal de Curitiba" class="employer-logo" data-logo-bg="dark" data-i18n-alt="exp.cmcEmployer">
+            </a>
+            <button type="button" class="org-network-toggle" data-org-toggle aria-expanded="false" aria-controls="org-branches-cmc" aria-label="Mostrar links relacionados à Câmara Municipal de Curitiba" data-i18n-aria-label="exp.orgLinks.cmc"></button>
+          </div>
+          <p class="font-mono text-xs text-fog mb-1.5"><span data-experience-date="cmc" data-i18n="exp.cmcDate">mar 2025</span> — <span data-i18n="exp.present">jul 2026</span> <span class="text-fog/60 ml-2">· a3f9c21</span></p>
+          <h3 class="font-display font-semibold text-xl text-paper"><span data-i18n="exp.cmcRole">Estagiário DevOps</span> <span class="text-purple-light font-normal">· <a data-org-primary-name href="https://www.curitiba.pr.leg.br/" target="_blank" rel="noopener noreferrer" class="org-primary-name" data-i18n="exp.cmcEmployer">Câmara Municipal de Curitiba</a></span></h3>
+          <nav id="org-branches-cmc" class="org-branches" data-org-branches aria-hidden="true" aria-label="Links relacionados à Câmara Municipal de Curitiba" data-i18n-aria-label="exp.orgLinks.cmc" inert>
+            <a data-org-link="project" href="#project-voip" class="org-branch-link"><span data-i18n="exp.org.cmc.project">Projeto VoIP</span><span class="org-branch-arrow" aria-hidden="true">↓</span></a>
+            <a data-org-link="resource" href="https://github.com/CMCuritiba" target="_blank" rel="noopener noreferrer" class="org-branch-link"><span data-i18n="exp.org.cmc.github">GitHub CMC</span><span class="org-branch-arrow" aria-hidden="true">↗</span></a>
+          </nav>
           <ul class="mt-3 space-y-2 text-fog font-light text-[15px] list-none">
             <li class="flex gap-2"><span class="text-purple mt-0.5" aria-hidden="true">▹</span><span data-i18n="exp.cmc1">Arquitetei e desenvolvi soluções open-source Unix-based com Ansible, Vagrant e Molecule, em ambiente Linux com SSO e LDAP para autenticação de serviços.</span></li>
             <li class="flex gap-2"><span class="text-purple mt-0.5" aria-hidden="true">▹</span><span data-i18n="exp.cmc2">Implementei correções de vulnerabilidades conhecidas com base no OWASP Top 10, seguindo Conventional Commits (commitizen + commitlint).</span></li>
@@ -704,31 +1033,31 @@
           </div>
         </article>
 
-        <!-- UTFPR Frontend -->
-        <article class="tl-item reveal pl-8">
-          <img src="assets/utfpr1.png" alt="UTFPR" class="employer-logo" data-logo-bg="dark">
-          <p class="font-mono text-xs text-fog mb-1.5">set 2025 — jul 2026 <span class="text-fog/60 ml-2">· 7e2b90d</span></p>
-          <h3 class="font-display font-semibold text-xl text-paper"><span data-i18n="exp.utfRole">Desenvolvedor Web | Frontend</span> <span class="text-purple-light font-normal">· UTFPR</span></h3>
-          <ul class="mt-3 space-y-2 text-fog font-light text-[15px] list-none">
-            <li class="flex gap-2"><span class="text-purple mt-0.5" aria-hidden="true">▹</span><span data-i18n="exp.utf1">Desenvolvi componentes reutilizáveis em React e Volto, implementei layouts responsivos e acessíveis e refatorei componentes e códigos legados do projeto.</span></li>
-            <li class="flex gap-2"><span class="text-purple mt-0.5" aria-hidden="true">▹</span><span data-i18n="exp.utf2">Trabalhei na correção de inconsistências visuais e funcionais, documentação dos componentes e colaboração com a equipe de UI/UX para transformar protótipos em interfaces para produção.</span></li>
-          </ul>
-          <div class="flex flex-wrap gap-2 mt-4">
-            <span class="chip font-mono text-[11px] px-2.5 py-1 rounded text-fog">React / Volto</span>
-            <span class="chip font-mono text-[11px] px-2.5 py-1 rounded text-fog">Plone 6</span>
-            <span class="chip font-mono text-[11px] px-2.5 py-1 rounded text-fog">GitLab CI/CD</span>
-            <span class="chip font-mono text-[11px] px-2.5 py-1 rounded text-fog">Gov.br DS</span>
-          </div>
-        </article>
-
         <!-- VESPAS -->
-        <article class="tl-item tl-green reveal pl-8">
-          <img src="assets/VESPAS.Logo1.png" alt="VESPAS" class="employer-logo" data-logo-bg="dark">
+        <article class="tl-item tl-green reveal pl-8" data-org-network="vespas" data-open="false">
+          <div class="org-network-control">
+            <a data-org-primary-logo href="https://linktr.ee/vespas_utfpr" target="_blank" rel="noopener noreferrer" class="org-logo-link" aria-label="Abrir Linktree do VESPAS" data-i18n-aria-label="exp.orgPrimary.vespas">
+              <img src="assets/VESPAS.Logo1.png" alt="VESPAS" class="employer-logo" data-logo-bg="dark">
+            </a>
+            <button type="button" class="org-network-toggle" data-org-toggle aria-expanded="false" aria-controls="org-branches-vespas" aria-label="Mostrar links relacionados ao VESPAS" data-i18n-aria-label="exp.orgLinks.vespas"></button>
+          </div>
           <p class="font-mono text-xs text-terminal mb-1.5">2025 — <span data-i18n="exp.present3">presente</span> <span class="text-fog/60 ml-2">· c4f7a12</span></p>
-          <h3 class="font-display font-semibold text-xl text-paper"><span data-i18n="exp.vespasRole">Coordenador Voluntário</span> <span class="text-purple-light font-normal">· VESPAS (UTFPR)</span></h3>
+          <h3 class="font-display font-semibold text-xl text-paper"><span data-i18n="exp.vespasRole">Voluntário — Alertas, CTF &amp; Site</span> <span class="text-purple-light font-normal">· <a data-org-primary-name href="https://linktr.ee/vespas_utfpr" target="_blank" rel="noopener noreferrer" class="org-primary-name">VESPAS (UTFPR)</a></span></h3>
+          <nav id="org-branches-vespas" class="org-branches" data-org-branches aria-hidden="true" aria-label="Links relacionados ao VESPAS" data-i18n-aria-label="exp.orgLinks.vespas" inert>
+            <a data-org-link="project" href="https://github.com/vespas-utfpr/ainjection" target="_blank" rel="noopener noreferrer" class="org-branch-link"><span>AInjection 2026</span><span class="org-branch-arrow" aria-hidden="true">↗</span></a>
+            <a data-org-link="resource" href="https://utfpr.curitiba.br/vespas/" target="_blank" rel="noopener noreferrer" class="org-branch-link"><span data-i18n="exp.org.vespas.site">Site VESPAS</span><span class="org-branch-arrow" aria-hidden="true">↗</span></a>
+            <a data-org-link="resource" href="https://github.com/vespas-utfpr" target="_blank" rel="noopener noreferrer" class="org-branch-link"><span data-i18n="exp.org.vespas.github">GitHub VESPAS</span><span class="org-branch-arrow" aria-hidden="true">↗</span></a>
+          </nav>
           <ul class="mt-3 space-y-2 text-fog font-light text-[15px] list-none">
-            <li class="flex gap-2"><span class="text-purple mt-0.5" aria-hidden="true">▹</span><span data-i18n="exp.ves1">Coordeno o canal oficial de alertas de cibersegurança, cobrindo vulnerabilidades críticas (CVSS 10.0) e conscientização em segurança da informação.</span></li>
-            <li class="flex gap-2"><span class="text-purple mt-0.5" aria-hidden="true">▹</span><span data-i18n="exp.ves2">Participo do time competitivo de CTF e desenvolvo labs/challenges para competições próprias. Foco atual: OWASP Top 10:2025 e LLM Risks.</span></li>
+            <li class="flex gap-2"><span class="text-purple mt-0.5" aria-hidden="true">▹</span><span data-i18n="exp.ves1">Sou um dos coordenadores do Canal de Alertas de cibersegurança, cobrindo vulnerabilidades críticas (CVSS 10.0) e conscientização em segurança da informação.</span></li>
+            <li class="flex gap-2"><span class="text-purple mt-0.5" aria-hidden="true">▹</span><span data-i18n="exp.ves2">Colaboro com o time competitivo de CTF e no desenvolvimento de labs e desafios para competições próprias. Foco atual: OWASP Top 10:2025 e LLM Risks.</span></li>
+            <li class="flex gap-2">
+              <span class="text-purple mt-0.5" aria-hidden="true">▹</span>
+              <span>
+                <span data-i18n="exp.ves3">Também sou um dos mantenedores do site do VESPAS.</span>
+                <a data-vespas-site href="https://utfpr.curitiba.br/vespas/" target="_blank" rel="noopener noreferrer" class="ml-1 whitespace-nowrap font-mono text-[11px] text-purple-light transition-colors hover:text-purple focus:outline-none focus-visible:ring-2 focus-visible:ring-purple rounded-sm"><span data-i18n="exp.ves3Cta">Acessar site</span> ↗</a>
+              </span>
+            </li>
           </ul>
           <div class="flex flex-wrap gap-2 mt-4">
             <span class="chip font-mono text-[11px] px-2.5 py-1 rounded text-fog">CTF</span>
@@ -738,21 +1067,45 @@
           </div>
         </article>
 
-        <!-- Volkswagen — Segurança da Informação -->
-        <article class="tl-item reveal pl-8">
-          <img src="assets/Volkswagen_logo_2019.svg" alt="Volkswagen do Brasil" class="employer-logo" data-logo-bg="light">
-          <p class="font-mono text-xs text-fog mb-1.5">mai 2024 — fev 2025 <span class="text-fog/60 ml-2">· 91d3e5f</span></p>
-          <h3 class="font-display font-semibold text-xl text-paper"><span data-i18n="exp.vwRole">Estágio em Segurança da Informação</span> <span class="text-purple-light font-normal">· Volkswagen do Brasil</span></h3>
-          <ul class="mt-3 space-y-2 text-fog font-light text-[15px] list-none">
-            <li class="flex gap-2"><span class="text-purple mt-0.5" aria-hidden="true">▹</span><span data-i18n="exp.vw1">Suporte a processos de IAM com Active Directory, além de análise de vulnerabilidades, gestão de riscos e acompanhamento de auditoria ISO 27001.</span></li>
-            <li class="flex gap-2"><span class="text-purple mt-0.5" aria-hidden="true">▹</span><span data-i18n="exp.vw2">Operação das plataformas Axur (monitoramento) e Prisma Cloud (AWS Security) em contexto de SOC, além de ações de conscientização em Segurança da Informação.</span></li>
-          </ul>
-          <div class="flex flex-wrap gap-2 mt-4">
-            <span class="chip font-mono text-[11px] px-2.5 py-1 rounded text-fog">SOC</span>
-            <span class="chip font-mono text-[11px] px-2.5 py-1 rounded text-fog">ISO 27001</span>
-            <span class="chip font-mono text-[11px] px-2.5 py-1 rounded text-fog">IAM / Active Directory</span>
-            <span class="chip font-mono text-[11px] px-2.5 py-1 rounded text-fog">Axur</span>
-            <span class="chip font-mono text-[11px] px-2.5 py-1 rounded text-fog">Prisma Cloud</span>
+        <!-- Volkswagen — progressão de TI para Segurança da Informação -->
+        <article class="tl-item reveal pl-8" data-employer-group="volkswagen" data-org-network="volkswagen" data-open="false">
+          <div class="org-network-control">
+            <a data-org-primary-logo href="https://www.vw.com.br/" target="_blank" rel="noopener noreferrer" class="org-logo-link" aria-label="Abrir site da Volkswagen do Brasil" data-i18n-aria-label="exp.orgPrimary.volkswagen">
+              <img src="assets/Volkswagen_logo_2019.svg" alt="Volkswagen do Brasil" class="employer-logo" data-logo-bg="light">
+            </a>
+          </div>
+          <header class="experience-employer">
+            <p class="font-mono text-[10px] uppercase tracking-[0.14em] text-purple-light mb-1" data-i18n="exp.employer">organização</p>
+            <h3 class="font-display font-semibold text-xl text-paper" data-employer-name><a data-org-primary-name href="https://www.vw.com.br/" target="_blank" rel="noopener noreferrer" class="org-primary-name">Volkswagen do Brasil</a></h3>
+          </header>
+          <div class="experience-role-stack">
+            <section class="experience-role" data-experience-role="volkswagen-security">
+              <p class="font-mono text-xs text-fog mb-1.5"><span data-experience-date="vwSecurity" data-i18n="exp.vwDate">mai 2024 — fev 2025</span> <span class="text-fog/60 ml-2">· 91d3e5f</span></p>
+              <h4 class="font-display font-semibold text-xl text-paper" data-role-title data-i18n="exp.vwRole">Estagiário de Segurança da Informação</h4>
+              <ul class="mt-3 space-y-2 text-fog font-light text-[15px] list-none">
+                <li class="flex gap-2"><span class="text-purple mt-0.5" aria-hidden="true">▹</span><span data-i18n="exp.vw1">Suporte a processos de IAM com Active Directory, além de análise de vulnerabilidades, gestão de riscos e acompanhamento de auditoria ISO 27001.</span></li>
+                <li class="flex gap-2"><span class="text-purple mt-0.5" aria-hidden="true">▹</span><span data-i18n="exp.vw2">Operação das plataformas Axur (monitoramento) e Prisma Cloud (AWS Security) em contexto de SOC, além de ações de conscientização em Segurança da Informação.</span></li>
+              </ul>
+              <div class="flex flex-wrap gap-2 mt-4">
+                <span class="chip font-mono text-[11px] px-2.5 py-1 rounded text-fog">SOC</span>
+                <span class="chip font-mono text-[11px] px-2.5 py-1 rounded text-fog">ISO 27001</span>
+                <span class="chip font-mono text-[11px] px-2.5 py-1 rounded text-fog">IAM / Active Directory</span>
+                <span class="chip font-mono text-[11px] px-2.5 py-1 rounded text-fog">Axur</span>
+                <span class="chip font-mono text-[11px] px-2.5 py-1 rounded text-fog">Prisma Cloud</span>
+              </div>
+            </section>
+            <section class="experience-role" data-experience-role="volkswagen-it">
+              <p class="font-mono text-xs text-fog mb-1.5"><span data-experience-date="vwIt" data-i18n="exp.vwtiDate">mai 2023 — abr 2024</span> <span class="text-fog/60 ml-2">· 3a7f12c</span></p>
+              <h4 class="font-display font-semibold text-xl text-paper" data-role-title data-i18n="exp.vwtiRole">Estagiário de TI</h4>
+              <ul class="mt-3 space-y-2 text-fog font-light text-[15px] list-none">
+                <li class="flex gap-2"><span class="text-purple mt-0.5" aria-hidden="true">▹</span><span data-i18n="exp.vwti1">Apoiei as operações de TI no FIS Competence Center, com rotinas operacionais e suporte técnico em ambiente corporativo — base que levou à migração para a área de Segurança da Informação.</span></li>
+              </ul>
+              <div class="flex flex-wrap gap-2 mt-4">
+                <span class="chip font-mono text-[11px] px-2.5 py-1 rounded text-fog" data-i18n="exp.vwtiTag1">Operações de TI</span>
+                <span class="chip font-mono text-[11px] px-2.5 py-1 rounded text-fog" data-i18n="exp.vwtiTag2">Infraestrutura de TI</span>
+                <span class="chip font-mono text-[11px] px-2.5 py-1 rounded text-fog" data-i18n="exp.vwtiTag3">Suporte técnico</span>
+              </div>
+            </section>
           </div>
         </article>
 
@@ -790,7 +1143,7 @@
             </div>
             <h3 class="font-display font-semibold text-2xl md:text-3xl leading-tight text-paper mb-4" data-i18n="proj.tcc.t">Educação em Cibersegurança: uma abordagem holística para a compreensão do phishing multifacetado e seus desdobramentos no ecossistema digital</h3>
             <p class="text-fog font-light text-[15px] leading-relaxed" data-i18n="proj.tcc.d">
-              Pesquisa aplicada de abordagem mista que desenvolveu e avaliou uma intervenção educativa em cibersegurança no Portal Sophia-CT, combinando MOOC, narrativa histórica, atividades práticas e simulações de phishing mapeadas com MITRE ATT&amp;CK. No piloto, a média aumentou de 7,54 para 9,85.
+              No meu TCC, desenvolvi e avaliei uma intervenção educativa em cibersegurança no Portal Sophia-CT. Combinei um MOOC com narrativa histórica, atividades práticas e simulações de phishing mapeadas ao MITRE ATT&amp;CK. No piloto, a média dos participantes subiu de 7,54 para 9,85.
             </p>
             <div class="flex flex-wrap gap-2 mt-6">
               <span class="chip font-mono text-[11px] px-2.5 py-1 rounded text-fog">Phishing</span>
@@ -800,7 +1153,7 @@
               <span class="chip font-mono text-[11px] px-2.5 py-1 rounded text-fog" data-i18n="proj.tcc.tagMethods">Métodos mistos</span>
             </div>
           </div>
-          <aside class="grid grid-cols-2 gap-3 border-t border-line pt-6 lg:grid-cols-1 lg:border-l lg:border-t-0 lg:pl-8 lg:pt-0" aria-label="Resultados e metadados da pesquisa">
+          <aside class="grid grid-cols-2 gap-3 border-t border-line pt-6 lg:grid-cols-1 lg:border-l lg:border-t-0 lg:pl-8 lg:pt-0" aria-label="Resultados e metadados da pesquisa" data-i18n-aria-label="proj.tcc.metaLabel">
             <div class="border-b border-line/70 pb-4 col-span-2 lg:col-span-1">
               <p class="font-mono text-2xl font-semibold text-terminal"><span data-i18n="proj.tcc.scoreStart">7,54</span> <span class="text-fog">→</span> <span data-i18n="proj.tcc.scoreEnd">9,85</span></p>
               <p class="font-mono text-[10px] uppercase tracking-wider text-fog mt-1" data-i18n="proj.tcc.metric">média no pré e pós-teste</p>
@@ -818,11 +1171,11 @@
       </article>
 
       <!-- VeriPkg -->
-      <a href="https://github.com/Taresu/veripkg" target="_blank" rel="noopener noreferrer" class="group reveal card-hover block bg-card border border-line rounded-xl p-6 md:col-span-2 md:p-8 focus:outline-none focus-visible:ring-2 focus-visible:ring-purple focus-visible:ring-offset-2 focus-visible:ring-offset-ink" data-project="veripkg">
+      <article class="group reveal card-hover block bg-card border border-line rounded-xl p-6 md:col-span-2 md:p-8" data-project="veripkg">
         <div class="flex min-w-0 flex-wrap items-start gap-x-2 gap-y-1 mb-4">
           <svg class="line-icon line-icon--project shrink-0" data-icon="shield-check" data-icon-context="project" aria-hidden="true" focusable="false"><use href="#icon-shield-check"></use></svg>
           <p class="min-w-0 flex-1 break-words font-mono text-[11px] text-fog">~/projects/<span class="text-terminal">veripkg</span></p>
-          <span class="ml-auto shrink-0 text-purple-light group-hover:text-purple font-mono text-[11px] transition-colors">github.com/Taresu/veripkg ↗</span>
+          <a data-project-link href="https://github.com/Taresu/veripkg" target="_blank" rel="noopener noreferrer" class="basis-full shrink-0 text-purple-light hover:text-purple font-mono text-[11px] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-purple rounded-sm sm:ml-auto sm:basis-auto">github.com/Taresu/veripkg ↗</a>
         </div>
         <h3 class="font-display font-semibold text-xl text-paper mb-2" data-i18n="proj.veripkg.t">VeriPkg — verificação honesta de downloads</h3>
         <p class="max-w-4xl text-fog font-light text-[15px] mb-5" data-i18n="proj.veripkg.d">
@@ -834,14 +1187,14 @@
           <span class="chip font-mono text-[11px] px-2.5 py-1 rounded text-fog">OpenPGP</span>
           <span class="chip font-mono text-[11px] px-2.5 py-1 rounded text-fog">SHA-256</span>
         </div>
-      </a>
+      </article>
 
       <!-- Nerdz -->
-      <a href="https://landing.nerdz.aurasec.dev/" target="_blank" rel="noopener noreferrer" class="group reveal card-hover block bg-card border border-line rounded-xl p-6 focus:outline-none focus-visible:ring-2 focus-visible:ring-purple focus-visible:ring-offset-2 focus-visible:ring-offset-ink" data-project="nerdz">
+      <article class="group reveal card-hover block bg-card border border-line rounded-xl p-6" data-project="nerdz">
         <div class="flex min-w-0 flex-wrap items-start gap-x-2 gap-y-1 mb-4">
           <svg class="line-icon line-icon--project shrink-0" data-icon="smartphone" data-icon-context="project" aria-hidden="true" focusable="false"><use href="#icon-smartphone"></use></svg>
           <p class="min-w-0 flex-1 break-words font-mono text-[11px] text-fog">~/projects/<span class="text-terminal">nerdz</span></p>
-          <span class="ml-auto shrink-0 text-purple-light group-hover:text-purple font-mono text-[11px] transition-colors">ver produto ↗</span>
+          <a data-project-link href="https://landing.nerdz.aurasec.dev/" target="_blank" rel="noopener noreferrer" class="basis-full shrink-0 text-purple-light hover:text-purple font-mono text-[11px] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-purple rounded-sm sm:ml-auto sm:basis-auto"><span data-i18n="proj.nerdz.cta">ver produto</span> ↗</a>
         </div>
         <h3 class="font-display font-semibold text-lg text-paper mb-2" data-i18n="proj.nerdz.t">Nerdz - Aplicação mobile e web</h3>
         <p class="text-fog font-light text-[15px] mb-5" data-i18n="proj.nerdz.d">
@@ -853,61 +1206,76 @@
           <span class="chip font-mono text-[11px] px-2.5 py-1 rounded text-fog">NestJS</span>
           <span class="chip font-mono text-[11px] px-2.5 py-1 rounded text-fog">PostgreSQL</span>
         </div>
-      </a>
+      </article>
 
       <!-- VoIP -->
-      <article class="reveal card-hover bg-card border border-line rounded-xl p-6" data-project="voip">
+      <article id="project-voip" tabindex="-1" class="reveal card-hover bg-card border border-line rounded-xl p-6" data-project="voip">
         <div class="flex min-w-0 flex-wrap items-start gap-x-2 gap-y-1 mb-4">
           <svg class="line-icon line-icon--project shrink-0" data-icon="phone-call" data-icon-context="project" aria-hidden="true" focusable="false"><use href="#icon-phone-call"></use></svg>
           <p class="min-w-0 flex-1 break-words font-mono text-[11px] text-fog">~/projects/<span class="text-terminal">voip-migration</span></p>
-          <span class="shrink-0 rounded-full border border-line bg-panel px-2 py-0.5 font-mono text-[9px] uppercase tracking-wider text-fog" data-project-visibility data-i18n="proj.voip.visibility">projeto interno · CMC</span>
+          <span class="basis-full shrink-0 rounded-full border border-line bg-panel px-2 py-0.5 font-mono text-[9px] uppercase tracking-wider text-fog sm:ml-auto sm:basis-auto" data-project-visibility data-i18n="proj.voip.visibility">projeto interno · CMC</span>
         </div>
         <h3 class="font-display font-semibold text-lg text-paper mb-2" data-i18n="proj.voip.t">Migração VoIP em escala</h3>
         <p class="text-fog font-light text-[15px] mb-5" data-i18n="proj.voip.d">
-          Bot em Python que reconfigurou ~370 telefones VoIP da Câmara Municipal de Curitiba, migrando de IP estático para DHCP — Selenium para automação web e requests com cookies de sessão para os métodos POST.
+          Bot de web scraping em Python que permitiu reconfigurar ~370 telefones VoIP da Câmara Municipal de Curitiba, migrando-os de IP estático para DHCP — Selenium para automação web e requests com cookies de sessão para os métodos POST.
         </p>
         <div class="flex flex-wrap gap-2">
           <span class="chip font-mono text-[11px] px-2.5 py-1 rounded text-fog">Python</span>
           <span class="chip font-mono text-[11px] px-2.5 py-1 rounded text-fog">Selenium</span>
           <span class="chip font-mono text-[11px] px-2.5 py-1 rounded text-fog">Web Scraping</span>
+          <span class="chip font-mono text-[11px] px-2.5 py-1 rounded text-fog" data-chip-href="https://github.com/CMCuritiba">GitHub</span>
         </div>
       </article>
 
       <!-- Portal UTFPR -->
-      <a href="https://www.utfpr.edu.br/" target="_blank" rel="noopener noreferrer" class="group reveal card-hover block bg-card border border-line rounded-xl p-6 focus:outline-none focus-visible:ring-2 focus-visible:ring-purple focus-visible:ring-offset-2 focus-visible:ring-offset-ink" data-project="portal">
+      <article id="project-portal" tabindex="-1" class="group reveal card-hover block bg-card border border-line rounded-xl p-6" data-project="portal">
         <div class="flex min-w-0 flex-wrap items-start gap-x-2 gap-y-1 mb-4">
           <svg class="line-icon line-icon--project shrink-0" data-icon="panels-top-left" data-icon-context="project" aria-hidden="true" focusable="false"><use href="#icon-panels-top-left"></use></svg>
           <p class="min-w-0 flex-1 break-words font-mono text-[11px] text-fog">~/projects/<span class="text-terminal">portal-utfpr</span></p>
-          <span class="ml-auto shrink-0 text-purple-light group-hover:text-purple font-mono text-[11px] transition-colors">utfpr.edu.br ↗</span>
         </div>
         <h3 class="font-display font-semibold text-lg text-paper mb-2" data-i18n="proj.portal.t">Reestruturação do Portal UTFPR</h3>
-        <p class="text-fog font-light text-[15px] mb-5" data-i18n="proj.portal.d">
+        <p class="text-fog font-light text-[15px] mb-4" data-i18n="proj.portal.d">
           Novos componentes Volto / Plone 6 para o portal institucional da universidade, alinhados ao Design System 4.0 do Gov.br — migração de código deprecado, documentação contínua e CI/CD no GitLab.
         </p>
+        <div class="mb-5 flex flex-wrap gap-x-4 gap-y-2" data-portal-actions>
+          <a data-project-link href="https://www.utfpr.edu.br/" target="_blank" rel="noopener noreferrer" class="shrink-0 text-terminal hover:text-terminal/75 font-mono text-[11px] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-purple rounded-sm"><span data-i18n="proj.portal.site">Visitar o portal</span> ↗</a>
+          <a data-team-link href="https://www.utfpr.edu.br/comunicacao/asport" target="_blank" rel="noopener noreferrer" class="shrink-0 text-purple-light hover:text-purple font-mono text-[11px] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-purple rounded-sm"><span data-i18n="proj.portal.team">Conheça a equipe</span> ↗</a>
+        </div>
         <div class="flex flex-wrap gap-2">
           <span class="chip font-mono text-[11px] px-2.5 py-1 rounded text-fog">Volto</span>
           <span class="chip font-mono text-[11px] px-2.5 py-1 rounded text-fog">Plone 6</span>
           <span class="chip font-mono text-[11px] px-2.5 py-1 rounded text-fog">React</span>
+          <span class="chip font-mono text-[11px] px-2.5 py-1 rounded text-fog">GitLab</span>
+          <span class="chip font-mono text-[11px] px-2.5 py-1 rounded text-fog">ClickUp</span>
         </div>
-      </a>
+      </article>
 
       <!-- VESPAS -->
-      <a href="https://github.com/vespas-utfpr" target="_blank" rel="noopener noreferrer" class="group reveal card-hover block bg-card border border-line rounded-xl p-6 focus:outline-none focus-visible:ring-2 focus-visible:ring-purple focus-visible:ring-offset-2 focus-visible:ring-offset-ink" data-project="vespas">
+      <article class="group reveal card-hover block bg-card border border-line rounded-xl p-6" data-project="vespas">
         <div class="flex min-w-0 flex-wrap items-start gap-x-2 gap-y-1 mb-4">
           <svg class="line-icon line-icon--project shrink-0" data-icon="flag" data-icon-context="project" aria-hidden="true" focusable="false"><use href="#icon-flag"></use></svg>
           <p class="min-w-0 flex-1 break-words font-mono text-[11px] text-fog">~/projects/<span class="text-terminal">vespas-ctf</span></p>
-          <span class="ml-auto shrink-0 text-purple-light group-hover:text-purple font-mono text-[11px] transition-colors">github.com/vespas-utfpr ↗</span>
+          <div class="flex w-full basis-full flex-wrap gap-x-4 gap-y-2 sm:ml-auto sm:w-auto sm:basis-auto sm:justify-end">
+            <a data-project-link href="https://github.com/vespas-utfpr" target="_blank" rel="noopener noreferrer" class="shrink-0 text-purple-light hover:text-purple font-mono text-[11px] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-purple rounded-sm">VESPAS GitHub ↗</a>
+            <a data-challenge-link href="https://github.com/vespas-utfpr/ainjection" target="_blank" rel="noopener noreferrer" class="shrink-0 text-terminal hover:text-terminal/75 font-mono text-[11px] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-purple rounded-sm"><span data-i18n="proj.vespas.challenge">AInjection 2026</span> ↗</a>
+          </div>
         </div>
         <h3 class="font-display font-semibold text-lg text-paper mb-2" data-i18n="proj.vespas.t">VESPAS — Labs de CTF &amp; Alertas</h3>
         <p class="text-fog font-light text-[15px] mb-5" data-i18n="proj.vespas.d">
-          Desenvolvimento de labs e challenges para CTFs próprios do VESPAS e coordenação do canal público de alertas de segurança — de CVEs críticas a dicas práticas de proteção para a comunidade.
+          Colaboro nos labs e desafios do VESPAS e sou um dos coordenadores do Canal de Alertas. Para o CTF 2026, desenvolvi o AInjection, projeto-base sobre Prompt Injection, trust boundaries e OWASP GenAI Top 10 em aplicações com LLM.
         </p>
         <div class="flex flex-wrap gap-2">
           <span class="chip font-mono text-[11px] px-2.5 py-1 rounded text-fog">CTF</span>
           <span class="chip font-mono text-[11px] px-2.5 py-1 rounded text-fog">Pentest</span>
           <span class="chip font-mono text-[11px] px-2.5 py-1 rounded text-fog">Prompt Injection</span>
+          <span class="chip font-mono text-[11px] px-2.5 py-1 rounded text-fog">OWASP Top 10</span>
+          <span class="chip font-mono text-[11px] px-2.5 py-1 rounded text-fog">OWASP GenAI Top 10</span>
+          <span class="chip font-mono text-[11px] px-2.5 py-1 rounded text-fog">Trust Boundaries</span>
+          <span class="chip font-mono text-[11px] px-2.5 py-1 rounded text-fog">MITRE ATT&amp;CK</span>
+          <span class="chip font-mono text-[11px] px-2.5 py-1 rounded text-fog">TypeScript</span>
+          <span class="chip font-mono text-[11px] px-2.5 py-1 rounded text-fog" data-chip-href="https://github.com/vespas-utfpr">GitHub</span>
         </div>
-      </a>
+      </article>
 
     </div>
   </section>
@@ -915,10 +1283,19 @@
   <!-- ═══════════ SKILLS ═══════════ -->
   <section id="skills" class="skills-atmosphere border-y border-line/60">
     <div class="max-w-6xl mx-auto px-5 sm:px-8 py-20 md:py-28">
-      <div class="reveal flex items-baseline gap-4 mb-12">
+      <div class="reveal flex items-baseline gap-4 mb-7">
         <span class="font-mono text-sm text-purple">04</span>
         <h2 class="font-display font-bold text-3xl md:text-4xl tracking-tight"><span class="text-fog font-mono text-xl align-middle mr-1">//</span> Skills &amp; <span data-i18n="skills.title">Formação</span></h2>
         <div class="flex-1 h-px bg-line"></div>
+      </div>
+
+      <div data-skill-legend class="reveal hidden md:flex flex-col items-end gap-2 mb-8 font-mono text-[10px] uppercase tracking-[.16em] text-fog" aria-label="Força das relações entre habilidades" data-i18n-aria-label="skills.relation.ariaLabel">
+        <span data-skill-legend-title data-i18n="skills.relation.title" class="text-[9px] tracking-[.22em] text-purple-light/70">correlação</span>
+        <div class="flex items-center gap-5">
+          <span class="skill-legend-item inline-flex items-center gap-2" data-strength="strong"><span class="skill-legend-line" aria-hidden="true"></span><span data-i18n="skills.relation.direct">direta</span></span>
+          <span class="skill-legend-item inline-flex items-center gap-2" data-strength="medium"><span class="skill-legend-line" aria-hidden="true"></span><span data-i18n="skills.relation.workflow">fluxo</span></span>
+          <span class="skill-legend-item inline-flex items-center gap-2" data-strength="weak"><span class="skill-legend-line" aria-hidden="true"></span><span data-i18n="skills.relation.context">contexto</span></span>
+        </div>
       </div>
 
       <div class="relative grid md:grid-cols-2 gap-x-12 gap-y-10">
@@ -934,11 +1311,11 @@
             <span data-i18n="skills.g1">segurança ofensiva</span>
           </h3>
           <div class="flex flex-wrap gap-2">
-            <span class="chip font-mono text-xs px-3 py-1.5 rounded-md text-fog">Kali Linux</span>
+            <span class="chip font-mono text-xs px-3 py-1.5 rounded-md text-fog" data-skill="kali-linux">Kali Linux</span>
             <span class="chip font-mono text-xs px-3 py-1.5 rounded-md text-fog" data-skill="nmap">Nmap</span>
             <span class="chip font-mono text-xs px-3 py-1.5 rounded-md text-fog" data-skill="burp-suite">Burp Suite</span>
-            <span class="chip font-mono text-xs px-3 py-1.5 rounded-md text-fog">Metasploit</span>
-            <span class="chip font-mono text-xs px-3 py-1.5 rounded-md text-fog">Wireshark</span>
+            <span class="chip font-mono text-xs px-3 py-1.5 rounded-md text-fog" data-skill="metasploit">Metasploit</span>
+            <span class="chip font-mono text-xs px-3 py-1.5 rounded-md text-fog" data-skill="wireshark">Wireshark</span>
           </div>
         </div>
         <div class="reveal relative" data-skill-hub="2">
@@ -947,13 +1324,13 @@
             <span data-i18n="skills.g2">defesa &amp; detecção</span>
           </h3>
           <div class="flex flex-wrap gap-2">
-            <span class="chip font-mono text-xs px-3 py-1.5 rounded-md text-fog">Axur</span>
+            <span class="chip font-mono text-xs px-3 py-1.5 rounded-md text-fog" data-skill="axur">Axur</span>
             <span class="chip font-mono text-xs px-3 py-1.5 rounded-md text-fog" data-skill="prisma-cloud">Prisma Cloud</span>
             <span class="chip font-mono text-xs px-3 py-1.5 rounded-md text-fog" data-skill="nessus">Nessus</span>
-            <span class="chip font-mono text-xs px-3 py-1.5 rounded-md text-fog">MITRE ATT&amp;CK</span>
+            <span class="chip font-mono text-xs px-3 py-1.5 rounded-md text-fog" data-skill="mitre-attack">MITRE ATT&amp;CK</span>
             <span class="chip font-mono text-xs px-3 py-1.5 rounded-md text-fog" data-skill="owasp-top-10">OWASP Top 10</span>
-            <span class="chip font-mono text-xs px-3 py-1.5 rounded-md text-fog">ISO 27001</span>
-            <span class="chip font-mono text-xs px-3 py-1.5 rounded-md text-fog">CVSS</span>
+            <span class="chip font-mono text-xs px-3 py-1.5 rounded-md text-fog" data-skill="iso-27001">ISO 27001</span>
+            <span class="chip font-mono text-xs px-3 py-1.5 rounded-md text-fog" data-skill="cvss">CVSS</span>
             <span class="chip font-mono text-xs px-3 py-1.5 rounded-md text-fog" data-skill="active-directory">Active Directory</span>
             <span class="chip font-mono text-xs px-3 py-1.5 rounded-md text-fog" data-skill="iam-ldap">IAM / LDAP</span>
           </div>
@@ -964,15 +1341,15 @@
             <span>devops &amp; cloud</span>
           </h3>
           <div class="flex flex-wrap gap-2">
-            <span class="chip font-mono text-xs px-3 py-1.5 rounded-md text-fog">Ansible</span>
-            <span class="chip font-mono text-xs px-3 py-1.5 rounded-md text-fog">Terraform</span>
-            <span class="chip font-mono text-xs px-3 py-1.5 rounded-md text-fog">Vagrant</span>
-            <span class="chip font-mono text-xs px-3 py-1.5 rounded-md text-fog">Molecule</span>
+            <span class="chip font-mono text-xs px-3 py-1.5 rounded-md text-fog" data-skill="ansible">Ansible</span>
+            <span class="chip font-mono text-xs px-3 py-1.5 rounded-md text-fog" data-skill="terraform">Terraform</span>
+            <span class="chip font-mono text-xs px-3 py-1.5 rounded-md text-fog" data-skill="vagrant">Vagrant</span>
+            <span class="chip font-mono text-xs px-3 py-1.5 rounded-md text-fog" data-skill="molecule">Molecule</span>
             <span class="chip font-mono text-xs px-3 py-1.5 rounded-md text-fog" data-skill="aws">AWS</span>
-            <span class="chip font-mono text-xs px-3 py-1.5 rounded-md text-fog">S3 / CloudFront</span>
+            <span class="chip font-mono text-xs px-3 py-1.5 rounded-md text-fog" data-skill="s3-cloudfront">S3 / CloudFront</span>
             <span class="chip font-mono text-xs px-3 py-1.5 rounded-md text-fog" data-skill="docker">Docker</span>
             <span class="chip font-mono text-xs px-3 py-1.5 rounded-md text-fog" data-skill="gitlab-ci-cd">GitLab CI/CD</span>
-            <span class="chip font-mono text-xs px-3 py-1.5 rounded-md text-fog">Git</span>
+            <span class="chip font-mono text-xs px-3 py-1.5 rounded-md text-fog" data-skill="git">Git</span>
           </div>
         </div>
         <div class="reveal relative" data-skill-hub="4">
@@ -981,14 +1358,14 @@
             <span data-i18n="skills.g4">desenvolvimento</span>
           </h3>
           <div class="flex flex-wrap gap-2">
-            <span class="chip font-mono text-xs px-3 py-1.5 rounded-md text-fog">Python</span>
-            <span class="chip font-mono text-xs px-3 py-1.5 rounded-md text-fog">Go</span>
-            <span class="chip font-mono text-xs px-3 py-1.5 rounded-md text-fog">JavaScript</span>
-            <span class="chip font-mono text-xs px-3 py-1.5 rounded-md text-fog">TypeScript</span>
-            <span class="chip font-mono text-xs px-3 py-1.5 rounded-md text-fog">React</span>
-            <span class="chip font-mono text-xs px-3 py-1.5 rounded-md text-fog">React Native / Expo</span>
-            <span class="chip font-mono text-xs px-3 py-1.5 rounded-md text-fog">NestJS</span>
-            <span class="chip font-mono text-xs px-3 py-1.5 rounded-md text-fog">Prisma / PostgreSQL</span>
+            <span class="chip font-mono text-xs px-3 py-1.5 rounded-md text-fog" data-skill="python">Python</span>
+            <span class="chip font-mono text-xs px-3 py-1.5 rounded-md text-fog" data-skill="go">Go</span>
+            <span class="chip font-mono text-xs px-3 py-1.5 rounded-md text-fog" data-skill="javascript">JavaScript</span>
+            <span class="chip font-mono text-xs px-3 py-1.5 rounded-md text-fog" data-skill="typescript">TypeScript</span>
+            <span class="chip font-mono text-xs px-3 py-1.5 rounded-md text-fog" data-skill="react">React</span>
+            <span class="chip font-mono text-xs px-3 py-1.5 rounded-md text-fog" data-skill="react-native-expo">React Native / Expo</span>
+            <span class="chip font-mono text-xs px-3 py-1.5 rounded-md text-fog" data-skill="nestjs">NestJS</span>
+            <span class="chip font-mono text-xs px-3 py-1.5 rounded-md text-fog" data-skill="prisma-postgresql">Prisma / PostgreSQL</span>
             <span class="chip font-mono text-xs px-3 py-1.5 rounded-md text-fog" data-skill="apis-rest">APIs REST</span>
           </div>
         </div>
@@ -1000,18 +1377,19 @@
           <div class="flex flex-wrap gap-2 md:justify-center">
             <span class="chip font-mono text-xs px-3 py-1.5 rounded-md text-fog" data-skill="anthropic-api">Anthropic API</span>
             <span class="chip font-mono text-xs px-3 py-1.5 rounded-md text-fog" data-skill="mcp">MCP</span>
-            <span class="chip font-mono text-xs px-3 py-1.5 rounded-md text-fog">LLMs</span>
+            <span class="chip font-mono text-xs px-3 py-1.5 rounded-md text-fog" data-skill="llms">LLMs</span>
             <span class="chip font-mono text-xs px-3 py-1.5 rounded-md text-fog" data-skill="tool-calling">Tool Calling</span>
-            <span class="chip font-mono text-xs px-3 py-1.5 rounded-md text-fog" data-skill="multiagent">Orquestração Multiagente</span>
+            <span class="chip font-mono text-xs px-3 py-1.5 rounded-md text-fog" data-skill="multiagent" data-i18n="skills.multiagent">Orquestração Multiagente</span>
           </div>
         </div>
       </div>
 
       <!-- Verifiable credentials -->
       <div data-credentials class="reveal mt-14">
-        <div class="flex items-center gap-3 mb-5">
+        <div class="flex flex-wrap items-center gap-3 mb-5">
           <span class="h-px w-8 bg-terminal/70"></span>
           <h3 class="font-mono text-xs uppercase tracking-[0.18em] text-fog" data-i18n="credentials.technical">credenciais técnicas</h3>
+          <span class="w-full pl-11 font-mono text-[9px] uppercase tracking-[0.14em] text-terminal/70 sm:ml-auto sm:w-auto sm:pl-0" data-i18n="credentials.verificationNote">links externos de verificação</span>
         </div>
 
         <div data-credential-group="cisco">
@@ -1020,7 +1398,6 @@
           <a data-credential data-credential-link href="https://www.credly.com/badges/19585ed5-1d40-4697-b22f-3cb52a220dc3?source=linked_in_profile" target="_blank" rel="noopener noreferrer" class="group bg-card border border-line rounded-xl p-5 card-hover flex min-h-48 flex-col focus:outline-none focus-visible:ring-2 focus-visible:ring-purple focus-visible:ring-offset-2 focus-visible:ring-offset-ink">
             <div class="flex items-start justify-between gap-3 mb-3">
               <p class="font-mono text-[11px] leading-relaxed text-terminal">Cisco Networking Academy · 2022</p>
-              <span class="shrink-0 rounded-full border border-terminal/30 bg-terminal/10 px-2 py-1 font-mono text-[9px] uppercase tracking-wider text-terminal" data-i18n="credentials.verified">verificável</span>
             </div>
             <img data-credential-badge src="assets/CyberOpsAssoc.png" alt="Badge Cisco Networking Academy — CyberOps Associate" width="600" height="600" loading="lazy" decoding="async" class="mx-auto my-4 aspect-square w-28 object-contain sm:w-32">
             <h4 class="font-display font-semibold text-paper">CyberOps Associate</h4>
@@ -1032,7 +1409,6 @@
           <a data-credential data-credential-link href="https://www.credly.com/badges/28d753d2-ab77-4cc0-a71f-8e3acc6e478a/linked_in_profile" target="_blank" rel="noopener noreferrer" class="group bg-card border border-line rounded-xl p-5 card-hover flex min-h-48 flex-col focus:outline-none focus-visible:ring-2 focus-visible:ring-purple focus-visible:ring-offset-2 focus-visible:ring-offset-ink">
             <div class="flex items-start justify-between gap-3 mb-3">
               <p class="font-mono text-[11px] leading-relaxed text-terminal">Cisco Networking Academy · 2024</p>
-              <span class="shrink-0 rounded-full border border-terminal/30 bg-terminal/10 px-2 py-1 font-mono text-[9px] uppercase tracking-wider text-terminal" data-i18n="credentials.verified">verificável</span>
             </div>
             <img data-credential-badge src="assets/EndpointSecurity.png" alt="Badge Cisco Networking Academy — Endpoint Security" width="680" height="680" loading="lazy" decoding="async" class="mx-auto my-4 aspect-square w-28 object-contain sm:w-32">
             <h4 class="font-display font-semibold text-paper">Endpoint Security</h4>
@@ -1044,7 +1420,6 @@
           <a data-credential data-credential-link href="https://www.credly.com/badges/5bf1788d-2873-459b-b066-2ba41a2bfdc4?source=linked_in_profile" target="_blank" rel="noopener noreferrer" class="group bg-card border border-line rounded-xl p-5 card-hover flex min-h-48 flex-col focus:outline-none focus-visible:ring-2 focus-visible:ring-purple focus-visible:ring-offset-2 focus-visible:ring-offset-ink">
             <div class="flex items-start justify-between gap-3 mb-3">
               <p class="font-mono text-[11px] leading-relaxed text-terminal">Cisco Networking Academy · 2022</p>
-              <span class="shrink-0 rounded-full border border-terminal/30 bg-terminal/10 px-2 py-1 font-mono text-[9px] uppercase tracking-wider text-terminal" data-i18n="credentials.verified">verificável</span>
             </div>
             <img data-credential-badge src="assets/CyberEssentials.png" alt="Badge Cisco Networking Academy — Cybersecurity Essentials" width="600" height="600" loading="lazy" decoding="async" class="mx-auto my-4 aspect-square w-28 object-contain sm:w-32">
             <h4 class="font-display font-semibold text-paper">Cybersecurity Essentials</h4>
@@ -1056,7 +1431,6 @@
           <a data-credential data-credential-link href="https://www.credly.com/badges/df801995-970f-4c9c-8c4e-47da78ed9db4?source=linked_in_profile" target="_blank" rel="noopener noreferrer" class="group bg-card border border-line rounded-xl p-5 card-hover flex min-h-48 flex-col focus:outline-none focus-visible:ring-2 focus-visible:ring-purple focus-visible:ring-offset-2 focus-visible:ring-offset-ink">
             <div class="flex items-start justify-between gap-3 mb-3">
               <p class="font-mono text-[11px] leading-relaxed text-terminal">Cisco Networking Academy · 2022</p>
-              <span class="shrink-0 rounded-full border border-terminal/30 bg-terminal/10 px-2 py-1 font-mono text-[9px] uppercase tracking-wider text-terminal" data-i18n="credentials.verified">verificável</span>
             </div>
             <img data-credential-badge src="assets/CCNAITN__1_.png" alt="Badge Cisco Networking Academy — CCNA: Introduction to Networks (ITN)" width="600" height="600" loading="lazy" decoding="async" class="mx-auto my-4 aspect-square w-28 object-contain sm:w-32">
             <h4 class="font-display font-semibold text-paper">CCNA: Introduction to Networks (ITN)</h4>
@@ -1074,10 +1448,9 @@
             <a data-compact-credential href="https://ada.tech/certificado?code=de946b1e-6997-80f6-49ba-26078f14bbb3" target="_blank" rel="noopener noreferrer" class="group card-hover flex min-h-44 flex-col rounded-xl border border-line bg-card p-5 focus:outline-none focus-visible:ring-2 focus-visible:ring-purple focus-visible:ring-offset-2 focus-visible:ring-offset-ink">
               <div class="mb-5 flex items-start justify-between gap-4">
               <p class="icon-label font-mono text-[11px] text-fog"><svg class="line-icon line-icon--credential" data-icon="code-xml" data-icon-context="credential" aria-hidden="true" focusable="false"><use href="#icon-code-xml"></use></svg>~/credentials/<span class="text-terminal">ada-backend</span></p>
-                <span class="shrink-0 rounded-full border border-terminal/30 bg-terminal/10 px-2 py-1 font-mono text-[9px] uppercase tracking-wider text-terminal" data-i18n="credentials.verified">verificável</span>
               </div>
               <p class="mb-2 font-mono text-xs text-terminal">Ada · 2025</p>
-              <h5 data-credential-title class="font-display text-lg font-semibold leading-snug text-paper">Trilha Digital Back-End — Santander Tech+</h5>
+              <h5 data-credential-title class="font-display text-lg font-semibold leading-snug text-paper" data-i18n="credentials.adaTitle">Trilha Digital Back-End — Santander Tech+</h5>
               <span class="mt-auto inline-flex items-center gap-1.5 pt-5 font-mono text-[11px] text-purple-light transition-colors group-hover:text-purple">
                 <span data-i18n="credentials.view">Ver credencial</span> <span aria-hidden="true">↗</span>
               </span>
@@ -1086,10 +1459,9 @@
             <a data-compact-credential href="https://apl.utfpr.edu.br/extensao/validar/D194E4D801ECCEB67D8F29742731D299" target="_blank" rel="noopener noreferrer" class="group card-hover flex min-h-44 flex-col rounded-xl border border-line bg-card p-5 focus:outline-none focus-visible:ring-2 focus-visible:ring-purple focus-visible:ring-offset-2 focus-visible:ring-offset-ink">
               <div class="mb-5 flex items-start justify-between gap-4">
               <p class="icon-label font-mono text-[11px] text-fog"><svg class="line-icon line-icon--credential" data-icon="shield-check" data-icon-context="credential" aria-hidden="true" focusable="false"><use href="#icon-shield-check"></use></svg>~/credentials/<span class="text-terminal">utfpr-cyber</span></p>
-                <span class="shrink-0 rounded-full border border-terminal/30 bg-terminal/10 px-2 py-1 font-mono text-[9px] uppercase tracking-wider text-terminal" data-i18n="credentials.verified">verificável</span>
               </div>
               <p class="mb-2 font-mono text-xs text-terminal">UTFPR · 2021</p>
-              <h5 data-credential-title class="font-display text-lg font-semibold leading-snug text-paper">Fundamentos em Cibersegurança</h5>
+              <h5 data-credential-title class="font-display text-lg font-semibold leading-snug text-paper" data-i18n="credentials.cyberTitle">Fundamentos em Cibersegurança</h5>
               <p class="mt-2 font-mono text-xs text-fog">30h</p>
               <span class="mt-auto inline-flex items-center gap-1.5 pt-5 font-mono text-[11px] text-purple-light transition-colors group-hover:text-purple">
                 <span data-i18n="credentials.view">Ver credencial</span> <span aria-hidden="true">↗</span>
@@ -1104,10 +1476,9 @@
             <a data-compact-credential href="https://conquerplus.com.br/certificates/362c41cd-3800-4a28-9bb1-c816f0c484f8" target="_blank" rel="noopener noreferrer" class="group card-hover flex min-h-44 flex-col rounded-xl border border-line bg-card p-5 focus:outline-none focus-visible:ring-2 focus-visible:ring-purple focus-visible:ring-offset-2 focus-visible:ring-offset-ink">
               <div class="mb-5 flex items-start justify-between gap-4">
               <p class="icon-label font-mono text-[11px] text-fog"><svg class="line-icon line-icon--credential" data-icon="brain" data-icon-context="credential" aria-hidden="true" focusable="false"><use href="#icon-brain"></use></svg>~/credentials/<span class="text-purple-light">emotional-intelligence</span></p>
-                <span class="shrink-0 rounded-full border border-purple/30 bg-purple/10 px-2 py-1 font-mono text-[9px] uppercase tracking-wider text-purple-light" data-i18n="credentials.verified">verificável</span>
               </div>
               <p class="mb-2 font-mono text-xs text-purple-light">Escola Conquer · 2022</p>
-              <h5 data-credential-title class="font-display text-lg font-semibold leading-snug text-paper">Inteligência Emocional 2.0</h5>
+              <h5 data-credential-title class="font-display text-lg font-semibold leading-snug text-paper" data-i18n="credentials.emotionalTitle">Inteligência Emocional 2.0</h5>
               <p class="mt-2 font-mono text-xs text-fog">15h</p>
               <span class="mt-auto inline-flex items-center gap-1.5 pt-5 font-mono text-[11px] text-purple-light transition-colors group-hover:text-purple">
                 <span data-i18n="credentials.view">Ver credencial</span> <span aria-hidden="true">↗</span>
@@ -1117,10 +1488,9 @@
             <a data-compact-credential href="https://www.conquerplus.com.br/certificates/efc5142f-0c55-4e3d-a8be-623bf706f61c" target="_blank" rel="noopener noreferrer" class="group card-hover flex min-h-44 flex-col rounded-xl border border-line bg-card p-5 focus:outline-none focus-visible:ring-2 focus-visible:ring-purple focus-visible:ring-offset-2 focus-visible:ring-offset-ink">
               <div class="mb-5 flex items-start justify-between gap-4">
               <p class="icon-label font-mono text-[11px] text-fog"><svg class="line-icon line-icon--credential" data-icon="timer" data-icon-context="credential" aria-hidden="true" focusable="false"><use href="#icon-timer"></use></svg>~/credentials/<span class="text-purple-light">productivity</span></p>
-                <span class="shrink-0 rounded-full border border-purple/30 bg-purple/10 px-2 py-1 font-mono text-[9px] uppercase tracking-wider text-purple-light" data-i18n="credentials.verified">verificável</span>
               </div>
               <p class="mb-2 font-mono text-xs text-purple-light">Escola Conquer · 2022</p>
-              <h5 data-credential-title class="font-display text-lg font-semibold leading-snug text-paper">Produtividade e Gestão do Tempo</h5>
+              <h5 data-credential-title class="font-display text-lg font-semibold leading-snug text-paper" data-i18n="credentials.productivityTitle">Produtividade e Gestão do Tempo</h5>
               <p class="mt-2 font-mono text-xs text-fog">15h</p>
               <span class="mt-auto inline-flex items-center gap-1.5 pt-5 font-mono text-[11px] text-purple-light transition-colors group-hover:text-purple">
                 <span data-i18n="credentials.view">Ver credencial</span> <span aria-hidden="true">↗</span>
@@ -1136,16 +1506,25 @@
   <section id="contato" class="max-w-6xl mx-auto px-5 sm:px-8 py-24 md:py-32 text-center">
     <p class="reveal font-mono text-sm text-purple mb-4">05 <span class="text-fog">//</span> <span data-i18n="contact.kicker">o que vem agora?</span></p>
     <h2 class="reveal font-display font-bold text-4xl md:text-5xl tracking-tight mb-6"><span data-i18n="contact.title">Vamos conversar</span><span class="text-terminal">.</span></h2>
-    <p class="reveal text-fog font-light max-w-xl mx-auto mb-10" data-i18n="contact.sub">
+    <p class="reveal text-fog font-light max-w-xl mx-auto mb-10 md:mb-16" data-i18n="contact.sub">
       Aberto a oportunidades em desenvolvimento Full Stack, DevSecOps e Segurança da Informação. Se o seu time precisa integrar produto, operação e segurança, vamos conversar.
     </p>
-    <div class="reveal flex flex-wrap justify-center items-center gap-3">
-      <a data-contact="email" href="mailto:thales.salata@gmail.com" class="btn-primary inline-flex items-center gap-2 font-mono text-sm text-white px-6 py-3.5 rounded-md">
+    <div class="contact-actions reveal flex flex-wrap justify-center items-start gap-3">
+      <a data-contact="email" href="mailto:thales.salata@gmail.com" class="contact-control btn-primary inline-flex items-center gap-2 font-mono text-sm text-white px-6 py-3.5 rounded-md">
         <svg class="line-icon line-icon--contact" data-icon="mail" data-icon-context="contact" aria-hidden="true" focusable="false"><use href="#icon-mail"></use></svg><span data-i18n="contact.cta">Enviar e-mail</span> <span aria-hidden="true">→</span>
       </a>
-      <a data-contact="linkedin" href="https://www.linkedin.com/in/thales-sgarbi-salata/" target="_blank" rel="noopener" class="btn-ghost inline-flex items-center gap-2 font-mono text-sm text-fog px-6 py-3.5 rounded-md"><svg class="line-icon line-icon--contact" data-icon="briefcase-business" data-icon-context="contact" aria-hidden="true" focusable="false"><use href="#icon-briefcase-business"></use></svg>LinkedIn ↗</a>
-      <a data-contact="github" href="https://github.com/Taresu" target="_blank" rel="noopener" class="btn-ghost inline-flex items-center gap-2 font-mono text-sm text-fog px-6 py-3.5 rounded-md"><svg class="line-icon line-icon--contact" data-icon="git-branch" data-icon-context="contact" aria-hidden="true" focusable="false"><use href="#icon-git-branch"></use></svg>GitHub ↗</a>
-      <span data-contact="discord" class="btn-ghost inline-flex items-center gap-2 font-mono text-sm text-fog px-6 py-3.5 rounded-md cursor-default" title="Discord"><svg class="line-icon line-icon--contact" data-icon="message-circle" data-icon-context="contact" aria-hidden="true" focusable="false"><use href="#icon-message-circle"></use></svg>Discord: tsalada</span>
+      <div class="linkedin-contact">
+        <p data-linkedin-availability data-i18n="contact.linkedinAvailability" class="linkedin-availability whitespace-nowrap font-mono text-[10px] text-terminal/80">Open to Work ativo · visível apenas para recrutadores</p>
+        <a data-contact="linkedin" href="https://www.linkedin.com/in/thales-sgarbi-salata/" target="_blank" rel="noopener" class="contact-control btn-ghost inline-flex items-center gap-2 font-mono text-sm text-fog px-6 py-3.5 rounded-md"><svg class="line-icon line-icon--contact" data-icon="briefcase-business" data-icon-context="contact" aria-hidden="true" focusable="false"><use href="#icon-briefcase-business"></use></svg>LinkedIn ↗</a>
+      </div>
+      <a data-contact="github" href="https://github.com/Taresu" target="_blank" rel="noopener" class="contact-control btn-ghost inline-flex items-center gap-2 font-mono text-sm text-fog px-6 py-3.5 rounded-md"><svg class="line-icon line-icon--contact" data-icon="git-branch" data-icon-context="contact" aria-hidden="true" focusable="false"><use href="#icon-git-branch"></use></svg>GitHub ↗</a>
+      <div class="flex flex-col items-center gap-2">
+        <button type="button" data-contact="discord" data-discord-copy data-copy-value="tsalada" data-copy-action-pt="copiar" data-copy-action-en="copy" data-copy-success-pt="Copiado" data-copy-success-en="Copied" data-copy-aria-pt="Copiar nome de usuário do Discord: tsalada" data-copy-aria-en="Copy Discord username: tsalada" aria-label="Copiar nome de usuário do Discord: tsalada" class="contact-control btn-ghost inline-flex items-center gap-2 font-mono text-sm text-fog px-6 py-3.5 rounded-md cursor-pointer"><svg class="line-icon line-icon--contact" data-icon="message-circle" data-icon-context="contact" aria-hidden="true" focusable="false"><use href="#icon-message-circle"></use></svg><span>Discord: tsalada</span><span data-copy-feedback aria-live="polite" class="ml-1 text-[9px] uppercase tracking-wider text-purple-light">copiar</span></button>
+        <p class="max-w-[18rem] text-center font-mono text-[10px] leading-relaxed text-fog/70">
+          <span data-discord-guide data-i18n="contact.discordGuide">Copie o usuário e abra Amigos → Adicionar amigo.</span>
+          <a data-discord-open href="https://discord.com/channels/@me" target="_blank" rel="noopener noreferrer" class="ml-1 text-purple-light hover:text-purple transition-colors"><span data-i18n="contact.discordOpen">Abrir Discord</span> ↗</a>
+        </p>
+      </div>
     </div>
   </section>
 
@@ -1161,113 +1540,145 @@
     /* ═══════════ i18n ═══════════ */
     const I18N = {
       pt: {
-        'nav.about': 'sobre', 'nav.exp': 'experiência', 'nav.projects': 'projetos', 'nav.contact': 'contato',
+        'nav.about': 'sobre', 'nav.exp': 'experiência', 'nav.projects': 'projetos', 'nav.contact': 'contato', 'nav.mobileOpen': 'Abrir navegação', 'nav.mobileClose': 'Fechar navegação', 'nav.mobileLabel': 'Navegação mobile',
         'hero.kicker': 'portfólio pessoal — Curitiba, PR · Brasil',
         'hero.role': 'Full Stack · DevSecOps · Segurança da Informação',
         'hero.pitch': 'Desenvolvo e mantenho aplicações web e mobile, integro serviços e automatizo infraestrutura com segurança incorporada ao ciclo de desenvolvimento.',
-        'hero.cv': 'Baixar CV', 'hero.projects': 'Ver projetos',
+        'hero.cv': 'Baixar CV', 'hero.projects': 'Ver projetos', 'hero.terminalLabel': 'Terminal animado com resumo do perfil',
         'about.title': 'Sobre',
-        'about.p1': 'Sou bacharel em Sistemas de Informação pela UTFPR. Atuo como desenvolvedor Full Stack no portal institucional da universidade e como um dos mantenedores do Nerdz, aplicação mobile e web multiplataforma. Também coordeno voluntariamente o VESPAS, projeto de extensão em cibersegurança e equipe de CTF da UTFPR.',
+        'about.p1': 'Sou bacharel em Sistemas de Informação pela UTFPR. Atuo como desenvolvedor Full Stack no portal institucional da universidade e como um dos mantenedores do Nerdz, aplicação mobile e web multiplataforma. Também sou um dos coordenadores voluntários do Canal de Alertas do VESPAS, um dos mantenedores do site da iniciativa e colaboro no desenvolvimento de labs e desafios de CTF.',
         'about.p2': 'Minha trajetória conecta desenvolvimento, operações e segurança: React/TypeScript e Python no Portal UTFPR; React Native, Expo e NestJS no Nerdz; automação, CI/CD, cloud e investigação de vulnerabilidades em ambientes corporativos.',
         'about.p3': 'Também utilizo IA generativa e agêntica no desenvolvimento e implementei um orquestrador multiagente com Anthropic API e MCP, mantendo revisão crítica sobre o código produzido.',
         'about.stat1': 'cursos Cisco Networking Academy', 'about.stat2': 'dispositivos VoIP migrados', 'about.stat3': 'plataformas no Nerdz',
-        'exp.title': 'Experiência', 'exp.present': 'jul 2026', 'exp.present3': 'presente', 'exp.present4': 'presente',
+        'exp.title': 'Experiência', 'exp.employer': 'organização', 'exp.present': 'jul 2026', 'exp.present3': 'presente', 'exp.present4': 'presente',
         'exp.utfsRole': 'Desenvolvedor Full Stack',
+        'exp.utfsDate': 'mar 2026', 'exp.utfDate': 'set 2025 — jul 2026', 'exp.cmcDate': 'mar 2025', 'exp.vwDate': 'mai 2024 — fev 2025', 'exp.vwtiDate': 'mai 2023 — abr 2024',
+        'exp.orgPrimary.utfpr': 'Abrir site da UTFPR', 'exp.orgPrimary.vespas': 'Abrir Linktree do VESPAS', 'exp.orgPrimary.cmc': 'Abrir site da Câmara Municipal de Curitiba', 'exp.orgPrimary.volkswagen': 'Abrir site da Volkswagen do Brasil',
+        'exp.orgLinks.utfpr': 'Mostrar links relacionados à UTFPR', 'exp.orgLinks.vespas': 'Mostrar links relacionados ao VESPAS', 'exp.orgLinks.cmc': 'Mostrar links relacionados à Câmara Municipal de Curitiba',
+        'exp.orgLinksHide.utfpr': 'Ocultar links relacionados à UTFPR', 'exp.orgLinksHide.vespas': 'Ocultar links relacionados ao VESPAS', 'exp.orgLinksHide.cmc': 'Ocultar links relacionados à Câmara Municipal de Curitiba',
+        'exp.org.utfpr.project': 'Projeto Portal', 'exp.org.utfpr.team': 'Equipe ASport', 'exp.org.vespas.site': 'Site VESPAS', 'exp.org.vespas.github': 'GitHub VESPAS', 'exp.org.cmc.project': 'Projeto VoIP', 'exp.org.cmc.github': 'GitHub CMC',
         'exp.utfs1': 'Desenvolvo e mantenho o Portal da UTFPR com Plone 6 e Volto — integrando o frontend em React/Volto ao backend em Plone, alinhando ao Design System Gov.br v4.0, com refatoração e modernização de código legado.',
         'exp.utfs2': 'Investigo problemas entre aplicação, serviços e ambientes; realizo ajustes de segurança, documentação técnica e manutenção dos processos de CI/CD no GitLab.',
         'exp.utfs3': 'Colaboro com equipes de UI/UX, infraestrutura e servidores na definição, implementação e disponibilização de novas soluções para o portal.',
+        'exp.cmcRole': 'Estagiário DevOps',
+        'exp.cmcEmployer': 'Câmara Municipal de Curitiba',
         'exp.cmc1': 'Arquitetei e desenvolvi soluções open-source Unix-based com Ansible, Vagrant e Molecule, em ambiente Linux com SSO e LDAP para autenticação de serviços.',
         'exp.cmc2': 'Implementei correções de vulnerabilidades conhecidas com base no OWASP Top 10, seguindo Conventional Commits (commitizen + commitlint).',
         'exp.cmc3': 'Milestone: migração automatizada de ~370 telefones VoIP de IP estático para DHCP, com Python, Selenium e requests.',
         'exp.utfRole': 'Desenvolvedor Web | Frontend',
         'exp.utf1': 'Desenvolvi componentes reutilizáveis em React e Volto, implementei layouts responsivos e acessíveis e refatorei componentes e códigos legados do projeto.',
         'exp.utf2': 'Trabalhei na correção de inconsistências visuais e funcionais, documentação dos componentes e colaboração com a equipe de UI/UX para transformar protótipos em interfaces para produção.',
-        'exp.vespasRole': 'Coordenador Voluntário',
-        'exp.ves1': 'Coordeno o canal oficial de alertas de cibersegurança, cobrindo vulnerabilidades críticas (CVSS 10.0) e conscientização em segurança da informação.',
-        'exp.ves2': 'Participo do time competitivo de CTF e desenvolvo labs/challenges para competições próprias. Foco atual: OWASP Top 10:2025 e LLM Risks.',
-        'exp.vwRole': 'Estágio em Segurança da Informação',
+        'exp.vespasRole': 'Voluntário — Alertas, CTF & Site',
+        'exp.ves1': 'Sou um dos coordenadores do Canal de Alertas de cibersegurança, cobrindo vulnerabilidades críticas (CVSS 10.0) e conscientização em segurança da informação.',
+        'exp.ves2': 'Colaboro com o time competitivo de CTF e no desenvolvimento de labs e desafios para competições próprias. Foco atual: OWASP Top 10:2025 e LLM Risks.',
+        'exp.ves3': 'Também sou um dos mantenedores do site do VESPAS.', 'exp.ves3Cta': 'Acessar site',
+        'exp.vwRole': 'Estagiário de Segurança da Informação',
         'exp.vw1': 'Suporte a processos de IAM com Active Directory, além de análise de vulnerabilidades, gestão de riscos e acompanhamento de auditoria ISO 27001.',
         'exp.vw2': 'Operação das plataformas Axur (monitoramento) e Prisma Cloud (AWS Security) em contexto de SOC, além de ações de conscientização em Segurança da Informação.',
+        'exp.vwtiRole': 'Estagiário de TI',
+        'exp.vwti1': 'Apoiei as operações de TI no FIS Competence Center, com rotinas operacionais e suporte técnico em ambiente corporativo — base que levou à migração para a área de Segurança da Informação.',
+        'exp.vwtiTag1': 'Operações de TI', 'exp.vwtiTag2': 'Infraestrutura de TI', 'exp.vwtiTag3': 'Suporte técnico',
         'proj.title': 'Projetos em destaque',
         'proj.tcc.kicker': 'pesquisa acadêmica · TCC · UTFPR · 2026',
         'proj.tcc.cta': 'Ler pesquisa (PDF)',
         'proj.tcc.course': 'Acessar curso', 'proj.tcc.login': 'login Sophia-CT',
         'proj.tcc.t': 'Educação em Cibersegurança: uma abordagem holística para a compreensão do phishing multifacetado e seus desdobramentos no ecossistema digital',
-        'proj.tcc.d': 'Pesquisa aplicada de abordagem mista que desenvolveu e avaliou uma intervenção educativa em cibersegurança no Portal Sophia-CT, combinando MOOC, narrativa histórica, atividades práticas e simulações de phishing mapeadas com MITRE ATT&CK. No piloto, a média aumentou de 7,54 para 9,85.',
+        'proj.tcc.d': 'No meu TCC, desenvolvi e avaliei uma intervenção educativa em cibersegurança no Portal Sophia-CT. Combinei um MOOC com narrativa histórica, atividades práticas e simulações de phishing mapeadas ao MITRE ATT&CK. No piloto, a média dos participantes subiu de 7,54 para 9,85.',
         'proj.tcc.tagAi': 'IA Generativa', 'proj.tcc.tagMethods': 'Métodos mistos', 'proj.tcc.scoreStart': '7,54', 'proj.tcc.scoreEnd': '9,85',
-        'proj.tcc.metric': 'média no pré e pós-teste', 'proj.tcc.pages': 'documento completo', 'proj.tcc.date': '14 jul 2026', 'proj.tcc.approved': 'data de aprovação',
+        'proj.tcc.metric': 'média no pré e pós-teste', 'proj.tcc.pages': 'documento completo', 'proj.tcc.date': '14 jul 2026', 'proj.tcc.approved': 'data de aprovação', 'proj.tcc.metaLabel': 'Resultados e metadados da pesquisa',
         'proj.veripkg.t': 'VeriPkg — verificação honesta de downloads',
         'proj.veripkg.d': 'CLI em Go, sem dependências de runtime, que verifica arquivos baixados fora do gerenciador de pacotes contra fontes confiáveis. Cada resultado informa seu nível de confiança: assinatura OpenPGP, hash fixado ou não verificado.',
         'proj.nerdz.t': 'Nerdz - Aplicação mobile e web',
         'proj.nerdz.d': 'Manutenção e evolução de um produto de estudo em grupo para web, Android e iOS, com frontend React Native/Expo, API NestJS, Prisma/PostgreSQL, autenticação Clerk e distribuição por AWS S3/CloudFront.',
+        'proj.nerdz.cta': 'ver produto',
         'proj.voip.t': 'Migração VoIP em escala',
-        'proj.voip.d': 'Bot em Python que reconfigurou ~370 telefones VoIP da Câmara Municipal de Curitiba, migrando de IP estático para DHCP — Selenium para automação web e requests com cookies de sessão para os métodos POST.',
+        'proj.voip.d': 'Bot de web scraping em Python que permitiu reconfigurar ~370 telefones VoIP da Câmara Municipal de Curitiba, migrando-os de IP estático para DHCP — Selenium para automação web e requests com cookies de sessão para os métodos POST.',
         'proj.voip.visibility': 'projeto interno · CMC',
         'proj.portal.t': 'Reestruturação do Portal UTFPR',
         'proj.portal.d': 'Novos componentes Volto / Plone 6 para o portal institucional da universidade, alinhados ao Design System 4.0 do Gov.br — migração de código deprecado, documentação contínua e CI/CD no GitLab.',
+        'proj.portal.site': 'Visitar o portal', 'proj.portal.team': 'Conheça a equipe',
         'proj.vespas.t': 'VESPAS — Labs de CTF & Alertas',
-        'proj.vespas.d': 'Desenvolvimento de labs e challenges para CTFs próprios do VESPAS e coordenação do canal público de alertas de segurança — de CVEs críticas a dicas práticas de proteção para a comunidade.',
-        'skills.title': 'Formação', 'skills.g1': 'segurança ofensiva', 'skills.g2': 'defesa & detecção', 'skills.g4': 'desenvolvimento', 'skills.g5': 'IA aplicada ao desenvolvimento',
+        'proj.vespas.d': 'Colaboro nos labs e desafios do VESPAS e sou um dos coordenadores do Canal de Alertas. Para o CTF 2026, desenvolvi o AInjection, projeto-base sobre Prompt Injection, trust boundaries e OWASP GenAI Top 10 em aplicações com LLM.',
+        'proj.vespas.challenge': 'AInjection 2026',
+        'skills.title': 'Formação', 'skills.g1': 'segurança ofensiva', 'skills.g2': 'defesa & detecção', 'skills.g4': 'desenvolvimento', 'skills.g5': 'IA aplicada', 'skills.multiagent': 'Orquestração Multiagente',
+        'skills.relation.title': 'correlação', 'skills.relation.direct': 'direta', 'skills.relation.workflow': 'fluxo', 'skills.relation.context': 'contexto', 'skills.relation.ariaLabel': 'Força das relações entre habilidades',
         'credentials.technical': 'credenciais técnicas', 'credentials.cisco': 'Cisco Networking Academy', 'credentials.devSecurity': 'Desenvolvimento e segurança', 'credentials.professional': 'desenvolvimento profissional & pessoal',
-        'credentials.verified': 'verificável', 'credentials.verify': 'Verificar no Credly', 'credentials.view': 'Ver credencial',
+        'credentials.verified': 'verificável', 'credentials.verificationNote': 'links externos de verificação', 'credentials.verify': 'Verificar no Credly', 'credentials.view': 'Ver credencial',
+        'credentials.adaTitle': 'Trilha Digital Back-End — Santander Tech+', 'credentials.cyberTitle': 'Fundamentos em Cibersegurança', 'credentials.emotionalTitle': 'Inteligência Emocional 2.0', 'credentials.productivityTitle': 'Produtividade e Gestão do Tempo',
         'contact.kicker': 'o que vem agora?', 'contact.title': 'Vamos conversar',
         'contact.sub': 'Aberto a oportunidades em desenvolvimento Full Stack, DevSecOps e Segurança da Informação. Se o seu time precisa integrar produto, operação e segurança, vamos conversar.',
-        'contact.cta': 'Enviar e-mail',
+        'contact.cta': 'Enviar e-mail', 'contact.linkedinAvailability': 'Open to Work ativo · visível apenas para recrutadores', 'contact.discordGuide': 'Copie o usuário e abra Amigos → Adicionar amigo.', 'contact.discordOpen': 'Abrir Discord',
         'footer.tag': 'produto, operação e segurança no mesmo fluxo.',
       },
       en: {
-        'nav.about': 'about', 'nav.exp': 'experience', 'nav.projects': 'projects', 'nav.contact': 'contact',
+        'nav.about': 'about', 'nav.exp': 'experience', 'nav.projects': 'projects', 'nav.contact': 'contact', 'nav.mobileOpen': 'Open navigation', 'nav.mobileClose': 'Close navigation', 'nav.mobileLabel': 'Mobile navigation',
         'hero.kicker': 'personal portfolio — Curitiba, Brazil',
         'hero.role': 'Full Stack · DevSecOps · Information Security',
         'hero.pitch': 'I build and maintain web and mobile applications, integrate services and automate infrastructure with security embedded in the development lifecycle.',
-        'hero.cv': 'Download résumé', 'hero.projects': 'View projects',
+        'hero.cv': 'Download résumé', 'hero.projects': 'View projects', 'hero.terminalLabel': 'Animated terminal with profile summary',
         'about.title': 'About',
-        'about.p1': "I'm an Information Systems graduate from UTFPR. I work as a Full Stack developer on the university's institutional portal and as one of the maintainers of Nerdz, a cross-platform mobile and web application. I also volunteer as a coordinator at VESPAS, UTFPR's cybersecurity extension program and CTF team.",
+        'about.p1': "I'm an Information Systems graduate from UTFPR. I work as a Full Stack developer on the university's institutional portal and as one of the maintainers of Nerdz, a cross-platform mobile and web application. I also volunteer as one of the coordinators of the VESPAS Alerts Channel, co-maintain the initiative's website, and contribute to its CTF labs and challenges.",
         'about.p2': 'My experience connects development, operations and security: React/TypeScript and Python on the UTFPR Portal; React Native, Expo and NestJS on Nerdz; automation, CI/CD, cloud and vulnerability investigation in corporate environments.',
         'about.p3': 'I also use generative and agentic AI in software development and implemented a multi-agent orchestrator with the Anthropic API and MCP, while maintaining critical review of AI-assisted code.',
         'about.stat1': 'Cisco Networking Academy courses', 'about.stat2': 'VoIP devices migrated', 'about.stat3': 'Nerdz platforms',
-        'exp.title': 'Experience', 'exp.present': 'Jul 2026', 'exp.present3': 'present', 'exp.present4': 'present',
+        'exp.title': 'Experience', 'exp.employer': 'organization', 'exp.present': 'Jul 2026', 'exp.present3': 'present', 'exp.present4': 'present',
         'exp.utfsRole': 'Full Stack Developer',
+        'exp.utfsDate': 'Mar 2026', 'exp.utfDate': 'Sep 2025 — Jul 2026', 'exp.cmcDate': 'Mar 2025', 'exp.vwDate': 'May 2024 — Feb 2025', 'exp.vwtiDate': 'May 2023 — Apr 2024',
+        'exp.orgPrimary.utfpr': 'Open the UTFPR website', 'exp.orgPrimary.vespas': 'Open the VESPAS Linktree', 'exp.orgPrimary.cmc': 'Open the Curitiba City Council website', 'exp.orgPrimary.volkswagen': 'Open the Volkswagen Brazil website',
+        'exp.orgLinks.utfpr': 'Show links related to UTFPR', 'exp.orgLinks.vespas': 'Show links related to VESPAS', 'exp.orgLinks.cmc': 'Show links related to Curitiba City Council',
+        'exp.orgLinksHide.utfpr': 'Hide links related to UTFPR', 'exp.orgLinksHide.vespas': 'Hide links related to VESPAS', 'exp.orgLinksHide.cmc': 'Hide links related to Curitiba City Council',
+        'exp.org.utfpr.project': 'Portal project', 'exp.org.utfpr.team': 'ASport team', 'exp.org.vespas.site': 'VESPAS website', 'exp.org.vespas.github': 'VESPAS GitHub', 'exp.org.cmc.project': 'VoIP project', 'exp.org.cmc.github': 'CMC GitHub',
         'exp.utfs1': "Develop and maintain UTFPR's Portal with Plone 6 and Volto — integrating the React/Volto frontend with the Plone backend, aligned with the Gov.br Design System v4.0, including refactoring and modernizing legacy code.",
         'exp.utfs2': 'Investigate issues across application, services and environments; handle security fixes, technical documentation and CI/CD pipeline maintenance on GitLab.',
         'exp.utfs3': 'Collaborate with UI/UX, infrastructure and server teams to define, implement and release new solutions for the portal.',
+        'exp.cmcRole': 'DevOps Intern',
+        'exp.cmcEmployer': 'Curitiba City Council',
         'exp.cmc1': 'Architected and built Unix-based open-source solutions with Ansible, Vagrant and Molecule in a Linux environment using SSO and LDAP for service authentication.',
         'exp.cmc2': 'Fixed known vulnerabilities guided by the OWASP Top 10, following Conventional Commits (commitizen + commitlint).',
         'exp.cmc3': 'Milestone: automated migration of ~370 VoIP phones from static IP to DHCP using Python, Selenium and requests.',
         'exp.utfRole': 'Web | Frontend Developer',
         'exp.utf1': 'Built reusable components in React and Volto, implemented responsive and accessible layouts, and refactored legacy components and code.',
         'exp.utf2': 'Worked on fixing visual and functional inconsistencies, documenting components and collaborating with the UI/UX team to turn prototypes into production interfaces.',
-        'exp.vespasRole': 'Volunteer Coordinator',
-        'exp.ves1': 'I run the official cybersecurity alerts channel, covering critical vulnerabilities (CVSS 10.0) and information-security awareness.',
-        'exp.ves2': 'I compete with the CTF team and build labs/challenges for our own competitions. Current focus: OWASP Top 10:2025 and LLM Risks.',
+        'exp.vespasRole': 'Volunteer — Alerts, CTF & Website',
+        'exp.ves1': 'I am one of the coordinators of the cybersecurity Alerts Channel, covering critical vulnerabilities (CVSS 10.0) and information-security awareness.',
+        'exp.ves2': 'I contribute to the competitive CTF team and to developing labs and challenges for our own competitions. Current focus: OWASP Top 10:2025 and LLM Risks.',
+        'exp.ves3': 'I am also one of the maintainers of the VESPAS website.', 'exp.ves3Cta': 'Visit website',
         'exp.vwRole': 'Information Security Intern',
         'exp.vw1': 'Supported IAM processes with Active Directory, alongside vulnerability analysis, risk management and ISO 27001 audit follow-up.',
         'exp.vw2': 'Operated Axur (monitoring) and Prisma Cloud (AWS Security) in an SOC context, plus information-security awareness initiatives.',
+        'exp.vwtiRole': 'IT Intern',
+        'exp.vwti1': 'Supported IT operations at the FIS Competence Center, handling operational routines and technical support in a corporate environment — the foundation that led to the move into Information Security.',
+        'exp.vwtiTag1': 'IT Operations', 'exp.vwtiTag2': 'IT Infrastructure', 'exp.vwtiTag3': 'Technical Support',
         'proj.title': 'Featured projects',
-        'proj.tcc.kicker': 'academic research · final course project · UTFPR · 2026',
+        'proj.tcc.kicker': 'academic research · final paper · UTFPR · 2026',
         'proj.tcc.cta': 'Read research (PDF)',
         'proj.tcc.course': 'Access course', 'proj.tcc.login': 'Sophia-CT login',
         'proj.tcc.t': 'Education in Cybersecurity: a holistic approach to understanding multifaceted phishing and its implications in the digital ecosystem',
-        'proj.tcc.d': 'Mixed-methods applied research that developed and evaluated a cybersecurity education intervention on Portal Sophia-CT, combining a MOOC, historical narrative, practical activities and phishing simulations mapped with MITRE ATT&CK. In the pilot, the mean score increased from 7.54 to 9.85.',
+        'proj.tcc.d': 'For my final paper, I developed and evaluated a cybersecurity education intervention on Portal Sophia-CT. I combined a MOOC with historical storytelling, hands-on activities and phishing simulations mapped to MITRE ATT&CK. In the pilot, participants’ average score rose from 7.54 to 9.85.',
         'proj.tcc.tagAi': 'Generative AI', 'proj.tcc.tagMethods': 'Mixed methods', 'proj.tcc.scoreStart': '7.54', 'proj.tcc.scoreEnd': '9.85',
-        'proj.tcc.metric': 'mean pre-test to post-test', 'proj.tcc.pages': 'full paper', 'proj.tcc.date': '14 Jul 2026', 'proj.tcc.approved': 'approval date',
+        'proj.tcc.metric': 'mean pre-test to post-test', 'proj.tcc.pages': 'full paper', 'proj.tcc.date': '14 Jul 2026', 'proj.tcc.approved': 'approval date', 'proj.tcc.metaLabel': 'Research results and metadata',
         'proj.veripkg.t': 'VeriPkg — honest download verification',
         'proj.veripkg.d': 'Dependency-free Go CLI that verifies files downloaded outside the package manager against trusted sources. Every result reports its trust tier: OpenPGP signature, pinned hash, or unverified.',
         'proj.nerdz.t': 'Nerdz - Mobile and web application',
         'proj.nerdz.d': 'Maintenance and evolution of a group-study product for web, Android and iOS, with a React Native/Expo frontend, NestJS API, Prisma/PostgreSQL, Clerk authentication and distribution through AWS S3/CloudFront.',
+        'proj.nerdz.cta': 'View product',
         'proj.voip.t': 'VoIP migration at scale',
-        'proj.voip.d': 'Python bot that reconfigured ~370 VoIP phones at the Curitiba City Council, migrating from static IP to DHCP — Selenium for web automation plus requests with session cookies for the POST calls.',
+        'proj.voip.d': 'Python web-scraping bot that enabled the reconfiguration of ~370 VoIP phones at the Curitiba City Council, migrating them from static IP to DHCP — Selenium for web automation and requests with session cookies for POST methods.',
         'proj.voip.visibility': 'internal project · CMC',
         'proj.portal.t': 'UTFPR Portal restructuring',
         'proj.portal.d': "New Volto / Plone 6 components for the university's institutional portal, aligned with the Gov.br Design System 4.0 — deprecated-code migration, continuous documentation and GitLab CI/CD.",
+        'proj.portal.site': 'Visit the portal', 'proj.portal.team': 'Meet the team',
         'proj.vespas.t': 'VESPAS — CTF Labs & Alerts',
-        'proj.vespas.d': "Labs and challenges for VESPAS's own CTFs, plus coordination of the public security-alerts channel — from critical CVEs to practical protection tips for the community.",
-        'skills.title': 'Credentials', 'skills.g1': 'offensive security', 'skills.g2': 'defense & detection', 'skills.g4': 'development', 'skills.g5': 'AI-assisted development',
+        'proj.vespas.d': 'I contribute to VESPAS labs and challenges and am one of the Alerts Channel coordinators. For the 2026 CTF, I developed AInjection, a base project covering Prompt Injection, trust boundaries and the OWASP GenAI Top 10 in LLM applications.',
+        'proj.vespas.challenge': 'AInjection 2026',
+        'skills.title': 'Credentials', 'skills.g1': 'offensive security', 'skills.g2': 'defense & detection', 'skills.g4': 'development', 'skills.g5': 'Applied AI', 'skills.multiagent': 'Multi-agent Orchestration',
+        'skills.relation.title': 'correlation', 'skills.relation.direct': 'direct', 'skills.relation.workflow': 'workflow', 'skills.relation.context': 'context', 'skills.relation.ariaLabel': 'Strength of skill relationships',
         'credentials.technical': 'Technical credentials', 'credentials.cisco': 'Cisco Networking Academy', 'credentials.devSecurity': 'Development and security', 'credentials.professional': 'Professional & personal development',
-        'credentials.verified': 'verified', 'credentials.verify': 'Verify on Credly', 'credentials.view': 'View credential',
+        'credentials.verified': 'verified', 'credentials.verificationNote': 'external verification links', 'credentials.verify': 'Verify on Credly', 'credentials.view': 'View credential',
+        'credentials.adaTitle': 'Digital Back-End Track — Santander Tech+', 'credentials.cyberTitle': 'Cybersecurity Fundamentals', 'credentials.emotionalTitle': 'Emotional Intelligence 2.0', 'credentials.productivityTitle': 'Productivity and Time Management',
         'contact.kicker': "what's next?", 'contact.title': "Let's talk",
         'contact.sub': 'Open to Full Stack, DevSecOps and Information Security opportunities. If your team needs to connect product, operations and security, let’s talk.',
-        'contact.cta': 'Send e-mail',
+        'contact.cta': 'Send e-mail', 'contact.linkedinAvailability': 'Open to Work active · visible to recruiters only', 'contact.discordGuide': 'Copy the username, then open Friends → Add Friend.', 'contact.discordOpen': 'Open Discord',
         'footer.tag': 'product, operations and security in one workflow.',
       }
     };
@@ -1278,13 +1689,32 @@
         const key = el.getAttribute('data-i18n');
         if (I18N[lang][key] !== undefined) el.textContent = I18N[lang][key];
       });
+      document.querySelectorAll('[data-i18n-aria-label]').forEach(el => {
+        const baseKey = el.getAttribute('data-i18n-aria-label');
+        const key = baseKey === 'nav.mobileOpen' && el.getAttribute('aria-expanded') === 'true'
+          ? 'nav.mobileClose'
+          : baseKey;
+        if (I18N[lang][key] !== undefined) el.setAttribute('aria-label', I18N[lang][key]);
+      });
+      document.querySelectorAll('[data-i18n-alt]').forEach(el => {
+        const key = el.getAttribute('data-i18n-alt');
+        if (I18N[lang][key] !== undefined) el.setAttribute('alt', I18N[lang][key]);
+      });
       const cvLink = document.getElementById('cv-link');
       if (cvLink) cvLink.href = cvLink.dataset[lang === 'pt' ? 'cvPt' : 'cvEn'];
       document.getElementById('lang-pt').classList.toggle('active', lang === 'pt');
       document.getElementById('lang-en').classList.toggle('active', lang === 'en');
       document.getElementById('lang-pt').setAttribute('aria-pressed', lang === 'pt');
       document.getElementById('lang-en').setAttribute('aria-pressed', lang === 'en');
+      const discordCopy = document.querySelector('[data-discord-copy]');
+      if (discordCopy) {
+        const suffix = lang === 'pt' ? 'Pt' : 'En';
+        discordCopy.setAttribute('aria-label', discordCopy.dataset[`copyAria${suffix}`]);
+        discordCopy.querySelector('[data-copy-feedback]').textContent = discordCopy.dataset[`copyAction${suffix}`];
+        discordCopy.dataset.copyState = 'idle';
+      }
       try { localStorage.setItem('lang', lang); } catch (e) {}
+      window.dispatchEvent(new Event('portfolio:languagechange'));
     }
     document.getElementById('lang-pt').addEventListener('click', () => setLang('pt'));
     document.getElementById('lang-en').addEventListener('click', () => setLang('en'));
@@ -1293,19 +1723,241 @@
       if (saved === 'en') setLang('en');
     } catch (e) {}
 
+    const discordCopyButton = document.querySelector('[data-discord-copy]');
+    discordCopyButton?.addEventListener('click', async () => {
+      const value = discordCopyButton.dataset.copyValue;
+      try {
+        if (navigator.clipboard?.writeText) {
+          await navigator.clipboard.writeText(value);
+        } else {
+          const input = document.createElement('textarea');
+          input.value = value;
+          input.setAttribute('readonly', '');
+          input.style.position = 'fixed';
+          input.style.opacity = '0';
+          document.body.appendChild(input);
+          input.select();
+          document.execCommand('copy');
+          input.remove();
+        }
+        const suffix = document.documentElement.lang === 'pt-BR' ? 'Pt' : 'En';
+        const feedback = discordCopyButton.querySelector('[data-copy-feedback]');
+        discordCopyButton.dataset.copyState = 'copied';
+        feedback.textContent = discordCopyButton.dataset[`copySuccess${suffix}`];
+        window.setTimeout(() => {
+          feedback.textContent = discordCopyButton.dataset[`copyAction${suffix}`];
+          discordCopyButton.dataset.copyState = 'idle';
+        }, 1800);
+      } catch (error) {
+        discordCopyButton.dataset.copyState = 'error';
+      }
+    });
+
+    /* ═══════════ Organization link graphs ═══════════ */
+    const organizationNetworks = [...document.querySelectorAll('[data-org-network]')];
+    const organizationHover = window.matchMedia('(min-width: 1100px)');
+
+    const updateOrganizationToggleLabel = network => {
+      const toggle = network.querySelector('[data-org-toggle]');
+      if (!toggle) return;
+      const lang = document.documentElement.lang === 'pt-BR' ? 'pt' : 'en';
+      const prefix = network.dataset.open === 'true' ? 'exp.orgLinksHide' : 'exp.orgLinks';
+      const label = I18N[lang][`${prefix}.${network.dataset.orgNetwork}`];
+      if (label) toggle.setAttribute('aria-label', label);
+    };
+
+    const setOrganizationNetworkOpen = (network, open) => {
+      const branches = network.querySelector('[data-org-branches]');
+      const toggle = network.querySelector('[data-org-toggle]');
+      if (!branches || !toggle) return;
+      if (!open) network.dataset.pinned = 'false';
+      network.dataset.open = String(open);
+      toggle.setAttribute('aria-expanded', String(open));
+      branches.setAttribute('aria-hidden', String(!open));
+      branches.inert = !open;
+      updateOrganizationToggleLabel(network);
+    };
+
+    const closeOrganizationNetworks = except => {
+      organizationNetworks.forEach(network => {
+        if (network !== except) setOrganizationNetworkOpen(network, false);
+      });
+    };
+
+    organizationNetworks.forEach(network => {
+      const control = network.querySelector('.org-network-control');
+      const logoLink = network.querySelector('[data-org-primary-logo]');
+      const toggle = network.querySelector('[data-org-toggle]');
+      const branches = network.querySelector('[data-org-branches]');
+      if (!toggle || !branches) return;
+
+      setOrganizationNetworkOpen(network, false);
+      control?.addEventListener('pointerenter', () => {
+        if (!organizationHover.matches) return;
+        closeOrganizationNetworks(network);
+        network.dataset.pinned = 'false';
+        setOrganizationNetworkOpen(network, true);
+      });
+      network.addEventListener('pointerleave', () => {
+        if (organizationHover.matches && network.dataset.pinned !== 'true') {
+          setOrganizationNetworkOpen(network, false);
+        }
+      });
+      logoLink?.addEventListener('focus', () => {
+        closeOrganizationNetworks(network);
+        network.dataset.pinned = 'false';
+        setOrganizationNetworkOpen(network, true);
+      });
+      network.addEventListener('focusout', () => {
+        window.requestAnimationFrame(() => {
+          if (!network.contains(document.activeElement)) setOrganizationNetworkOpen(network, false);
+        });
+      });
+      toggle.addEventListener('click', event => {
+        event.stopPropagation();
+        const willOpen = network.dataset.pinned !== 'true';
+        closeOrganizationNetworks(network);
+        network.dataset.pinned = String(willOpen);
+        setOrganizationNetworkOpen(network, willOpen);
+      });
+      branches.querySelectorAll('a').forEach(link => {
+        link.addEventListener('click', () => {
+          setOrganizationNetworkOpen(network, false);
+          if (link.getAttribute('href')?.startsWith('#')) {
+            const target = document.querySelector(link.getAttribute('href'));
+            window.setTimeout(() => target?.focus({ preventScroll: true }), 350);
+          }
+        });
+      });
+    });
+
+    document.addEventListener('pointerdown', event => {
+      if (!event.target.closest('[data-org-network]')) closeOrganizationNetworks();
+    });
+    document.addEventListener('keydown', event => {
+      if (event.key !== 'Escape') return;
+      const activeNetwork = organizationNetworks.find(network => network.dataset.open === 'true');
+      if (!activeNetwork) return;
+      setOrganizationNetworkOpen(activeNetwork, false);
+      activeNetwork.querySelector('[data-org-toggle]')?.focus();
+    });
+    window.addEventListener('portfolio:languagechange', () => {
+      organizationNetworks.forEach(updateOrganizationToggleLabel);
+    });
+
+    /* ═══════════ Documentation links for experience, project and skill chips ═══════════ */
+    const CHIP_LINKS = {
+      'React / Volto': 'https://6.docs.plone.org/volto/',
+      'Volto': 'https://6.docs.plone.org/volto/',
+      'Plone 6': 'https://6.docs.plone.org/',
+      'Python': 'https://docs.python.org/3/',
+      'GitLab CI/CD': 'https://docs.gitlab.com/ci/',
+      'GitLab': 'https://docs.gitlab.com/',
+      'Gov.br DS': 'https://www.gov.br/ds/home',
+      'Ansible': 'https://docs.ansible.com/',
+      'Vagrant': 'https://developer.hashicorp.com/vagrant/docs',
+      'Molecule': 'https://ansible.readthedocs.io/projects/molecule/',
+      'OWASP': 'https://owasp.org/',
+      'CTF': 'https://en.wikipedia.org/wiki/Capture_the_flag_(cybersecurity)',
+      'MITRE ATT&CK': 'https://attack.mitre.org/',
+      'OWASP LLM': 'https://genai.owasp.org/llm-top-10/',
+      'Threat Intel': 'https://en.wikipedia.org/wiki/Cyber_threat_intelligence',
+      'SOC': 'https://en.wikipedia.org/wiki/Information_security_operations_center',
+      'ISO 27001': 'https://www.iso.org/standard/27001',
+      'IAM / Active Directory': 'https://learn.microsoft.com/en-us/windows-server/identity/ad-ds/get-started/virtual-dc/active-directory-domain-services-overview',
+      'Axur': 'https://www.axur.com/',
+      'Prisma Cloud': 'https://docs.prismacloud.io/',
+      'Operações de TI': 'https://en.wikipedia.org/wiki/IT_operations',
+      'IT Operations': 'https://en.wikipedia.org/wiki/IT_operations',
+      'Infraestrutura de TI': 'https://en.wikipedia.org/wiki/IT_infrastructure',
+      'IT Infrastructure': 'https://en.wikipedia.org/wiki/IT_infrastructure',
+      'Suporte técnico': 'https://en.wikipedia.org/wiki/Technical_support',
+      'Technical Support': 'https://en.wikipedia.org/wiki/Technical_support',
+      'Phishing': 'https://en.wikipedia.org/wiki/Phishing',
+      'MOOC': 'https://en.wikipedia.org/wiki/Massive_open_online_course',
+      'IA Generativa': 'https://en.wikipedia.org/wiki/Generative_artificial_intelligence',
+      'Generative AI': 'https://en.wikipedia.org/wiki/Generative_artificial_intelligence',
+      'Métodos mistos': 'https://en.wikipedia.org/wiki/Multimethodology',
+      'Mixed methods': 'https://en.wikipedia.org/wiki/Multimethodology',
+      'Go': 'https://go.dev/doc/',
+      'Supply Chain Security': 'https://csrc.nist.gov/projects/cyber-supply-chain-risk-management',
+      'OpenPGP': 'https://www.rfc-editor.org/rfc/rfc9580.html',
+      'SHA-256': 'https://csrc.nist.gov/pubs/fips/180-4/upd1/final',
+      'React Native': 'https://reactnative.dev/docs/getting-started',
+      'Expo': 'https://docs.expo.dev/',
+      'NestJS': 'https://docs.nestjs.com/',
+      'PostgreSQL': 'https://www.postgresql.org/docs/',
+      'Selenium': 'https://www.selenium.dev/documentation/',
+      'Web Scraping': 'https://en.wikipedia.org/wiki/Web_scraping',
+      'GitHub': 'https://docs.github.com/',
+      'ClickUp': 'https://help.clickup.com/hc/en-us',
+      'React': 'https://react.dev/',
+      'Pentest': 'https://en.wikipedia.org/wiki/Penetration_test',
+      'Prompt Injection': 'https://genai.owasp.org/llmrisk/llm01-prompt-injection/',
+      'OWASP Top 10': 'https://owasp.org/www-project-top-ten/',
+      'OWASP GenAI Top 10': 'https://genai.owasp.org/llm-top-10/',
+      'Trust Boundaries': 'https://en.wikipedia.org/wiki/Trust_boundary',
+      'Kali Linux': 'https://www.kali.org/docs/',
+      'Nmap': 'https://nmap.org/book/man.html',
+      'Burp Suite': 'https://portswigger.net/burp/documentation',
+      'Metasploit': 'https://docs.rapid7.com/metasploit/',
+      'Wireshark': 'https://www.wireshark.org/docs/',
+      'Nessus': 'https://docs.tenable.com/nessus/',
+      'CVSS': 'https://www.first.org/cvss/',
+      'Active Directory': 'https://learn.microsoft.com/en-us/windows-server/identity/ad-ds/get-started/virtual-dc/active-directory-domain-services-overview',
+      'IAM / LDAP': 'https://en.wikipedia.org/wiki/Identity_management',
+      'Terraform': 'https://developer.hashicorp.com/terraform/docs',
+      'AWS': 'https://docs.aws.amazon.com/',
+      'S3 / CloudFront': 'https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/GettingStarted.SimpleDistribution.html',
+      'Docker': 'https://docs.docker.com/',
+      'Git': 'https://git-scm.com/doc',
+      'JavaScript': 'https://developer.mozilla.org/en-US/docs/Web/JavaScript',
+      'TypeScript': 'https://www.typescriptlang.org/docs/',
+      'React Native / Expo': 'https://docs.expo.dev/',
+      'Prisma / PostgreSQL': 'https://www.prisma.io/docs/',
+      'APIs REST': 'https://en.wikipedia.org/wiki/REST',
+      'Anthropic API': 'https://docs.anthropic.com/en/api/overview',
+      'MCP': 'https://modelcontextprotocol.io/docs/getting-started/intro',
+      'LLMs': 'https://en.wikipedia.org/wiki/Large_language_model',
+      'Tool Calling': 'https://docs.anthropic.com/en/docs/agents-and-tools/tool-use/overview',
+      'Orquestração Multiagente': 'https://en.wikipedia.org/wiki/Multi-agent_system',
+      'Multi-agent Orchestration': 'https://en.wikipedia.org/wiki/Multi-agent_system',
+    };
+
+    document.querySelectorAll('.chip').forEach(chip => {
+      const label = chip.textContent.trim();
+      const href = chip.dataset.chipHref || CHIP_LINKS[label];
+      if (!href || chip.matches('a')) return;
+      const link = document.createElement('a');
+      [...chip.attributes].forEach(attribute => link.setAttribute(attribute.name, attribute.value));
+      link.href = href;
+      link.target = '_blank';
+      link.rel = 'noopener noreferrer';
+      link.dataset.chipLink = '';
+      link.title = `${label} ↗`;
+      while (chip.firstChild) link.appendChild(chip.firstChild);
+      chip.replaceWith(link);
+    });
+
     /* ═══════════ Mobile navigation ═══════════ */
     const mobileMenuButton = document.getElementById('mobile-menu-button');
     const mobileMenu = document.getElementById('mobile-menu');
+    const setMobileMenuLabel = isOpen => {
+      const lang = document.documentElement.lang === 'pt-BR' ? 'pt' : 'en';
+      mobileMenuButton.setAttribute('aria-label', I18N[lang][isOpen ? 'nav.mobileClose' : 'nav.mobileOpen']);
+    };
     const closeMobileMenu = () => {
       mobileMenu.hidden = true;
       mobileMenuButton.setAttribute('aria-expanded', 'false');
       mobileMenuButton.querySelector('[aria-hidden="true"]').textContent = '☰';
+      setMobileMenuLabel(false);
     };
     const toggleMobileMenu = () => {
       const willOpen = mobileMenu.hidden;
       mobileMenu.hidden = !willOpen;
       mobileMenuButton.setAttribute('aria-expanded', String(willOpen));
       mobileMenuButton.querySelector('[aria-hidden="true"]').textContent = willOpen ? '×' : '☰';
+      setMobileMenuLabel(willOpen);
     };
     mobileMenuButton.addEventListener('click', toggleMobileMenu);
     mobileMenu.querySelectorAll('[data-mobile-link]').forEach(link => link.addEventListener('click', closeMobileMenu));
@@ -1322,8 +1974,9 @@
       { prompt: false, text: 'th4l3s_s4l4t4' },
       { prompt: false, text: '' },
       { prompt: true,  text: 'cat mission.txt' },
-      { prompt: false, text: 'Build products. Automate delivery.' },
-      { prompt: false, text: 'Secure systems.' },
+      { prompt: false, text: 'Build resilient products.' },
+      { prompt: false, text: 'Automate the path to production.' },
+      { prompt: false, text: 'Turn attack insight into defense.' },
       { prompt: false, text: '' },
       { prompt: true,  text: './status --check' },
       { prompt: false, text: '[ ONLINE ] fullstack_devsecops: active', status: true },
@@ -1411,16 +2064,73 @@
     const FINE = window.matchMedia('(pointer: fine)').matches;
 
     const GROUP_IDS = ['1', '2', '3', '4', '5'];
+    const AI_SATELLITE_IDS = ['anthropic-api', 'mcp', 'tool-calling', 'multiagent'];
     const SKILL_RELATIONS = [
-      ['nmap', 'nessus'],
-      ['burp-suite', 'owasp-top-10'],
-      ['prisma-cloud', 'aws'],
-      ['active-directory', 'iam-ldap'],
-      ['gitlab-ci-cd', 'docker'],
-      ['owasp-top-10', 'apis-rest'],
-      ['anthropic-api', 'mcp'],
-      ['mcp', 'tool-calling'],
-    ];
+      // Strong: direct dependency, native pairing or core tool relationship.
+      ['kali-linux', 'nmap', 'strong'],
+      ['kali-linux', 'burp-suite', 'strong'],
+      ['kali-linux', 'metasploit', 'strong'],
+      ['kali-linux', 'wireshark', 'strong'],
+      ['burp-suite', 'owasp-top-10', 'strong'],
+      ['nessus', 'cvss', 'strong'],
+      ['prisma-cloud', 'aws', 'strong'],
+      ['active-directory', 'iam-ldap', 'strong'],
+      ['ansible', 'molecule', 'strong'],
+      ['terraform', 'aws', 'strong'],
+      ['aws', 's3-cloudfront', 'strong'],
+      ['docker', 'gitlab-ci-cd', 'strong'],
+      ['git', 'gitlab-ci-cd', 'strong'],
+      ['javascript', 'typescript', 'strong'],
+      ['typescript', 'react', 'strong'],
+      ['typescript', 'nestjs', 'strong'],
+      ['react', 'react-native-expo', 'strong'],
+      ['nestjs', 'prisma-postgresql', 'strong'],
+      ['nestjs', 'apis-rest', 'strong'],
+      ['llms', 'anthropic-api', 'strong'],
+      ['llms', 'tool-calling', 'strong'],
+      ['llms', 'multiagent', 'strong'],
+      ['anthropic-api', 'tool-calling', 'strong'],
+      ['mcp', 'tool-calling', 'strong'],
+      ['mcp', 'multiagent', 'strong'],
+      ['tool-calling', 'multiagent', 'strong'],
+
+      // Medium: frequent workflow or implementation relationship.
+      ['nmap', 'nessus', 'medium'],
+      ['nmap', 'metasploit', 'medium'],
+      ['burp-suite', 'apis-rest', 'medium'],
+      ['metasploit', 'mitre-attack', 'medium'],
+      ['axur', 'mitre-attack', 'medium'],
+      ['owasp-top-10', 'apis-rest', 'medium'],
+      ['owasp-top-10', 'nestjs', 'medium'],
+      ['owasp-top-10', 'cvss', 'medium'],
+      ['prisma-cloud', 'docker', 'medium'],
+      ['prisma-cloud', 'terraform', 'medium'],
+      ['active-directory', 'mitre-attack', 'medium'],
+      ['iso-27001', 'iam-ldap', 'medium'],
+      ['vagrant', 'ansible', 'medium'],
+      ['vagrant', 'molecule', 'medium'],
+      ['ansible', 'aws', 'medium'],
+      ['terraform', 'gitlab-ci-cd', 'medium'],
+      ['docker', 'nestjs', 'medium'],
+      ['react', 's3-cloudfront', 'medium'],
+      ['python', 'ansible', 'medium'],
+      ['python', 'llms', 'medium'],
+      ['go', 'apis-rest', 'medium'],
+      ['typescript', 'react-native-expo', 'medium'],
+      ['typescript', 'anthropic-api', 'medium'],
+      ['anthropic-api', 'mcp', 'medium'],
+
+      // Weak: supporting or contextual overlap.
+      ['wireshark', 'apis-rest', 'weak'],
+      ['nessus', 'iso-27001', 'weak'],
+      ['mitre-attack', 'cvss', 'weak'],
+      ['iso-27001', 'owasp-top-10', 'weak'],
+      ['axur', 'cvss', 'weak'],
+      ['ansible', 'docker', 'weak'],
+      ['python', 'apis-rest', 'weak'],
+      ['go', 'docker', 'weak'],
+      ['apis-rest', 'anthropic-api', 'weak'],
+    ].map(([from, to, strength]) => ({ from, to, strength }));
 
     /* ═══════ 1. Ambient hero canvas — drifting node field ═══════ */
     const canvas = document.getElementById('recon-graph');
@@ -1541,6 +2251,8 @@
       const nodeEls = {};
       const relationEls = [];
       const skillEls = {};
+      const aiSatelliteEls = {};
+      const aiSatelliteEdgeEls = {};
 
       GROUP_IDS.forEach(id => {
         if (id !== '5') {
@@ -1559,15 +2271,33 @@
       edgesG.appendChild(spine);
       edgeEls['5'] = [spine];
 
-      SKILL_RELATIONS.forEach(([from, to]) => {
+      SKILL_RELATIONS.forEach(({ from, to, strength }) => {
         const edge = document.createElementNS(SVGNS, 'path');
         edge.setAttribute('class', 'relation-edge');
         edge.setAttribute('data-relation', `${from}:${to}`);
+        edge.setAttribute('data-strength', strength);
         edge.setAttribute('vector-effect', 'non-scaling-stroke');
         relationsG.appendChild(edge);
-        relationEls.push({ from, to, edge });
+        relationEls.push({ from, to, strength, edge });
         skillEls[from] = document.querySelector(`[data-skill="${from}"]`);
         skillEls[to] = document.querySelector(`[data-skill="${to}"]`);
+      });
+
+      AI_SATELLITE_IDS.forEach(id => {
+        const edge = document.createElementNS(SVGNS, 'path');
+        edge.setAttribute('class', 'net-ai-edge');
+        edge.setAttribute('data-ai-edge', id);
+        edge.setAttribute('vector-effect', 'non-scaling-stroke');
+        edgesG.appendChild(edge);
+        aiSatelliteEdgeEls[id] = edge;
+
+        const node = document.createElementNS(SVGNS, 'circle');
+        node.setAttribute('r', '2.4');
+        node.setAttribute('class', 'net-ai-satellite');
+        node.setAttribute('data-ai-satellite', id);
+        node.setAttribute('vector-effect', 'non-scaling-stroke');
+        nodesG.appendChild(node);
+        aiSatelliteEls[id] = node;
       });
 
       GROUP_IDS.forEach(id => {
@@ -1583,7 +2313,10 @@
       function layoutBackbone() {
         const netRect = net.getBoundingClientRect();
         if (!netRect.width || !netRect.height) return;
-        const centerX = netRect.width / 2;
+        const aiLabelRect = document.querySelector('[data-skill-group="ai"] [data-i18n="skills.g5"]')?.getBoundingClientRect();
+        const backboneX = aiLabelRect
+          ? aiLabelRect.left + aiLabelRect.width / 2 - netRect.left
+          : netRect.width / 2;
         const hubs = {};
         net.setAttribute('viewBox', `0 0 ${netRect.width} ${netRect.height}`);
 
@@ -1591,14 +2324,14 @@
           const id = block.getAttribute('data-skill-hub');
           const headingRect = block.querySelector('h3').getBoundingClientRect();
           if (id === '5') {
-            hubs[id] = { x: centerX, y: headingRect.top - netRect.top - 13 };
+            hubs[id] = { x: backboneX, y: headingRect.top - netRect.top - 13 };
           } else {
             const leftColumn = id === '1' || id === '3';
             const preferredX = leftColumn
               ? headingRect.right - netRect.left + 16
-              : headingRect.left - netRect.left - 16;
+              : headingRect.left - netRect.left - 28;
             hubs[id] = {
-              x: leftColumn ? Math.min(centerX - 18, preferredX) : Math.max(centerX + 18, preferredX),
+              x: leftColumn ? Math.min(backboneX - 18, preferredX) : preferredX,
               y: headingRect.top - netRect.top + headingRect.height / 2,
             };
           }
@@ -1609,12 +2342,29 @@
           if (!hub) return;
           nodeEls[id].setAttribute('cx', hub.x);
           nodeEls[id].setAttribute('cy', hub.y);
-          if (id !== '5') edgeEls[id][0].setAttribute('d', `M ${hub.x} ${hub.y} H ${centerX}`);
+          if (id !== '5') edgeEls[id][0].setAttribute('d', `M ${hub.x} ${hub.y} H ${backboneX}`);
         });
 
         if (hubs['1'] && hubs['2'] && hubs['5']) {
           const topY = Math.min(hubs['1'].y, hubs['2'].y);
-          spine.setAttribute('d', `M ${centerX} ${topY} V ${hubs['5'].y}`);
+          spine.setAttribute('d', `M ${backboneX} ${topY} V ${hubs['5'].y}`);
+        }
+        if (hubs['5']) {
+          const offsets = {
+            'anthropic-api': { x: -38, y: -8 },
+            'mcp': { x: -15, y: -25 },
+            'tool-calling': { x: 15, y: -25 },
+            'multiagent': { x: 38, y: -8 },
+          };
+          AI_SATELLITE_IDS.forEach(id => {
+            const point = {
+              x: hubs['5'].x + offsets[id].x,
+              y: hubs['5'].y + offsets[id].y,
+            };
+            aiSatelliteEls[id].setAttribute('cx', point.x);
+            aiSatelliteEls[id].setAttribute('cy', point.y);
+            aiSatelliteEdgeEls[id].setAttribute('d', `M ${hubs['5'].x} ${hubs['5'].y} L ${point.x} ${point.y}`);
+          });
         }
         layoutRelations(netRect);
       }
@@ -1664,18 +2414,30 @@
       }
 
       function clearSkillRelations() {
-        Object.values(skillEls).forEach(tag => tag?.classList.remove('skill-active', 'skill-related'));
+        net.classList.remove('relations-active');
+        Object.values(skillEls).forEach(tag => {
+          if (!tag) return;
+          tag.classList.remove('skill-active', 'skill-related');
+          delete tag.dataset.relatedStrength;
+        });
         relationEls.forEach(({ edge }) => edge.classList.remove('hot'));
+        Object.values(aiSatelliteEls).forEach(node => node.classList.remove('hot'));
+        Object.values(aiSatelliteEdgeEls).forEach(edge => edge.classList.remove('hot'));
       }
 
       function showSkillRelations(skill) {
         clearSkillRelations();
+        net.classList.add('relations-active');
         skillEls[skill]?.classList.add('skill-active');
-        relationEls.forEach(({ from, to, edge }) => {
+        relationEls.forEach(({ from, to, strength, edge }) => {
           if (from !== skill && to !== skill) return;
           edge.classList.add('hot');
-          skillEls[from === skill ? to : from]?.classList.add('skill-related');
+          const related = skillEls[from === skill ? to : from];
+          related?.classList.add('skill-related');
+          if (related) related.dataset.relatedStrength = strength;
         });
+        aiSatelliteEls[skill]?.classList.add('hot');
+        aiSatelliteEdgeEls[skill]?.classList.add('hot');
       }
 
       Object.entries(skillEls).forEach(([skill, tag]) => {
@@ -1698,6 +2460,7 @@
         block.addEventListener('transitionend', layoutBackbone);
       });
       window.addEventListener('resize', layoutBackbone, { passive: true });
+      window.addEventListener('portfolio:languagechange', layoutBackbone);
       if ('ResizeObserver' in window) {
         const observer = new ResizeObserver(layoutBackbone);
         blocks.forEach(block => observer.observe(block.querySelector('h3')));
@@ -1720,14 +2483,15 @@
         const pct = intro.querySelector('.scan-status');
         const label = intro.querySelector('.scan-label');
         const STEPS = ['mapping surface…', 'enumerating skills…', 'linking nodes…', 'access granted'];
-        let p = 0;
+        const SCAN_DURATION = 2400;
+        const startedAt = performance.now();
         const finish = () => {
           intro.classList.add('done');
           try { sessionStorage.setItem('recon-seen', '1'); } catch (e) {}
           setTimeout(() => intro.remove(), 650);
         };
         const tick = setInterval(() => {
-          p = Math.min(100, p + 6 + Math.random() * 9);
+          const p = Math.min(100, ((performance.now() - startedAt) / SCAN_DURATION) * 100);
           if (fill) fill.style.right = (100 - p) + '%';
           if (pct) pct.textContent = Math.round(p) + '%';
           if (label) label.textContent = STEPS[Math.min(STEPS.length - 1, Math.floor(p / 26))];
@@ -1781,7 +2545,7 @@
                 { title: 'Full Stack Developer', org: 'UTFPR', period: 'Mar 2026 – present', stack: ['React', 'Volto', 'Plone 6', 'Python', 'GitLab CI/CD'] },
                 { title: 'DevOps Intern', org: 'Câmara Municipal de Curitiba', period: 'Mar 2025 – Jul 2026', stack: ['Ansible', 'Vagrant', 'Molecule', 'Python', 'Selenium', 'Linux', 'SSO', 'LDAP'] },
                 { title: 'Web | Frontend Developer', org: 'UTFPR', period: 'Sep 2025 – Jul 2026', stack: ['React', 'Volto', 'Plone 6', 'GitLab CI/CD'] },
-                { title: 'Volunteer Coordinator', org: 'VESPAS / UTFPR', period: '2025 – present', focus: 'Cybersecurity, CTF competitions, OWASP Top 10:2025, LLM Risks' },
+                { title: 'Volunteer — Alerts, CTF & Website', org: 'VESPAS / UTFPR', period: '2025 – present', focus: 'One of the Alerts Channel coordinators; VESPAS website co-maintainer; contributor to CTF labs and challenges' },
                 { title: 'Information Security Intern', org: 'Volkswagen do Brasil', period: 'May 2024 – Feb 2025', stack: ['SOC', 'ISO 27001', 'Active Directory', 'Axur', 'Prisma Cloud'] },
               ],
             }),
@@ -1792,11 +2556,11 @@
             inputSchema: { type: 'object', properties: {} },
             execute: async () => ({
               projects: [
-                { name: 'Education in Cybersecurity (TCC)', type: 'Academic research', year: 2026, description: 'Mixed-methods research developing a cybersecurity education intervention combining MOOC, phishing simulations (MITRE ATT&CK). Pilot: mean score 7.54 → 9.85.' },
+                { name: 'Education in Cybersecurity (final paper)', type: 'Academic research', year: 2026, description: 'For my final paper, I developed and evaluated a cybersecurity education intervention combining a MOOC, hands-on activities and MITRE ATT&CK-mapped phishing simulations. Pilot: average score 7.54 → 9.85.' },
                 { name: 'Nerdz', type: 'Mobile & web app', stack: ['React Native', 'Expo', 'NestJS', 'PostgreSQL', 'Clerk', 'AWS'], description: 'Cross-platform group-study app for web, Android and iOS.' },
-                { name: 'VoIP migration at scale', type: 'Automation', stack: ['Python', 'Selenium'], description: '~370 VoIP phones migrated from static IP to DHCP at Curitiba City Council.' },
+                { name: 'VoIP migration at scale', type: 'Automation', stack: ['Python', 'Selenium', 'requests'], description: 'Python web-scraping bot that enabled ~370 VoIP phones to be migrated from static IP to DHCP at Curitiba City Council.' },
                 { name: 'UTFPR Portal restructuring', type: 'Web development', stack: ['Volto', 'Plone 6', 'GitLab CI/CD'], description: "New components for UTFPR's institutional portal aligned with Gov.br Design System 4.0." },
-                { name: 'VESPAS — CTF Labs & Alerts', type: 'Security', description: 'CTF labs and challenges, plus public cybersecurity alerts channel.' },
+                { name: 'VESPAS — CTF Labs & Alerts', type: 'Security', description: 'Contributes to CTF labs and challenges, co-coordinates the public cybersecurity Alerts Channel, and co-maintains the VESPAS website.' },
               ],
             }),
           },
