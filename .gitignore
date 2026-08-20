@@ -4,3 +4,7 @@ public/
 # Separate repo: GitHub profile README clone (github.com/Taresu/Taresu),
 # pushed independently to its own remote — never commit it into this repo.
 Taresu/
+
+# Local-only assets — kept out of the repo and the published site.
+assets/curriculo-thales-salata.pdf
+assets/resume-thales-salata-en.pdf
