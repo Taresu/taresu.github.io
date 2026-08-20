@@ -134,9 +134,22 @@
     .chip {
       border: 1px solid #1E2A3A;
       background: rgba(17,24,39,.6);
-      transition: border-color .25s, color .25s;
+      transition: border-color .25s, color .25s, background .25s, box-shadow .25s;
     }
     .chip:hover { border-color: rgba(124,58,237,.6); color: #C4B5FD; }
+    .chip[data-skill] { position: relative; z-index: 1; cursor: crosshair; outline: none; }
+    .chip[data-skill]:focus-visible { outline: 2px solid #C4B5FD; outline-offset: 3px; }
+    .chip.skill-active {
+      border-color: rgba(0,255,135,.85);
+      background: rgba(0,255,135,.08);
+      color: #00FF87;
+      box-shadow: 0 0 0 1px rgba(0,255,135,.12), 0 0 16px rgba(0,255,135,.12);
+    }
+    .chip.skill-related {
+      border-color: rgba(0,255,135,.5);
+      color: #B8FFD8;
+      box-shadow: 0 0 12px rgba(0,255,135,.08);
+    }
 
     /* ── Shared line icons ── */
     .line-icon {
@@ -195,7 +208,7 @@
        ATTACK-GRAPH / LIVE RECON MAP — signature visual system
        Nodes/edges live on their OWN layers (canvas + .netgraph svg).
        They never use .line-icon or #icon-* — keeps verify.mjs icon
-       counts (18 instances / 16 symbols) intact.
+       counts (19 instances / 16 symbols) intact.
        ══════════════════════════════════════════════════════════ */
 
     /* Ambient node-field canvas behind the hero */
@@ -254,30 +267,16 @@
     }
     @keyframes scanSweep { from { transform: translateY(-45vh); } to { transform: translateY(115vh); } }
 
-    /* Reticle cursor accent (additive; native cursor stays visible) */
-    #reticle {
-      position: fixed;
-      top: 0; left: 0;
-      width: 34px; height: 34px;
-      margin: -17px 0 0 -17px;
-      z-index: 80;
-      pointer-events: none;
-      opacity: 0;
-      transition: opacity .3s ease, transform .12s ease-out;
-      mix-blend-mode: screen;
+    /* Skills constellation: category glows + a quiet shared backbone. */
+    .skills-atmosphere {
+      background-color: rgba(14,20,32,.4);
+      background-image:
+        radial-gradient(circle at 17% 28%, rgba(255,77,109,.035), transparent 24%),
+        radial-gradient(circle at 83% 28%, rgba(0,255,135,.03), transparent 24%),
+        radial-gradient(circle at 17% 62%, rgba(196,181,253,.035), transparent 24%),
+        radial-gradient(circle at 83% 62%, rgba(251,191,36,.025), transparent 24%),
+        radial-gradient(circle at 50% 82%, rgba(124,58,237,.04), transparent 25%);
     }
-    #reticle::before, #reticle::after {
-      content: ''; position: absolute; background: rgba(0,255,135,.55);
-    }
-    #reticle::before { left: 50%; top: 0; width: 1px; height: 100%; transform: translateX(-.5px); }
-    #reticle::after  { top: 50%; left: 0; height: 1px; width: 100%; transform: translateY(-.5px); }
-    #reticle .ring {
-      position: absolute; inset: 8px; border: 1px solid rgba(124,58,237,.7);
-      border-radius: 50%; box-shadow: 0 0 10px rgba(124,58,237,.5);
-    }
-    body.reticle-on #reticle { opacity: .8; }
-
-    /* Skills constellation (decorative SVG behind the skills grid) */
     .netgraph {
       position: absolute; inset: 0;
       width: 100%; height: 100%;
@@ -286,20 +285,51 @@
       overflow: visible;
     }
     .netgraph .net-edge {
-      stroke: rgba(124,58,237,.28);
+      fill: none;
+      stroke: rgba(124,58,237,.22);
       stroke-width: 1;
-      stroke-dasharray: 3 5;
+      stroke-dasharray: 2 7;
+      stroke-linecap: round;
       transition: stroke .3s, stroke-opacity .3s;
     }
+    .netgraph .net-edge[data-edge="spine"] { stroke: rgba(124,58,237,.3); }
     .netgraph .net-edge.hot { stroke: rgba(0,255,135,.75); stroke-dasharray: none; }
+    .netgraph .relation-edge {
+      fill: none;
+      stroke: rgba(0,255,135,.9);
+      stroke-width: 1.25;
+      stroke-dasharray: 4 7;
+      stroke-linecap: round;
+      opacity: 0;
+      filter: drop-shadow(0 0 4px rgba(0,255,135,.45));
+      transition: opacity .2s ease;
+    }
+    .netgraph .relation-edge.hot { opacity: .88; animation: relationFlow 1.1s linear infinite; }
+    @keyframes relationFlow { to { stroke-dashoffset: -11; } }
     .netgraph .net-node {
       fill: #0A0E14;
       stroke: #7C3AED;
-      stroke-width: 1.5;
+      stroke-width: 1.25;
       transition: stroke .3s, r .3s, filter .3s;
     }
     .netgraph .net-node.hot { stroke: #00FF87; filter: drop-shadow(0 0 6px rgba(0,255,135,.7)); }
     .netgraph .net-pulse { fill: none; stroke: rgba(124,58,237,.4); transform-origin: center; }
+    .netgraph .net-ai-edge {
+      fill: none;
+      stroke: rgba(124,58,237,.38);
+      stroke-width: 1;
+      stroke-dasharray: 1 4;
+      stroke-linecap: round;
+      transition: stroke .2s, filter .2s;
+    }
+    .netgraph .net-ai-satellite {
+      fill: #0A0E14;
+      stroke: #C4B5FD;
+      stroke-width: 1;
+      transition: stroke .2s, fill .2s, filter .2s;
+    }
+    .netgraph .net-ai-edge.hot { stroke: #00FF87; filter: drop-shadow(0 0 4px rgba(0,255,135,.55)); }
+    .netgraph .net-ai-satellite.hot { fill: rgba(0,255,135,.12); stroke: #00FF87; filter: drop-shadow(0 0 5px rgba(0,255,135,.7)); }
     .skill-hub { cursor: default; }
 
     /* Node badge on section headers + timeline: subtle live pulse */
@@ -325,12 +355,12 @@
       .line-icon { transition: none; }
       .icon-label:hover .line-icon { transform: none; }
       [data-project]:hover .line-icon--project { transform: none; filter: none; }
-      /* Recon-map motion off: static graph, no scan, no reticle motion */
+      /* Recon-map motion off: static graph and no scan intro. */
       #scan-intro, #scan-intro .scan-sweep { animation: none !important; }
       #scan-intro { display: none !important; }
       .node-badge::after, .tl-item::after { animation: none !important; }
-      #reticle { display: none !important; }
       .netgraph .net-edge { stroke-dasharray: none; }
+      .netgraph .relation-edge.hot { animation: none; stroke-dasharray: none; }
     }
   .employer-logo {
     position: absolute;
@@ -345,6 +375,24 @@
   }
   .employer-logo[data-logo-bg="light"] { background: #fff; }
   .employer-logo[data-logo-bg="dark"]  { background: #0f1523; border: 1px solid #2d3550; }
+  @media (max-width: 639px) {
+    #experiencia .tl-item {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 52px;
+      column-gap: 16px;
+      align-items: start;
+    }
+    #experiencia .tl-item > .employer-logo {
+      position: static;
+      grid-column: 2;
+      grid-row: 1 / 3;
+      justify-self: end;
+    }
+    #experiencia .tl-item > p:first-of-type { grid-column: 1; grid-row: 1; }
+    #experiencia .tl-item > h3 { grid-column: 1; grid-row: 2; }
+    #experiencia .tl-item > ul,
+    #experiencia .tl-item > div { grid-column: 1 / -1; }
+  }
   </style>
 </head>
 <body class="noise antialiased">
@@ -357,9 +405,6 @@
       <div><span class="scan-label">mapping surface…</span> <span class="scan-status">0%</span></div>
     </div>
   </div>
-  <!-- Reticle cursor accent -->
-  <div id="reticle" aria-hidden="true"><span class="ring"></span></div>
-
   <svg id="line-icon-sprite" aria-hidden="true" width="0" height="0" class="absolute pointer-events-none" style="position:absolute;width:0;height:0;overflow:hidden">
     <!-- symbols contain the unmodified child geometry from the pinned Lucide files -->
     <symbol id="icon-crosshair" viewBox="0 0 24 24">
@@ -644,7 +689,7 @@
         <article class="tl-item reveal pl-8">
           <img src="assets/camara-curitiba.png" alt="Câmara Municipal de Curitiba" class="employer-logo" data-logo-bg="dark">
           <p class="font-mono text-xs text-fog mb-1.5">mar 2025 — <span data-i18n="exp.present">jul 2026</span> <span class="text-fog/60 ml-2">· a3f9c21</span></p>
-          <h3 class="font-display font-semibold text-xl text-paper">DevOps Intern <span class="text-purple-light font-normal">· Câmara Municipal de Curitiba</span></h3>
+          <h3 class="font-display font-semibold text-xl text-paper"><span data-i18n="exp.cmcRole">Estagiário DevOps</span> <span class="text-purple-light font-normal">· Câmara Municipal de Curitiba</span></h3>
           <ul class="mt-3 space-y-2 text-fog font-light text-[15px] list-none">
             <li class="flex gap-2"><span class="text-purple mt-0.5" aria-hidden="true">▹</span><span data-i18n="exp.cmc1">Arquitetei e desenvolvi soluções open-source Unix-based com Ansible, Vagrant e Molecule, em ambiente Linux com SSO e LDAP para autenticação de serviços.</span></li>
             <li class="flex gap-2"><span class="text-purple mt-0.5" aria-hidden="true">▹</span><span data-i18n="exp.cmc2">Implementei correções de vulnerabilidades conhecidas com base no OWASP Top 10, seguindo Conventional Commits (commitizen + commitlint).</span></li>
@@ -772,6 +817,25 @@
         </div>
       </article>
 
+      <!-- VeriPkg -->
+      <a href="https://github.com/Taresu/veripkg" target="_blank" rel="noopener noreferrer" class="group reveal card-hover block bg-card border border-line rounded-xl p-6 md:col-span-2 md:p-8 focus:outline-none focus-visible:ring-2 focus-visible:ring-purple focus-visible:ring-offset-2 focus-visible:ring-offset-ink" data-project="veripkg">
+        <div class="flex min-w-0 flex-wrap items-start gap-x-2 gap-y-1 mb-4">
+          <svg class="line-icon line-icon--project shrink-0" data-icon="shield-check" data-icon-context="project" aria-hidden="true" focusable="false"><use href="#icon-shield-check"></use></svg>
+          <p class="min-w-0 flex-1 break-words font-mono text-[11px] text-fog">~/projects/<span class="text-terminal">veripkg</span></p>
+          <span class="ml-auto shrink-0 text-purple-light group-hover:text-purple font-mono text-[11px] transition-colors">github.com/Taresu/veripkg ↗</span>
+        </div>
+        <h3 class="font-display font-semibold text-xl text-paper mb-2" data-i18n="proj.veripkg.t">VeriPkg — verificação honesta de downloads</h3>
+        <p class="max-w-4xl text-fog font-light text-[15px] mb-5" data-i18n="proj.veripkg.d">
+          CLI em Go, sem dependências de runtime, que verifica arquivos baixados fora do gerenciador de pacotes contra fontes confiáveis. Cada resultado informa seu nível de confiança: assinatura OpenPGP, hash fixado ou não verificado.
+        </p>
+        <div class="flex flex-wrap gap-2">
+          <span class="chip font-mono text-[11px] px-2.5 py-1 rounded text-fog">Go</span>
+          <span class="chip font-mono text-[11px] px-2.5 py-1 rounded text-fog">Supply Chain Security</span>
+          <span class="chip font-mono text-[11px] px-2.5 py-1 rounded text-fog">OpenPGP</span>
+          <span class="chip font-mono text-[11px] px-2.5 py-1 rounded text-fog">SHA-256</span>
+        </div>
+      </a>
+
       <!-- Nerdz -->
       <a href="https://landing.nerdz.aurasec.dev/" target="_blank" rel="noopener noreferrer" class="group reveal card-hover block bg-card border border-line rounded-xl p-6 focus:outline-none focus-visible:ring-2 focus-visible:ring-purple focus-visible:ring-offset-2 focus-visible:ring-offset-ink" data-project="nerdz">
         <div class="flex min-w-0 flex-wrap items-start gap-x-2 gap-y-1 mb-4">
@@ -796,6 +860,7 @@
         <div class="flex min-w-0 flex-wrap items-start gap-x-2 gap-y-1 mb-4">
           <svg class="line-icon line-icon--project shrink-0" data-icon="phone-call" data-icon-context="project" aria-hidden="true" focusable="false"><use href="#icon-phone-call"></use></svg>
           <p class="min-w-0 flex-1 break-words font-mono text-[11px] text-fog">~/projects/<span class="text-terminal">voip-migration</span></p>
+          <span class="shrink-0 rounded-full border border-line bg-panel px-2 py-0.5 font-mono text-[9px] uppercase tracking-wider text-fog" data-project-visibility data-i18n="proj.voip.visibility">projeto interno · CMC</span>
         </div>
         <h3 class="font-display font-semibold text-lg text-paper mb-2" data-i18n="proj.voip.t">Migração VoIP em escala</h3>
         <p class="text-fog font-light text-[15px] mb-5" data-i18n="proj.voip.d">
@@ -827,11 +892,11 @@
       </a>
 
       <!-- VESPAS -->
-      <a href="https://linktr.ee/vespas_utfpr" target="_blank" rel="noopener noreferrer" class="group reveal card-hover block bg-card border border-line rounded-xl p-6 focus:outline-none focus-visible:ring-2 focus-visible:ring-purple focus-visible:ring-offset-2 focus-visible:ring-offset-ink" data-project="vespas">
+      <a href="https://github.com/vespas-utfpr" target="_blank" rel="noopener noreferrer" class="group reveal card-hover block bg-card border border-line rounded-xl p-6 focus:outline-none focus-visible:ring-2 focus-visible:ring-purple focus-visible:ring-offset-2 focus-visible:ring-offset-ink" data-project="vespas">
         <div class="flex min-w-0 flex-wrap items-start gap-x-2 gap-y-1 mb-4">
           <svg class="line-icon line-icon--project shrink-0" data-icon="flag" data-icon-context="project" aria-hidden="true" focusable="false"><use href="#icon-flag"></use></svg>
           <p class="min-w-0 flex-1 break-words font-mono text-[11px] text-fog">~/projects/<span class="text-terminal">vespas-ctf</span></p>
-          <span class="ml-auto shrink-0 text-purple-light group-hover:text-purple font-mono text-[11px] transition-colors">linktr.ee ↗</span>
+          <span class="ml-auto shrink-0 text-purple-light group-hover:text-purple font-mono text-[11px] transition-colors">github.com/vespas-utfpr ↗</span>
         </div>
         <h3 class="font-display font-semibold text-lg text-paper mb-2" data-i18n="proj.vespas.t">VESPAS — Labs de CTF &amp; Alertas</h3>
         <p class="text-fog font-light text-[15px] mb-5" data-i18n="proj.vespas.d">
@@ -848,7 +913,7 @@
   </section>
 
   <!-- ═══════════ SKILLS ═══════════ -->
-  <section id="skills" class="border-y border-line/60 bg-panel/40">
+  <section id="skills" class="skills-atmosphere border-y border-line/60">
     <div class="max-w-6xl mx-auto px-5 sm:px-8 py-20 md:py-28">
       <div class="reveal flex items-baseline gap-4 mb-12">
         <span class="font-mono text-sm text-purple">04</span>
@@ -860,6 +925,7 @@
         <!-- Decorative skill constellation (own layer; no line-icons, no external requests) -->
         <svg class="netgraph hidden md:block" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
           <g data-net-edges></g>
+          <g data-net-relations></g>
           <g data-net-nodes></g>
         </svg>
         <div class="reveal relative" data-skill-hub="1">
@@ -869,8 +935,8 @@
           </h3>
           <div class="flex flex-wrap gap-2">
             <span class="chip font-mono text-xs px-3 py-1.5 rounded-md text-fog">Kali Linux</span>
-            <span class="chip font-mono text-xs px-3 py-1.5 rounded-md text-fog">Nmap</span>
-            <span class="chip font-mono text-xs px-3 py-1.5 rounded-md text-fog">Burp Suite</span>
+            <span class="chip font-mono text-xs px-3 py-1.5 rounded-md text-fog" data-skill="nmap">Nmap</span>
+            <span class="chip font-mono text-xs px-3 py-1.5 rounded-md text-fog" data-skill="burp-suite">Burp Suite</span>
             <span class="chip font-mono text-xs px-3 py-1.5 rounded-md text-fog">Metasploit</span>
             <span class="chip font-mono text-xs px-3 py-1.5 rounded-md text-fog">Wireshark</span>
           </div>
@@ -882,14 +948,14 @@
           </h3>
           <div class="flex flex-wrap gap-2">
             <span class="chip font-mono text-xs px-3 py-1.5 rounded-md text-fog">Axur</span>
-            <span class="chip font-mono text-xs px-3 py-1.5 rounded-md text-fog">Prisma Cloud</span>
-            <span class="chip font-mono text-xs px-3 py-1.5 rounded-md text-fog">Nessus</span>
+            <span class="chip font-mono text-xs px-3 py-1.5 rounded-md text-fog" data-skill="prisma-cloud">Prisma Cloud</span>
+            <span class="chip font-mono text-xs px-3 py-1.5 rounded-md text-fog" data-skill="nessus">Nessus</span>
             <span class="chip font-mono text-xs px-3 py-1.5 rounded-md text-fog">MITRE ATT&amp;CK</span>
-            <span class="chip font-mono text-xs px-3 py-1.5 rounded-md text-fog">OWASP Top 10</span>
+            <span class="chip font-mono text-xs px-3 py-1.5 rounded-md text-fog" data-skill="owasp-top-10">OWASP Top 10</span>
             <span class="chip font-mono text-xs px-3 py-1.5 rounded-md text-fog">ISO 27001</span>
             <span class="chip font-mono text-xs px-3 py-1.5 rounded-md text-fog">CVSS</span>
-            <span class="chip font-mono text-xs px-3 py-1.5 rounded-md text-fog">Active Directory</span>
-            <span class="chip font-mono text-xs px-3 py-1.5 rounded-md text-fog">IAM / LDAP</span>
+            <span class="chip font-mono text-xs px-3 py-1.5 rounded-md text-fog" data-skill="active-directory">Active Directory</span>
+            <span class="chip font-mono text-xs px-3 py-1.5 rounded-md text-fog" data-skill="iam-ldap">IAM / LDAP</span>
           </div>
         </div>
         <div class="reveal relative" data-skill-hub="3">
@@ -902,10 +968,10 @@
             <span class="chip font-mono text-xs px-3 py-1.5 rounded-md text-fog">Terraform</span>
             <span class="chip font-mono text-xs px-3 py-1.5 rounded-md text-fog">Vagrant</span>
             <span class="chip font-mono text-xs px-3 py-1.5 rounded-md text-fog">Molecule</span>
-            <span class="chip font-mono text-xs px-3 py-1.5 rounded-md text-fog">AWS</span>
+            <span class="chip font-mono text-xs px-3 py-1.5 rounded-md text-fog" data-skill="aws">AWS</span>
             <span class="chip font-mono text-xs px-3 py-1.5 rounded-md text-fog">S3 / CloudFront</span>
-            <span class="chip font-mono text-xs px-3 py-1.5 rounded-md text-fog">Docker</span>
-            <span class="chip font-mono text-xs px-3 py-1.5 rounded-md text-fog">GitLab CI/CD</span>
+            <span class="chip font-mono text-xs px-3 py-1.5 rounded-md text-fog" data-skill="docker">Docker</span>
+            <span class="chip font-mono text-xs px-3 py-1.5 rounded-md text-fog" data-skill="gitlab-ci-cd">GitLab CI/CD</span>
             <span class="chip font-mono text-xs px-3 py-1.5 rounded-md text-fog">Git</span>
           </div>
         </div>
@@ -916,26 +982,27 @@
           </h3>
           <div class="flex flex-wrap gap-2">
             <span class="chip font-mono text-xs px-3 py-1.5 rounded-md text-fog">Python</span>
+            <span class="chip font-mono text-xs px-3 py-1.5 rounded-md text-fog">Go</span>
             <span class="chip font-mono text-xs px-3 py-1.5 rounded-md text-fog">JavaScript</span>
             <span class="chip font-mono text-xs px-3 py-1.5 rounded-md text-fog">TypeScript</span>
             <span class="chip font-mono text-xs px-3 py-1.5 rounded-md text-fog">React</span>
             <span class="chip font-mono text-xs px-3 py-1.5 rounded-md text-fog">React Native / Expo</span>
             <span class="chip font-mono text-xs px-3 py-1.5 rounded-md text-fog">NestJS</span>
             <span class="chip font-mono text-xs px-3 py-1.5 rounded-md text-fog">Prisma / PostgreSQL</span>
-            <span class="chip font-mono text-xs px-3 py-1.5 rounded-md text-fog">APIs REST</span>
+            <span class="chip font-mono text-xs px-3 py-1.5 rounded-md text-fog" data-skill="apis-rest">APIs REST</span>
           </div>
         </div>
         <div class="reveal relative md:col-span-2 md:flex md:flex-col md:items-center" data-skill-group="ai" data-skill-hub="5">
           <h3 class="icon-label font-mono text-sm text-purple-light mb-4">
             <svg class="line-icon line-icon--skill" data-icon="brain-circuit" data-icon-context="skill" aria-hidden="true" focusable="false"><use href="#icon-brain-circuit"></use></svg>
-            <span data-i18n="skills.g5">IA aplicada ao desenvolvimento</span>
+            <span data-i18n="skills.g5">IA aplicada</span>
           </h3>
           <div class="flex flex-wrap gap-2 md:justify-center">
-            <span class="chip font-mono text-xs px-3 py-1.5 rounded-md text-fog">Anthropic API</span>
-            <span class="chip font-mono text-xs px-3 py-1.5 rounded-md text-fog">MCP</span>
+            <span class="chip font-mono text-xs px-3 py-1.5 rounded-md text-fog" data-skill="anthropic-api">Anthropic API</span>
+            <span class="chip font-mono text-xs px-3 py-1.5 rounded-md text-fog" data-skill="mcp">MCP</span>
             <span class="chip font-mono text-xs px-3 py-1.5 rounded-md text-fog">LLMs</span>
-            <span class="chip font-mono text-xs px-3 py-1.5 rounded-md text-fog">Tool Calling</span>
-            <span class="chip font-mono text-xs px-3 py-1.5 rounded-md text-fog">Orquestração Multiagente</span>
+            <span class="chip font-mono text-xs px-3 py-1.5 rounded-md text-fog" data-skill="tool-calling">Tool Calling</span>
+            <span class="chip font-mono text-xs px-3 py-1.5 rounded-md text-fog" data-skill="multiagent">Orquestração Multiagente</span>
           </div>
         </div>
       </div>
@@ -1129,10 +1196,13 @@
         'proj.tcc.d': 'Pesquisa aplicada de abordagem mista que desenvolveu e avaliou uma intervenção educativa em cibersegurança no Portal Sophia-CT, combinando MOOC, narrativa histórica, atividades práticas e simulações de phishing mapeadas com MITRE ATT&CK. No piloto, a média aumentou de 7,54 para 9,85.',
         'proj.tcc.tagAi': 'IA Generativa', 'proj.tcc.tagMethods': 'Métodos mistos', 'proj.tcc.scoreStart': '7,54', 'proj.tcc.scoreEnd': '9,85',
         'proj.tcc.metric': 'média no pré e pós-teste', 'proj.tcc.pages': 'documento completo', 'proj.tcc.date': '14 jul 2026', 'proj.tcc.approved': 'data de aprovação',
+        'proj.veripkg.t': 'VeriPkg — verificação honesta de downloads',
+        'proj.veripkg.d': 'CLI em Go, sem dependências de runtime, que verifica arquivos baixados fora do gerenciador de pacotes contra fontes confiáveis. Cada resultado informa seu nível de confiança: assinatura OpenPGP, hash fixado ou não verificado.',
         'proj.nerdz.t': 'Nerdz - Aplicação mobile e web',
         'proj.nerdz.d': 'Manutenção e evolução de um produto de estudo em grupo para web, Android e iOS, com frontend React Native/Expo, API NestJS, Prisma/PostgreSQL, autenticação Clerk e distribuição por AWS S3/CloudFront.',
         'proj.voip.t': 'Migração VoIP em escala',
         'proj.voip.d': 'Bot em Python que reconfigurou ~370 telefones VoIP da Câmara Municipal de Curitiba, migrando de IP estático para DHCP — Selenium para automação web e requests com cookies de sessão para os métodos POST.',
+        'proj.voip.visibility': 'projeto interno · CMC',
         'proj.portal.t': 'Reestruturação do Portal UTFPR',
         'proj.portal.d': 'Novos componentes Volto / Plone 6 para o portal institucional da universidade, alinhados ao Design System 4.0 do Gov.br — migração de código deprecado, documentação contínua e CI/CD no GitLab.',
         'proj.vespas.t': 'VESPAS — Labs de CTF & Alertas',
@@ -1181,10 +1251,13 @@
         'proj.tcc.d': 'Mixed-methods applied research that developed and evaluated a cybersecurity education intervention on Portal Sophia-CT, combining a MOOC, historical narrative, practical activities and phishing simulations mapped with MITRE ATT&CK. In the pilot, the mean score increased from 7.54 to 9.85.',
         'proj.tcc.tagAi': 'Generative AI', 'proj.tcc.tagMethods': 'Mixed methods', 'proj.tcc.scoreStart': '7.54', 'proj.tcc.scoreEnd': '9.85',
         'proj.tcc.metric': 'mean pre-test to post-test', 'proj.tcc.pages': 'full paper', 'proj.tcc.date': '14 Jul 2026', 'proj.tcc.approved': 'approval date',
+        'proj.veripkg.t': 'VeriPkg — honest download verification',
+        'proj.veripkg.d': 'Dependency-free Go CLI that verifies files downloaded outside the package manager against trusted sources. Every result reports its trust tier: OpenPGP signature, pinned hash, or unverified.',
         'proj.nerdz.t': 'Nerdz - Mobile and web application',
         'proj.nerdz.d': 'Maintenance and evolution of a group-study product for web, Android and iOS, with a React Native/Expo frontend, NestJS API, Prisma/PostgreSQL, Clerk authentication and distribution through AWS S3/CloudFront.',
         'proj.voip.t': 'VoIP migration at scale',
         'proj.voip.d': 'Python bot that reconfigured ~370 VoIP phones at the Curitiba City Council, migrating from static IP to DHCP — Selenium for web automation plus requests with session cookies for the POST calls.',
+        'proj.voip.visibility': 'internal project · CMC',
         'proj.portal.t': 'UTFPR Portal restructuring',
         'proj.portal.d': "New Volto / Plone 6 components for the university's institutional portal, aligned with the Gov.br Design System 4.0 — deprecated-code migration, continuous documentation and GitLab CI/CD.",
         'proj.vespas.t': 'VESPAS — CTF Labs & Alerts',
@@ -1337,20 +1410,17 @@
     const RM = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const FINE = window.matchMedia('(pointer: fine)').matches;
 
-    /* ── Shared graph model (mirrors the real content) ── */
-    const GROUPS = [
-      { id: 1, label: 'offensive', color: '#FF4D6D' },
-      { id: 2, label: 'defense',   color: '#00FF87' },
-      { id: 3, label: 'devops',    color: '#C4B5FD' },
-      { id: 4, label: 'dev',       color: '#FBBF24' },
-      { id: 5, label: 'ai',        color: '#7C3AED' },
+    const GROUP_IDS = ['1', '2', '3', '4', '5'];
+    const SKILL_RELATIONS = [
+      ['nmap', 'nessus'],
+      ['burp-suite', 'owasp-top-10'],
+      ['prisma-cloud', 'aws'],
+      ['active-directory', 'iam-ldap'],
+      ['gitlab-ci-cd', 'docker'],
+      ['owasp-top-10', 'apis-rest'],
+      ['anthropic-api', 'mcp'],
+      ['mcp', 'tool-calling'],
     ];
-    // Fixed constellation layout (viewBox 0..100), plus an inter-hub mesh.
-    const HUBS = {
-      1: { x: 22, y: 26 }, 2: { x: 74, y: 20 }, 3: { x: 20, y: 72 },
-      4: { x: 78, y: 74 }, 5: { x: 50, y: 50 },
-    };
-    const HUB_EDGES = [[1,5],[2,5],[3,5],[4,5],[1,2],[1,3],[2,4],[3,4]];
 
     /* ═══════ 1. Ambient hero canvas — drifting node field ═══════ */
     const canvas = document.getElementById('recon-graph');
@@ -1423,7 +1493,7 @@
           p.x += p.vx; p.y += p.vy;
           if (p.x < 0 || p.x > W) p.vx *= -1;
           if (p.y < 0 || p.y > H) p.vy *= -1;
-          // gentle pointer attraction (recon "reticle" pull)
+          // Gentle pointer attraction keeps the ambient recon field responsive.
           if (FINE && pointer.x > -900) {
             const dx = pointer.x - p.x, dy = pointer.y - p.y;
             const d = Math.hypot(dx, dy);
@@ -1459,38 +1529,165 @@
       }
     }
 
-    /* ═══════ 2. Skills constellation (decorative + hover highlight) ═══════ */
+    /* ═══════ 2. Skills backbone (aligned to the five real domains) ═══════ */
     const net = document.querySelector('.netgraph');
     if (net) {
       const edgesG = net.querySelector('[data-net-edges]');
+      const relationsG = net.querySelector('[data-net-relations]');
       const nodesG = net.querySelector('[data-net-nodes]');
       const SVGNS = 'http://www.w3.org/2000/svg';
+      const blocks = [...document.querySelectorAll('[data-skill-hub]')];
       const edgeEls = {};
-      HUB_EDGES.forEach(([a, b]) => {
-        const l = document.createElementNS(SVGNS, 'line');
-        l.setAttribute('x1', HUBS[a].x); l.setAttribute('y1', HUBS[a].y);
-        l.setAttribute('x2', HUBS[b].x); l.setAttribute('y2', HUBS[b].y);
-        l.setAttribute('class', 'net-edge');
-        l.setAttribute('vector-effect', 'non-scaling-stroke');
-        edgesG.appendChild(l);
-        (edgeEls[a] = edgeEls[a] || []).push(l);
-        (edgeEls[b] = edgeEls[b] || []).push(l);
-      });
       const nodeEls = {};
-      GROUPS.forEach(g => {
+      const relationEls = [];
+      const skillEls = {};
+
+      GROUP_IDS.forEach(id => {
+        if (id !== '5') {
+          const branch = document.createElementNS(SVGNS, 'path');
+          branch.setAttribute('class', 'net-edge');
+          branch.setAttribute('data-edge', `branch-${id}`);
+          branch.setAttribute('vector-effect', 'non-scaling-stroke');
+          edgesG.appendChild(branch);
+          edgeEls[id] = [branch];
+        }
+      });
+      const spine = document.createElementNS(SVGNS, 'path');
+      spine.setAttribute('class', 'net-edge');
+      spine.setAttribute('data-edge', 'spine');
+      spine.setAttribute('vector-effect', 'non-scaling-stroke');
+      edgesG.appendChild(spine);
+      edgeEls['5'] = [spine];
+
+      SKILL_RELATIONS.forEach(([from, to]) => {
+        const edge = document.createElementNS(SVGNS, 'path');
+        edge.setAttribute('class', 'relation-edge');
+        edge.setAttribute('data-relation', `${from}:${to}`);
+        edge.setAttribute('vector-effect', 'non-scaling-stroke');
+        relationsG.appendChild(edge);
+        relationEls.push({ from, to, edge });
+        skillEls[from] = document.querySelector(`[data-skill="${from}"]`);
+        skillEls[to] = document.querySelector(`[data-skill="${to}"]`);
+      });
+
+      GROUP_IDS.forEach(id => {
         const c = document.createElementNS(SVGNS, 'circle');
-        c.setAttribute('cx', HUBS[g.id].x); c.setAttribute('cy', HUBS[g.id].y);
-        c.setAttribute('r', g.id === 5 ? 3 : 2.3);
+        c.setAttribute('r', id === '5' ? 5 : 4);
         c.setAttribute('class', 'net-node');
+        c.setAttribute('data-hub-id', id);
         c.setAttribute('vector-effect', 'non-scaling-stroke');
         nodesG.appendChild(c);
-        nodeEls[g.id] = c;
+        nodeEls[id] = c;
       });
+
+      function layoutBackbone() {
+        const netRect = net.getBoundingClientRect();
+        if (!netRect.width || !netRect.height) return;
+        const centerX = netRect.width / 2;
+        const hubs = {};
+        net.setAttribute('viewBox', `0 0 ${netRect.width} ${netRect.height}`);
+
+        blocks.forEach(block => {
+          const id = block.getAttribute('data-skill-hub');
+          const headingRect = block.querySelector('h3').getBoundingClientRect();
+          if (id === '5') {
+            hubs[id] = { x: centerX, y: headingRect.top - netRect.top - 13 };
+          } else {
+            const leftColumn = id === '1' || id === '3';
+            const preferredX = leftColumn
+              ? headingRect.right - netRect.left + 16
+              : headingRect.left - netRect.left - 16;
+            hubs[id] = {
+              x: leftColumn ? Math.min(centerX - 18, preferredX) : Math.max(centerX + 18, preferredX),
+              y: headingRect.top - netRect.top + headingRect.height / 2,
+            };
+          }
+        });
+
+        GROUP_IDS.forEach(id => {
+          const hub = hubs[id];
+          if (!hub) return;
+          nodeEls[id].setAttribute('cx', hub.x);
+          nodeEls[id].setAttribute('cy', hub.y);
+          if (id !== '5') edgeEls[id][0].setAttribute('d', `M ${hub.x} ${hub.y} H ${centerX}`);
+        });
+
+        if (hubs['1'] && hubs['2'] && hubs['5']) {
+          const topY = Math.min(hubs['1'].y, hubs['2'].y);
+          spine.setAttribute('d', `M ${centerX} ${topY} V ${hubs['5'].y}`);
+        }
+        layoutRelations(netRect);
+      }
+
+      function boundaryPoint(fromRect, toRect, netRect) {
+        const x = fromRect.left + fromRect.width / 2;
+        const y = fromRect.top + fromRect.height / 2;
+        const targetX = toRect.left + toRect.width / 2;
+        const targetY = toRect.top + toRect.height / 2;
+        const dx = targetX - x;
+        const dy = targetY - y;
+        const scaleX = dx === 0 ? Infinity : (fromRect.width / 2) / Math.abs(dx);
+        const scaleY = dy === 0 ? Infinity : (fromRect.height / 2) / Math.abs(dy);
+        const scale = Math.min(scaleX, scaleY);
+        return {
+          x: x + dx * scale - netRect.left,
+          y: y + dy * scale - netRect.top,
+        };
+      }
+
+      function layoutRelations(netRect = net.getBoundingClientRect()) {
+        if (!netRect.width || !netRect.height) return;
+        relationEls.forEach(({ from, to, edge }) => {
+          const fromEl = skillEls[from];
+          const toEl = skillEls[to];
+          if (!fromEl || !toEl) return;
+          const fromRect = fromEl.getBoundingClientRect();
+          const toRect = toEl.getBoundingClientRect();
+          const start = boundaryPoint(fromRect, toRect, netRect);
+          const end = boundaryPoint(toRect, fromRect, netRect);
+          const dx = end.x - start.x;
+          const dy = end.y - start.y;
+          const horizontal = Math.abs(dx) >= Math.abs(dy);
+          const c1 = horizontal
+            ? { x: start.x + dx * .38, y: start.y }
+            : { x: start.x, y: start.y + dy * .38 };
+          const c2 = horizontal
+            ? { x: end.x - dx * .38, y: end.y }
+            : { x: end.x, y: end.y - dy * .38 };
+          edge.setAttribute('d', `M ${start.x} ${start.y} C ${c1.x} ${c1.y}, ${c2.x} ${c2.y}, ${end.x} ${end.y}`);
+        });
+      }
+
       function highlight(id, on) {
         if (nodeEls[id]) nodeEls[id].classList.toggle('hot', on);
         (edgeEls[id] || []).forEach(l => l.classList.toggle('hot', on));
       }
-      document.querySelectorAll('[data-skill-hub]').forEach(block => {
+
+      function clearSkillRelations() {
+        Object.values(skillEls).forEach(tag => tag?.classList.remove('skill-active', 'skill-related'));
+        relationEls.forEach(({ edge }) => edge.classList.remove('hot'));
+      }
+
+      function showSkillRelations(skill) {
+        clearSkillRelations();
+        skillEls[skill]?.classList.add('skill-active');
+        relationEls.forEach(({ from, to, edge }) => {
+          if (from !== skill && to !== skill) return;
+          edge.classList.add('hot');
+          skillEls[from === skill ? to : from]?.classList.add('skill-related');
+        });
+      }
+
+      Object.entries(skillEls).forEach(([skill, tag]) => {
+        if (!tag) return;
+        tag.tabIndex = 0;
+        tag.addEventListener('pointerenter', () => showSkillRelations(skill));
+        tag.addEventListener('pointerleave', () => { if (document.activeElement !== tag) clearSkillRelations(); });
+        tag.addEventListener('focus', () => showSkillRelations(skill));
+        tag.addEventListener('blur', clearSkillRelations);
+      });
+
+      blocks.forEach(block => {
         const id = block.getAttribute('data-skill-hub');
         const enter = () => highlight(id, true);
         const leave = () => highlight(id, false);
@@ -1498,27 +1695,19 @@
         block.addEventListener('pointerleave', leave);
         block.addEventListener('focusin', enter);
         block.addEventListener('focusout', leave);
+        block.addEventListener('transitionend', layoutBackbone);
       });
+      window.addEventListener('resize', layoutBackbone, { passive: true });
+      if ('ResizeObserver' in window) {
+        const observer = new ResizeObserver(layoutBackbone);
+        blocks.forEach(block => observer.observe(block.querySelector('h3')));
+        Object.values(skillEls).forEach(tag => { if (tag) observer.observe(tag); });
+      }
+      requestAnimationFrame(layoutBackbone);
+      document.fonts?.ready.then(layoutBackbone);
     }
 
-    /* ═══════ 3. Reticle cursor accent (pointer-fine, motion on) ═══════ */
-    const reticle = document.getElementById('reticle');
-    if (reticle && FINE && !RM) {
-      let rx = 0, ry = 0, tx = 0, ty = 0, on = false;
-      window.addEventListener('pointermove', e => {
-        tx = e.clientX; ty = e.clientY;
-        if (!on) { on = true; document.body.classList.add('reticle-on'); }
-      }, { passive: true });
-      window.addEventListener('pointerdown', () => reticle.style.transform = 'scale(.8)');
-      window.addEventListener('pointerup', () => reticle.style.transform = 'scale(1)');
-      (function follow() {
-        rx += (tx - rx) * 0.28; ry += (ty - ry) * 0.28;
-        reticle.style.left = rx + 'px'; reticle.style.top = ry + 'px';
-        requestAnimationFrame(follow);
-      })();
-    }
-
-    /* ═══════ 4. Boot recon-scan intro (once per session) ═══════ */
+    /* ═══════ 3. Boot recon-scan intro (once per session) ═══════ */
     const intro = document.getElementById('scan-intro');
     if (intro) {
       let seen = false;
@@ -1551,7 +1740,7 @@
       }
     }
 
-    /* ═══════ 5. Parallax depth on hero background (motion on) ═══════ */
+    /* ═══════ 4. Parallax depth on hero background (motion on) ═══════ */
     if (!RM) {
       const grid = document.querySelector('#top .bg-grid');
       if (grid && 'IntersectionObserver' in window) {

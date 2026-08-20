@@ -67,7 +67,7 @@ results.profile = await page.evaluate(() => ({
     card: Boolean(document.querySelector('[data-project="nerdz"]')),
     link: document.querySelector('[data-project="nerdz"] a')?.href,
   },
-  linkedProjects: ['nerdz', 'portal', 'vespas'].map(name => {
+  linkedProjects: ['veripkg', 'nerdz', 'portal', 'vespas'].map(name => {
     const card = document.querySelector(`[data-project="${name}"]`);
     return {
       name,
@@ -79,6 +79,15 @@ results.profile = await page.evaluate(() => ({
       nestedLinkCount: card?.querySelectorAll('a').length,
     };
   }),
+  veripkg: {
+    title: document.querySelector('[data-project="veripkg"] h3')?.textContent.trim(),
+    summary: document.querySelector('[data-project="veripkg"] [data-i18n="proj.veripkg.d"]')?.textContent.trim(),
+    tags: [...document.querySelectorAll('[data-project="veripkg"] .chip')].map(tag => tag.textContent.trim()),
+  },
+  voip: {
+    isLink: document.querySelector('[data-project="voip"]')?.matches('a'),
+    visibility: document.querySelector('[data-project="voip"] [data-project-visibility]')?.textContent.trim(),
+  },
   tcc: {
     card: Boolean(document.querySelector('[data-project="tcc"]')),
     firstProject: document.querySelector('#projetos article')?.dataset.project,
@@ -94,6 +103,7 @@ results.profile = await page.evaluate(() => ({
   oldExperienceCount: [...document.querySelectorAll('#experiencia article')].filter(article =>
     /Estagiário de TI|IT Intern|Assistant Webmaster/i.test(article.textContent)
   ).length,
+  cmcRole: document.querySelector('[data-i18n="exp.cmcRole"]')?.textContent.trim(),
   skills: document.querySelector('#skills')?.textContent,
   lineIcons: [...document.querySelectorAll('svg.line-icon')].map(icon => ({
     name: icon.dataset.icon,
@@ -121,6 +131,7 @@ results.profile = await page.evaluate(() => ({
     const gridBounds = grid?.getBoundingClientRect();
     const headingBounds = heading?.getBoundingClientRect();
     return {
+      title: heading?.textContent.trim(),
       spansGrid: Boolean(groupBounds && gridBounds && Math.abs(groupBounds.width - gridBounds.width) < 1),
       headingCentered: Boolean(groupBounds && headingBounds &&
         Math.abs((headingBounds.left + headingBounds.width / 2) - (groupBounds.left + groupBounds.width / 2)) < 1),
@@ -176,11 +187,64 @@ results.profile = await page.evaluate(() => ({
     graphUseRefs: document.querySelectorAll('#recon-graph use, .netgraph use').length,
     graphLineIcons: document.querySelectorAll('#recon-graph .line-icon, .netgraph .line-icon').length,
     skillHubs: document.querySelectorAll('[data-skill-hub]').length,
+    edgeCount: document.querySelectorAll('.netgraph .net-edge').length,
+    nodeCount: document.querySelectorAll('.netgraph .net-node').length,
+    relationCount: document.querySelectorAll('.netgraph .relation-edge').length,
+    aiSatelliteCount: document.querySelectorAll('.netgraph .net-ai-satellite').length,
+    aiSatelliteEdgeCount: document.querySelectorAll('.netgraph .net-ai-edge').length,
+    reticlePresent: Boolean(document.querySelector('#reticle')),
   },
 }));
 await shot(page, 'desktop-01-hero-pt');
 
 await revealAll(page);
+await gotoSection(page, '#skills');
+if (await page.$('[data-skill="prisma-cloud"]')) {
+  await page.hover('[data-skill="prisma-cloud"]');
+}
+results.skillRelation = await page.evaluate(() => {
+  const source = document.querySelector('[data-skill="prisma-cloud"]');
+  const target = document.querySelector('[data-skill="aws"]');
+  const edge = document.querySelector('[data-relation="prisma-cloud:aws"]');
+  if (!source || !target || !edge) return { present: false };
+
+  const sourceRect = source.getBoundingClientRect();
+  const targetRect = target.getBoundingClientRect();
+  const matrix = edge.getScreenCTM();
+  const pointAt = length => {
+    const point = edge.getPointAtLength(length);
+    return new DOMPoint(point.x, point.y).matrixTransform(matrix);
+  };
+  const distanceToRect = (point, rect) => Math.hypot(
+    Math.max(rect.left - point.x, 0, point.x - rect.right),
+    Math.max(rect.top - point.y, 0, point.y - rect.bottom),
+  );
+  const start = pointAt(0);
+  const end = pointAt(edge.getTotalLength());
+
+  return {
+    present: true,
+    sourceActive: source.classList.contains('skill-active'),
+    targetRelated: target.classList.contains('skill-related'),
+    edgeHot: edge.classList.contains('hot'),
+    connectsSource: distanceToRect(start, sourceRect) < 2,
+    connectsTarget: distanceToRect(end, targetRect) < 2,
+  };
+});
+await page.hover('[data-skill="mcp"]');
+results.aiClusterInteraction = await page.evaluate(() => ({
+  satellitePresent: Boolean(document.querySelector('[data-ai-satellite="mcp"]')),
+  satelliteHot: document.querySelector('[data-ai-satellite="mcp"]')?.classList.contains('hot'),
+  edgeHot: document.querySelector('[data-ai-edge="mcp"]')?.classList.contains('hot'),
+}));
+if (await page.$('[data-skill="kali-linux"]')) {
+  await page.hover('[data-skill="kali-linux"]');
+}
+results.kaliRelations = await page.evaluate(() => ({
+  edgeCount: document.querySelectorAll('.relation-edge.hot').length,
+  relatedCount: document.querySelectorAll('.chip.skill-related').length,
+}));
+await page.mouse.move(0, 0);
 for (const [id, name] of [['#sobre', 'sobre'], ['#experiencia', 'experiencia'], ['#projetos', 'projetos'], ['#skills', 'skills'], ['#contato', 'contato']]) {
   await gotoSection(page, id);
   await shot(page, `desktop-02-${name}-pt`);
@@ -201,6 +265,10 @@ results.en = await page.evaluate(() => ({
   contactTitle: document.querySelector('[data-i18n="contact.title"]').textContent.trim(),
   tcc: document.querySelector('[data-project="tcc"]')?.textContent,
   credentials: document.querySelector('[data-credentials]')?.textContent,
+  veripkg: document.querySelector('[data-project="veripkg"]')?.textContent,
+  voip: document.querySelector('[data-project="voip"]')?.textContent,
+  appliedAiHeading: document.querySelector('[data-skill-group="ai"] h3')?.textContent.trim(),
+  cmcRole: document.querySelector('[data-i18n="exp.cmcRole"]')?.textContent.trim(),
   saved: localStorage.getItem('lang'),
   untranslated: [...document.querySelectorAll('[data-i18n]')].filter(el => !el.textContent.trim()).length,
   iconMap: [...document.querySelectorAll('svg.line-icon')]
@@ -248,6 +316,18 @@ results.mobileMenu = await mob.evaluate(async () => {
   await new Promise(resolve => setTimeout(resolve, 50));
   return { before, after };
 });
+results.mobileExperienceLogoOverlaps = await mob.evaluate(() =>
+  [...document.querySelectorAll('#experiencia article')].flatMap(article => {
+    const title = article.querySelector('h3');
+    const logo = article.querySelector('.employer-logo');
+    if (!title || !logo) return [];
+    const titleRect = title.getBoundingClientRect();
+    const logoRect = logo.getBoundingClientRect();
+    const overlaps = titleRect.left < logoRect.right && titleRect.right > logoRect.left &&
+      titleRect.top < logoRect.bottom && titleRect.bottom > logoRect.top;
+    return overlaps ? [{ title: title.textContent.trim(), logo: logo.alt }] : [];
+  }),
+);
 await shot(mob, 'mobile-01-hero-pt');
 await revealAll(mob);
 await gotoSection(mob, '#skills');
@@ -298,8 +378,9 @@ const assertions = [
   [
     [
       ['nerdz', 'https://landing.nerdz.aurasec.dev/'],
+      ['veripkg', 'https://github.com/Taresu/veripkg'],
       ['portal', 'https://www.utfpr.edu.br/'],
-      ['vespas', 'https://linktr.ee/vespas_utfpr'],
+      ['vespas', 'https://github.com/vespas-utfpr'],
     ].every(([name, href]) => results.profile.linkedProjects.some(project =>
       project.name === name && project.isLink && project.href === href && project.target === '_blank' &&
         project.rel.includes('noopener') && project.keyboardFocusable && project.nestedLinkCount === 0
@@ -307,6 +388,17 @@ const assertions = [
     'each single-destination project card is one keyboard-accessible external link',
   ],
   [results.profile.tcc.card && results.profile.tcc.firstProject === 'tcc', 'the TCC appears first among featured projects'],
+  [
+    results.profile.veripkg.title === 'VeriPkg — verificação honesta de downloads' &&
+      results.profile.veripkg.summary?.includes('Go') &&
+      results.profile.veripkg.summary?.includes('nível de confiança') &&
+      ['Go', 'Supply Chain Security', 'OpenPGP', 'SHA-256'].every(tag => results.profile.veripkg.tags.includes(tag)),
+    'VeriPkg is presented as a Go supply-chain verification CLI with its trust model and core technologies',
+  ],
+  [
+    !results.profile.voip.isLink && results.profile.voip.visibility === 'projeto interno · CMC',
+    'the private VoIP project is non-interactive and identified as internal CMC work',
+  ],
   [
     results.profile.tcc.title?.includes('Educação em Cibersegurança') &&
       results.profile.tcc.summary?.includes('Portal Sophia-CT') &&
@@ -325,6 +417,7 @@ const assertions = [
     'the TCC card links safely to the course developed on Sophia-CT',
   ],
   [results.profile.oldExperienceCount === 0, 'legacy IT and Webmaster entries are absent'],
+  [results.profile.cmcRole === 'Estagiário DevOps', 'the CMC role is written naturally in Portuguese'],
   [['React Native', 'NestJS', 'PostgreSQL', 'Active Directory', 'MCP'].every(skill => results.profile.skills.includes(skill)), 'current development, IAM and agentic AI skills are present'],
   [
     expectedSkillIcons.every(name => results.profile.lineIcons.some(icon =>
@@ -335,6 +428,7 @@ const assertions = [
   [
     [
       ['tcc', 'graduation-cap'],
+      ['veripkg', 'shield-check'],
       ['nerdz', 'smartphone'],
       ['voip', 'phone-call'],
       ['portal', 'panels-top-left'],
@@ -358,6 +452,7 @@ const assertions = [
       results.mobileAiSkillGroup.headingLeftAligned,
     'the applied-AI skill group spans and centers on desktop while remaining left-aligned on mobile',
   ],
+  [results.profile.aiSkillGroup.title === 'IA aplicada', 'the applied-AI group uses the concise Portuguese heading'],
   [results.profile.credentials.length === 4, 'the four Cisco courses are presented as separate verifiable credentials'],
   [
     results.profile.credentials.every(credential => credential.cardIsLink && credential.keyboardFocusable && credential.nestedLinkCount === 0),
@@ -438,14 +533,22 @@ const assertions = [
       .every(text => results.en.credentials?.includes(text)),
     'credential hierarchy and actions are translated in the English portfolio',
   ],
+  [
+    ['VeriPkg — honest download verification', 'Go CLI', 'trust tier'].every(text => results.en.veripkg?.includes(text)),
+    'the VeriPkg project is translated in the English portfolio',
+  ],
+  [results.en.voip?.includes('internal project · CMC'), 'the private VoIP project context is translated in English'],
+  [results.en.appliedAiHeading === 'Applied AI', 'the applied-AI heading is translated concisely in English'],
+  [results.en.cmcRole === 'DevOps Intern', 'the CMC role remains correctly titled in English'],
   [results.tccPdf.status === 200 && results.tccPdf.type === 'application/pdf', 'TCC PDF is readable from the portfolio'],
   [results.mobileMenu.before.button && results.mobileMenu.before.menu, 'mobile navigation controls exist'],
   [results.mobileMenu.before.expanded === 'false' && results.mobileMenu.before.hidden === true, 'mobile navigation starts collapsed'],
   [results.mobileMenu.after.expanded === 'true' && results.mobileMenu.after.hidden === false, 'mobile navigation opens'],
   [results.mobileOverflowX === false, 'mobile layout has no horizontal overflow'],
+  [results.mobileExperienceLogoOverlaps.length === 0, 'mobile employer logos do not overlap experience titles'],
   [
-    results.profile.lineIcons.length === 18 && results.profile.spriteSymbols.length === 16,
-    'the page renders 18 semantic instances from 16 unique local symbols',
+    results.profile.lineIcons.length === 19 && results.profile.spriteSymbols.length === 16,
+    'the page renders 19 semantic instances from 16 unique local symbols',
   ],
   [
     results.profile.lineIcons.every(icon => icon.href?.startsWith('#icon-')),
@@ -462,9 +565,28 @@ const assertions = [
     'the recon-graph canvas exists and is decorative (aria-hidden)',
   ],
   [
-    results.profile.reconGraph.netgraphPresent && results.profile.reconGraph.skillHubs === 5,
-    'the skills constellation is present with five hub-tagged categories',
+    results.profile.reconGraph.netgraphPresent && results.profile.reconGraph.skillHubs === 5 &&
+      results.profile.reconGraph.nodeCount === 5 && results.profile.reconGraph.edgeCount === 5,
+    'the skills constellation uses five aligned domain nodes and a restrained five-edge backbone',
   ],
+  [
+    results.profile.reconGraph.relationCount === 12 && results.skillRelation.present &&
+      results.skillRelation.sourceActive && results.skillRelation.targetRelated &&
+      results.skillRelation.edgeHot && results.skillRelation.connectsSource && results.skillRelation.connectsTarget,
+    'skill tags reveal curated green relationships connected to the related tag boundaries',
+  ],
+  [
+    results.kaliRelations.edgeCount === 4 && results.kaliRelations.relatedCount === 4,
+    'Kali Linux acts as a visual hub for Nmap, Burp Suite, Metasploit and Wireshark',
+  ],
+  [
+    results.profile.reconGraph.aiSatelliteCount === 4 &&
+      results.profile.reconGraph.aiSatelliteEdgeCount === 4 &&
+      results.aiClusterInteraction.satellitePresent && results.aiClusterInteraction.satelliteHot &&
+      results.aiClusterInteraction.edgeHot,
+    'applied AI is marked by four semantic satellites that respond to their related tags',
+  ],
+  [!results.profile.reconGraph.reticlePresent, 'the cursor-like reticle is absent'],
   [
     results.profile.reconGraph.graphUseRefs === 0 && results.profile.reconGraph.graphLineIcons === 0,
     'attack-graph layers add no sprite icon references (18/16 icon budget stays intact)',
