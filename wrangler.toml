@@ -1,4 +1,6 @@
 name = "tsalata"
+# workers.dev URL: tsalata.<account>.workers.dev
+# Rename in dashboard (Settings → Name) to apply this name to the existing Worker.
 main = "worker.js"
 compatibility_date = "2025-01-01"
 

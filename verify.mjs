@@ -167,6 +167,16 @@ results.profile = await page.evaluate(() => ({
     name: control.querySelector('.line-icon')?.dataset.icon,
     visibleText: control.textContent.trim(),
   })),
+  reconGraph: {
+    canvasPresent: Boolean(document.querySelector('#recon-graph')),
+    canvasAriaHidden: document.querySelector('#recon-graph')?.getAttribute('aria-hidden'),
+    netgraphPresent: Boolean(document.querySelector('.netgraph')),
+    // The attack-graph layers must not introduce any sprite icon references,
+    // so the 18-instance / 16-symbol icon budget below stays exact.
+    graphUseRefs: document.querySelectorAll('#recon-graph use, .netgraph use').length,
+    graphLineIcons: document.querySelectorAll('#recon-graph .line-icon, .netgraph .line-icon').length,
+    skillHubs: document.querySelectorAll('[data-skill-hub]').length,
+  },
 }));
 await shot(page, 'desktop-01-hero-pt');
 
@@ -272,6 +282,10 @@ results.reducedMotion = await reducedMotion.$eval(
   '[data-project="tcc"] .line-icon--project',
   icon => ({ iconTransform: getComputedStyle(icon).transform }),
 );
+results.reducedMotionRecon = await reducedMotion.evaluate(() => ({
+  canvasAnimating: document.querySelector('#recon-graph')?.dataset.animating,
+  scanIntroPresent: Boolean(document.querySelector('#scan-intro')),
+}));
 
 await browser.close();
 
@@ -443,6 +457,22 @@ const assertions = [
   [results.profile.employerLogos.length === 5, 'all five experience entries have an employer logo'],
   [results.profile.employerLogos.every(l => l.alt && l.alt.length > 0), 'all employer logos have alt text'],
   [results.profile.employerLogos.filter(l => l.bg === 'light').length === 1, 'only Volkswagen uses the light pill'],
+  [
+    results.profile.reconGraph.canvasPresent && results.profile.reconGraph.canvasAriaHidden === 'true',
+    'the recon-graph canvas exists and is decorative (aria-hidden)',
+  ],
+  [
+    results.profile.reconGraph.netgraphPresent && results.profile.reconGraph.skillHubs === 5,
+    'the skills constellation is present with five hub-tagged categories',
+  ],
+  [
+    results.profile.reconGraph.graphUseRefs === 0 && results.profile.reconGraph.graphLineIcons === 0,
+    'attack-graph layers add no sprite icon references (18/16 icon budget stays intact)',
+  ],
+  [
+    results.reducedMotionRecon.canvasAnimating === 'false' && !results.reducedMotionRecon.scanIntroPresent,
+    'reduced-motion halts the recon animation loop and skips the scan intro',
+  ],
 ];
 
 const failures = assertions.filter(([passed]) => !passed).map(([, message]) => message);
