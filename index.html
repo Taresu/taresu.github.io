@@ -371,8 +371,14 @@
           Desenvolvo e mantenho aplicações web e mobile, integro serviços e automatizo infraestrutura com segurança incorporada ao ciclo de desenvolvimento.
         </p>
         <div class="rise flex flex-wrap items-center gap-3" style="animation-delay:.45s">
-          <a href="#projetos" class="btn-primary font-mono text-sm text-white px-5 py-3 rounded-md">
-            <span data-i18n="hero.projects">Ver projetos</span> <span aria-hidden="true">→</span>
+          <a id="cv-link" href="assets/curriculo-thales-salata.pdf" download
+             data-cv-pt="assets/curriculo-thales-salata.pdf"
+             data-cv-en="assets/resume-thales-salata-en.pdf"
+             class="btn-primary font-mono text-sm text-white px-5 py-3 rounded-md">
+            <span data-i18n="hero.cv">Baixar CV</span> <span aria-hidden="true">↓</span>
+          </a>
+          <a href="#projetos" class="btn-ghost font-mono text-sm text-fog px-5 py-3 rounded-md">
+            <span data-i18n="hero.projects">Ver projetos</span> <span class="text-purple" aria-hidden="true">→</span>
           </a>
           <div class="flex items-center gap-2 ml-1">
             <a href="https://www.linkedin.com/in/thales-sgarbi-salata/" target="_blank" rel="noopener" aria-label="LinkedIn" class="btn-ghost p-3 rounded-md text-fog hover:text-paper">
@@ -1230,6 +1236,8 @@
               email: CONTACT_EMAIL,
               github: 'https://github.com/Taresu',
               linkedin: 'https://www.linkedin.com/in/thales-sgarbi-salata/',
+              cv_pt: `${BASE}/assets/curriculo-thales-salata.pdf`,
+              resume_en: `${BASE}/assets/resume-thales-salata-en.pdf`,
               openTo: ['Full Stack', 'DevSecOps', 'Information Security'],
             }),
           },
