@@ -209,11 +209,8 @@ await page.reload({ waitUntil: 'networkidle0' });
 results.persistedAfterReload = await page.evaluate(() => localStorage.getItem('lang'));
 await page.evaluate(() => localStorage.removeItem('lang'));
 
-// ── Link do CV ──
-const resp = await page.goto(`${BASE}/assets/curriculo-thales-salata.pdf`, { timeout: 15000 }).catch(e => null);
-results.cvPdf = resp ? { status: resp.status(), type: resp.headers()['content-type'] } : 'FAILED';
-const respEn = await page.goto(`${BASE}/assets/resume-thales-salata-en.pdf`, { timeout: 15000 }).catch(e => null);
-results.resumePdf = respEn ? { status: respEn.status(), type: respEn.headers()['content-type'] } : 'FAILED';
+// ── Published PDFs ──
+// Personal CV/résumé PDFs are intentionally not hosted (kept local-only); only the TCC research PDF is published.
 const tccResp = await page.goto(`${BASE}/assets/TCC_Thales_Sgarbi_Salata_corrigido_revisado-1.pdf`, { timeout: 15000 }).catch(e => null);
 results.tccPdf = tccResp ? { status: tccResp.status(), type: tccResp.headers()['content-type'] } : 'FAILED';
 
@@ -427,8 +424,6 @@ const assertions = [
       .every(text => results.en.credentials?.includes(text)),
     'credential hierarchy and actions are translated in the English portfolio',
   ],
-  [results.cvPdf.status === 200 && results.cvPdf.type === 'application/pdf', 'Portuguese CV is downloadable'],
-  [results.resumePdf.status === 200 && results.resumePdf.type === 'application/pdf', 'English resume is downloadable'],
   [results.tccPdf.status === 200 && results.tccPdf.type === 'application/pdf', 'TCC PDF is readable from the portfolio'],
   [results.mobileMenu.before.button && results.mobileMenu.before.menu, 'mobile navigation controls exist'],
   [results.mobileMenu.before.expanded === 'false' && results.mobileMenu.before.hidden === true, 'mobile navigation starts collapsed'],
