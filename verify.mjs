@@ -16,6 +16,13 @@ fs.mkdirSync(outDir, { recursive: true });
 const shot = (page, name) => page.screenshot({ path: path.join(outDir, `${name}.png`) });
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 
+async function emulateLanguages(page, languages) {
+  await page.evaluateOnNewDocument(browserLanguages => {
+    Object.defineProperty(navigator, 'languages', { configurable: true, get: () => browserLanguages });
+    Object.defineProperty(navigator, 'language', { configurable: true, get: () => browserLanguages[0] });
+  }, languages);
+}
+
 async function revealAll(page) {
   await page.evaluate(async () => {
     const sleep = ms => new Promise(r => setTimeout(r, ms));
@@ -45,6 +52,7 @@ const browser = await puppeteer.launch({
 
 // ── Desktop ──
 const page = await browser.newPage();
+await emulateLanguages(page, ['pt-BR', 'pt']);
 page.on('request', request => {
   const url = request.url();
   if (/lucide|tabler|iconify|\/icons\//i.test(url) && !url.startsWith(BASE)) {
@@ -73,6 +81,9 @@ results.profile = await page.evaluate(() => ({
   title: document.title,
   role: document.querySelector('[data-i18n="hero.role"]')?.textContent.trim(),
   terminalMission: document.querySelector('#terminal-body')?.textContent,
+  terminalRenderedLines: [...document.querySelectorAll('#terminal-body > div')]
+    .map(line => line.textContent.trim())
+    .filter(Boolean),
   nerdz: {
     card: Boolean(document.querySelector('[data-project="nerdz"]')),
     link: document.querySelector('[data-project="nerdz"] a')?.href,
@@ -516,6 +527,9 @@ await sleep(300);
 results.en = await page.evaluate(() => ({
   htmlLang: document.documentElement.lang,
   heroRole: document.querySelector('[data-i18n="hero.role"]').textContent.trim(),
+  terminalRenderedLines: [...document.querySelectorAll('#terminal-body > div')]
+    .map(line => line.textContent.trim())
+    .filter(Boolean),
   aboutTitle: document.querySelector('[data-i18n="about.title"]').textContent.trim(),
   contactTitle: document.querySelector('[data-i18n="contact.title"]').textContent.trim(),
   tcc: document.querySelector('[data-project="tcc"]')?.textContent,
@@ -575,13 +589,34 @@ await gotoSection(page, '#contato');
 await shot(page, 'desktop-05-contato-en');
 
 // volta para PT e confere persistência
-await page.reload({ waitUntil: 'networkidle0' });
+await page.reload({ waitUntil: 'domcontentloaded' });
+await sleep(250);
+results.reloadScanIntro = await page.evaluate(() => {
+  const intro = document.querySelector('#scan-intro');
+  return Boolean(intro && !intro.hidden && !intro.classList.contains('done'));
+});
+await page.waitForNetworkIdle();
 results.persistedAfterReload = await page.evaluate(() => localStorage.getItem('lang'));
 results.englishReloadChipLinks = await page.evaluate(() => {
   const chips = [...document.querySelectorAll('.chip')];
   return { total: chips.length, linked: chips.filter(chip => chip.matches('a')).length };
 });
 await page.evaluate(() => localStorage.removeItem('lang'));
+
+// ── First-visit language detection and explicit-choice precedence ──
+const localePage = await browser.newPage();
+await emulateLanguages(localePage, ['en-US', 'en']);
+await localePage.goto(BASE, { waitUntil: 'domcontentloaded', timeout: 30000 });
+await sleep(250);
+results.localeSelection = {
+  firstVisit: await localePage.evaluate(() => document.documentElement.lang),
+};
+await localePage.evaluate(() => localStorage.setItem('lang', 'pt'));
+await localePage.reload({ waitUntil: 'domcontentloaded' });
+await sleep(250);
+results.localeSelection.savedPreference = await localePage.evaluate(() => document.documentElement.lang);
+await localePage.evaluate(() => localStorage.removeItem('lang'));
+await localePage.close();
 
 // ── Published PDFs ──
 // Personal CV/résumé PDFs are intentionally not hosted (kept local-only); only the TCC research PDF is published.
@@ -744,14 +779,24 @@ const expectedSkillIcons = ['crosshair', 'shield-check', 'cloud-cog', 'code-xml'
 const assertions = [
   [results.profile.title.includes('Full Stack'), 'title positions the profile as Full Stack'],
   [
-    results.slowScanIntro.visibleAfterInitialRead && results.slowScanIntro.sweepDurationSeconds >= 2.3,
-    'the first-visit recon scan remains readable for roughly 2.4 seconds',
+    results.slowScanIntro.visibleAfterInitialRead && results.slowScanIntro.sweepDurationSeconds >= 3.9,
+    'the page-load recon scan remains readable for roughly 4 seconds',
+  ],
+  [results.reloadScanIntro, 'refreshing the page starts the recon scan again'],
+  [
+    results.localeSelection.firstVisit === 'en' && results.localeSelection.savedPreference === 'pt-BR',
+    'browser language selects the first-visit locale while a saved manual choice takes precedence',
   ],
   [results.profile.role.includes('Full Stack') && results.profile.role.includes('DevSecOps'), 'hero combines Full Stack and DevSecOps'],
   [
+    ['Construir produtos resilientes.', 'Automatizar entregas com segurança.', 'Transformar inteligência ofensiva em defesa.']
+      .every(line => results.profile.terminalRenderedLines.includes(line)),
+    'the Portuguese terminal mission is localized',
+  ],
+  [
     ['Build resilient products.', 'Automate the path to production.', 'Turn attack insight into defense.']
-      .every(line => results.profile.terminalMission?.includes(line)),
-    'the terminal mission states a distinctive product, delivery and defense philosophy',
+      .every(line => results.en.terminalRenderedLines.includes(line)),
+    'the English terminal mission remains localized',
   ],
   [results.profile.nerdz.card, 'Nerdz appears as a featured project'],
   [

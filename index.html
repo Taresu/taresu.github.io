@@ -299,7 +299,7 @@
       height: 40vh;
       background: linear-gradient(180deg, transparent, rgba(124,58,237,.10) 60%, rgba(0,255,135,.14));
       pointer-events: none;
-      animation: scanSweep 2.4s cubic-bezier(.4,0,.2,1) 1 forwards;
+      animation: scanSweep 4s cubic-bezier(.4,0,.2,1) 1 forwards;
     }
     @keyframes scanSweep { from { transform: translateY(-45vh); } to { transform: translateY(115vh); } }
 
@@ -884,7 +884,7 @@
             <!-- typed by JS; static fallback for no-JS / reduced motion injected below -->
             <noscript>
               <p><span class="text-terminal">$</span> whoami<br/>th4l3s_s4l4t4</p>
-              <p class="mt-3"><span class="text-terminal">$</span> cat mission.txt<br/>Build resilient products.<br/>Automate the path to production.<br/>Turn attack insight into defense.</p>
+              <p class="mt-3"><span class="text-terminal">$</span> cat mission.txt<br/>Construir produtos resilientes.<br/>Automatizar entregas com segurança.<br/>Transformar inteligência ofensiva em defesa.</p>
               <p class="mt-3"><span class="text-terminal">$</span> ./status --check<br/><span class="text-purple-light">[ ONLINE ]</span> fullstack_devsecops: active</p>
             </noscript>
           </div>
@@ -1545,6 +1545,7 @@
         'hero.role': 'Full Stack · DevSecOps · Segurança da Informação',
         'hero.pitch': 'Desenvolvo e mantenho aplicações web e mobile, integro serviços e automatizo infraestrutura com segurança incorporada ao ciclo de desenvolvimento.',
         'hero.cv': 'Baixar CV', 'hero.projects': 'Ver projetos', 'hero.terminalLabel': 'Terminal animado com resumo do perfil',
+        'hero.mission1': 'Construir produtos resilientes.', 'hero.mission2': 'Automatizar entregas com segurança.', 'hero.mission3': 'Transformar inteligência ofensiva em defesa.',
         'about.title': 'Sobre',
         'about.p1': 'Sou bacharel em Sistemas de Informação pela UTFPR. Atuo como desenvolvedor Full Stack no portal institucional da universidade e como um dos mantenedores do Nerdz, aplicação mobile e web multiplataforma. Também sou um dos coordenadores voluntários do Canal de Alertas do VESPAS, um dos mantenedores do site da iniciativa e colaboro no desenvolvimento de labs e desafios de CTF.',
         'about.p2': 'Minha trajetória conecta desenvolvimento, operações e segurança: React/TypeScript e Python no Portal UTFPR; React Native, Expo e NestJS no Nerdz; automação, CI/CD, cloud e investigação de vulnerabilidades em ambientes corporativos.',
@@ -1616,6 +1617,7 @@
         'hero.role': 'Full Stack · DevSecOps · Information Security',
         'hero.pitch': 'I build and maintain web and mobile applications, integrate services and automate infrastructure with security embedded in the development lifecycle.',
         'hero.cv': 'Download résumé', 'hero.projects': 'View projects', 'hero.terminalLabel': 'Animated terminal with profile summary',
+        'hero.mission1': 'Build resilient products.', 'hero.mission2': 'Automate the path to production.', 'hero.mission3': 'Turn attack insight into defense.',
         'about.title': 'About',
         'about.p1': "I'm an Information Systems graduate from UTFPR. I work as a Full Stack developer on the university's institutional portal and as one of the maintainers of Nerdz, a cross-platform mobile and web application. I also volunteer as one of the coordinators of the VESPAS Alerts Channel, co-maintain the initiative's website, and contribute to its CTF labs and challenges.",
         'about.p2': 'My experience connects development, operations and security: React/TypeScript and Python on the UTFPR Portal; React Native, Expo and NestJS on Nerdz; automation, CI/CD, cloud and vulnerability investigation in corporate environments.',
@@ -1683,7 +1685,7 @@
       }
     };
 
-    function setLang(lang) {
+    function setLang(lang, { persist = true } = {}) {
       document.documentElement.lang = lang === 'pt' ? 'pt-BR' : 'en';
       document.querySelectorAll('[data-i18n]').forEach(el => {
         const key = el.getAttribute('data-i18n');
@@ -1713,15 +1715,26 @@
         discordCopy.querySelector('[data-copy-feedback]').textContent = discordCopy.dataset[`copyAction${suffix}`];
         discordCopy.dataset.copyState = 'idle';
       }
-      try { localStorage.setItem('lang', lang); } catch (e) {}
+      if (persist) {
+        try { localStorage.setItem('lang', lang); } catch (e) {}
+      }
       window.dispatchEvent(new Event('portfolio:languagechange'));
     }
     document.getElementById('lang-pt').addEventListener('click', () => setLang('pt'));
     document.getElementById('lang-en').addEventListener('click', () => setLang('en'));
+    let initialLang;
     try {
       const saved = localStorage.getItem('lang');
-      if (saved === 'en') setLang('en');
+      if (saved === 'pt' || saved === 'en') initialLang = saved;
     } catch (e) {}
+    if (!initialLang) {
+      const browserLanguages = navigator.languages?.length ? navigator.languages : [navigator.language];
+      const supportedLocale = browserLanguages
+        .map(locale => String(locale).toLowerCase())
+        .find(locale => locale.startsWith('pt') || locale.startsWith('en'));
+      initialLang = supportedLocale?.startsWith('pt') ? 'pt' : 'en';
+    }
+    setLang(initialLang, { persist: false });
 
     const discordCopyButton = document.querySelector('[data-discord-copy]');
     discordCopyButton?.addEventListener('click', async () => {
@@ -1974,9 +1987,9 @@
       { prompt: false, text: 'th4l3s_s4l4t4' },
       { prompt: false, text: '' },
       { prompt: true,  text: 'cat mission.txt' },
-      { prompt: false, text: 'Build resilient products.' },
-      { prompt: false, text: 'Automate the path to production.' },
-      { prompt: false, text: 'Turn attack insight into defense.' },
+      { prompt: false, text: 'Construir produtos resilientes.', i18n: 'hero.mission1' },
+      { prompt: false, text: 'Automatizar entregas com segurança.', i18n: 'hero.mission2' },
+      { prompt: false, text: 'Transformar inteligência ofensiva em defesa.', i18n: 'hero.mission3' },
       { prompt: false, text: '' },
       { prompt: true,  text: './status --check' },
       { prompt: false, text: '[ ONLINE ] fullstack_devsecops: active', status: true },
@@ -1992,7 +2005,9 @@
         p.innerHTML = '<span class="text-purple-light">[ ONLINE ]</span> <span class="text-fog">fullstack_devsecops:</span> <span class="text-terminal">active</span>';
         p.classList.add('opacity-0');
       } else {
-        p.textContent = line.text || ' ';
+        const lang = document.documentElement.lang === 'en' ? 'en' : 'pt';
+        p.textContent = (line.i18n ? I18N[lang][line.i18n] : line.text) || ' ';
+        if (line.i18n) p.dataset.i18n = line.i18n;
         p.classList.add('text-fog', 'opacity-0');
       }
       target.appendChild(p);
@@ -2470,12 +2485,10 @@
       document.fonts?.ready.then(layoutBackbone);
     }
 
-    /* ═══════ 3. Boot recon-scan intro (once per session) ═══════ */
+    /* ═══════ 3. Boot recon-scan intro (every page load) ═══════ */
     const intro = document.getElementById('scan-intro');
     if (intro) {
-      let seen = false;
-      try { seen = sessionStorage.getItem('recon-seen') === '1'; } catch (e) {}
-      if (RM || seen) {
+      if (RM) {
         intro.remove();
       } else {
         intro.hidden = false;
@@ -2483,11 +2496,10 @@
         const pct = intro.querySelector('.scan-status');
         const label = intro.querySelector('.scan-label');
         const STEPS = ['mapping surface…', 'enumerating skills…', 'linking nodes…', 'access granted'];
-        const SCAN_DURATION = 2400;
+        const SCAN_DURATION = 4000;
         const startedAt = performance.now();
         const finish = () => {
           intro.classList.add('done');
-          try { sessionStorage.setItem('recon-seen', '1'); } catch (e) {}
           setTimeout(() => intro.remove(), 650);
         };
         const tick = setInterval(() => {
