@@ -658,6 +658,155 @@
     #experiencia .tl-item > .org-network-control { grid-column: 2; }
   }
   .contact-control { height: 50px; }
+  /* ── Ambient terminal radio ── */
+  body { padding-bottom: calc(7rem + env(safe-area-inset-bottom, 0px)); }
+  .ambient-player {
+    position: fixed;
+    right: 24px;
+    bottom: calc(24px + env(safe-area-inset-bottom, 0px));
+    z-index: 45;
+    width: min(340px, calc(100vw - 32px));
+    padding: 11px 12px 10px;
+    border: 1px solid rgba(124,58,237,.42);
+    border-radius: 10px;
+    background:
+      linear-gradient(105deg, rgba(124,58,237,.08), transparent 38%),
+      rgba(10,14,20,.94);
+    box-shadow: 0 18px 48px rgba(0,0,0,.46), 0 0 24px rgba(124,58,237,.09);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .ambient-player::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    background: repeating-linear-gradient(0deg, rgba(255,255,255,.018) 0 1px, transparent 1px 3px);
+  }
+  .ambient-player__top {
+    position: relative;
+    display: grid;
+    grid-template-columns: 38px 22px minmax(0,1fr) auto;
+    align-items: center;
+    gap: 9px;
+  }
+  .ambient-player__play,
+  .ambient-player__mute {
+    display: grid;
+    place-items: center;
+    border: 1px solid #26354A;
+    background: #0E1420;
+    color: #C4B5FD;
+    transition: color 160ms ease, border-color 160ms ease, background 160ms ease, transform 160ms ease;
+  }
+  .ambient-player__play { width: 38px; height: 38px; border-radius: 8px; font-size: 14px; }
+  .ambient-player__mute { width: 27px; height: 27px; border-radius: 6px; font-size: 12px; }
+  .ambient-player__play:hover,
+  .ambient-player__mute:hover { color: #00FF87; border-color: rgba(0,255,135,.48); }
+  .ambient-player__play:active,
+  .ambient-player__mute:active { transform: scale(.96); }
+  .ambient-player__play:focus-visible,
+  .ambient-player__mute:focus-visible,
+  .ambient-player input:focus-visible,
+  .ambient-player__credit:focus-visible { outline: 2px solid #C4B5FD; outline-offset: 2px; }
+  .ambient-eq {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    height: 20px;
+    color: #59677C;
+  }
+  .ambient-eq-bar {
+    width: 2px;
+    height: 5px;
+    border-radius: 999px;
+    background: currentColor;
+    transform-origin: 50% 100%;
+  }
+  .ambient-player[data-state="playing"] .ambient-eq { color: #00FF87; }
+  .ambient-player[data-state="playing"] .ambient-eq-bar { animation: ambientPulse .72s ease-in-out infinite alternate; }
+  .ambient-player[data-state="playing"] .ambient-eq-bar:nth-child(2) { animation-delay: -.31s; }
+  .ambient-player[data-state="playing"] .ambient-eq-bar:nth-child(3) { animation-delay: -.55s; }
+  .ambient-player[data-state="playing"] .ambient-eq-bar:nth-child(4) { animation-delay: -.18s; }
+  .ambient-player[data-state="playing"] .ambient-eq-bar:nth-child(5) { animation-delay: -.44s; }
+  @keyframes ambientPulse { to { transform: scaleY(3.2); } }
+  .ambient-player__meta { min-width: 0; line-height: 1.2; }
+  .ambient-player__channel {
+    display: block;
+    overflow: hidden;
+    color: #00FF87;
+    font-size: 8px;
+    letter-spacing: .13em;
+    text-overflow: ellipsis;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+  .ambient-player__title {
+    display: block;
+    overflow: hidden;
+    margin-top: 3px;
+    color: #EDF1F7;
+    font-size: 11px;
+    font-weight: 500;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .ambient-player__credit {
+    position: relative;
+    border-radius: 3px;
+    color: #8B98AC;
+    font-size: 9px;
+    text-decoration: none;
+    transition: color 160ms ease;
+  }
+  .ambient-player__credit:hover { color: #C4B5FD; }
+  .ambient-player__controls {
+    position: relative;
+    display: grid;
+    grid-template-columns: 32px minmax(74px,1fr) 32px 27px 58px;
+    align-items: center;
+    gap: 6px;
+    margin-top: 9px;
+  }
+  .ambient-player__time { color: #708097; font-size: 8px; font-variant-numeric: tabular-nums; }
+  .ambient-player__time:last-of-type { text-align: right; }
+  .ambient-player input[type="range"] {
+    height: 16px;
+    margin: 0;
+    accent-color: #7C3AED;
+    cursor: pointer;
+  }
+  .ambient-player[data-state="playing"] input[type="range"] { accent-color: #00FF87; }
+  .ambient-player__status {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0,0,0,0);
+    white-space: nowrap;
+    border: 0;
+  }
+  @media (max-width: 480px) {
+    body { padding-bottom: calc(7rem + env(safe-area-inset-bottom, 0px)); }
+    .ambient-player {
+      right: 16px;
+      bottom: calc(14px + env(safe-area-inset-bottom, 0px));
+      left: 16px;
+      width: auto;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .ambient-player,
+    .ambient-player__play,
+    .ambient-player__mute,
+    .ambient-player__credit { transition: none !important; }
+    .ambient-player .ambient-eq-bar { animation: none !important; transform: none !important; }
+  }
   .linkedin-contact { position: relative; }
   .linkedin-availability {
     position: absolute;
@@ -1536,6 +1685,31 @@
     </div>
   </footer>
 
+  <aside class="ambient-player" data-ambient-player data-state="idle" aria-label="Player de música ambiente" data-i18n-aria-label="ambient.playerLabel">
+    <audio data-ambient-audio src="assets/audio/dimly-lit.mp3" preload="none" loop></audio>
+    <div class="ambient-player__top">
+      <button type="button" class="ambient-player__play" data-audio-play aria-label="Reproduzir música ambiente" data-i18n-aria-label="ambient.play" aria-pressed="false">
+        <span data-audio-play-icon aria-hidden="true">▶</span>
+      </button>
+      <span class="ambient-eq" aria-hidden="true">
+        <span class="ambient-eq-bar"></span><span class="ambient-eq-bar"></span><span class="ambient-eq-bar"></span><span class="ambient-eq-bar"></span><span class="ambient-eq-bar"></span>
+      </span>
+      <span class="ambient-player__meta">
+        <span class="ambient-player__channel">ambient://night_shift</span>
+        <strong class="ambient-player__title">Dimly Lit · iamoneabe</strong>
+      </span>
+      <a class="ambient-player__credit" data-audio-credit href="https://opengameart.org/content/dimly-lit" target="_blank" rel="noopener noreferrer">CC0 ↗</a>
+    </div>
+    <div class="ambient-player__controls">
+      <span class="ambient-player__time" data-audio-current>00:00</span>
+      <input data-audio-progress type="range" min="0" max="100" step="0.1" value="0" aria-label="Progresso da música ambiente" data-i18n-aria-label="ambient.progress">
+      <span class="ambient-player__time" data-audio-duration>--:--</span>
+      <button type="button" class="ambient-player__mute" data-audio-mute aria-label="Silenciar música ambiente" data-i18n-aria-label="ambient.mute" aria-pressed="false"><span data-audio-mute-icon aria-hidden="true">♪</span></button>
+      <input data-audio-volume type="range" min="0" max="1" step="0.05" value="0.3" aria-label="Volume da música ambiente" data-i18n-aria-label="ambient.volume">
+    </div>
+    <p class="ambient-player__status" data-audio-status data-i18n="ambient.ready" aria-live="polite">Música ambiente pronta</p>
+  </aside>
+
   <script>
     /* ═══════════ i18n ═══════════ */
     const I18N = {
@@ -1546,6 +1720,9 @@
         'hero.pitch': 'Desenvolvo e mantenho aplicações web e mobile, integro serviços e automatizo infraestrutura com segurança incorporada ao ciclo de desenvolvimento.',
         'hero.cv': 'Baixar CV', 'hero.projects': 'Ver projetos', 'hero.terminalLabel': 'Terminal animado com resumo do perfil',
         'hero.mission1': 'Construir produtos resilientes.', 'hero.mission2': 'Automatizar entregas com segurança.', 'hero.mission3': 'Transformar inteligência ofensiva em defesa.',
+        'ambient.playerLabel': 'Player de música ambiente', 'ambient.play': 'Reproduzir música ambiente', 'ambient.pause': 'Pausar música ambiente',
+        'ambient.progress': 'Progresso da música ambiente', 'ambient.volume': 'Volume da música ambiente', 'ambient.mute': 'Silenciar música ambiente', 'ambient.unmute': 'Ativar som da música ambiente',
+        'ambient.ready': 'Música ambiente pronta', 'ambient.loading': 'Carregando música ambiente', 'ambient.playing': 'Música ambiente em reprodução', 'ambient.paused': 'Música ambiente pausada', 'ambient.error': 'Não foi possível reproduzir a música ambiente',
         'about.title': 'Sobre',
         'about.p1': 'Sou bacharel em Sistemas de Informação pela UTFPR. Atuo como desenvolvedor Full Stack no portal institucional da universidade e como um dos mantenedores do Nerdz, aplicação mobile e web multiplataforma. Também sou um dos coordenadores voluntários do Canal de Alertas do VESPAS, um dos mantenedores do site da iniciativa e colaboro no desenvolvimento de labs e desafios de CTF.',
         'about.p2': 'Minha trajetória conecta desenvolvimento, operações e segurança: React/TypeScript e Python no Portal UTFPR; React Native, Expo e NestJS no Nerdz; automação, CI/CD, cloud e investigação de vulnerabilidades em ambientes corporativos.',
@@ -1618,6 +1795,9 @@
         'hero.pitch': 'I build and maintain web and mobile applications, integrate services and automate infrastructure with security embedded in the development lifecycle.',
         'hero.cv': 'Download résumé', 'hero.projects': 'View projects', 'hero.terminalLabel': 'Animated terminal with profile summary',
         'hero.mission1': 'Build resilient products.', 'hero.mission2': 'Automate the path to production.', 'hero.mission3': 'Turn attack insight into defense.',
+        'ambient.playerLabel': 'Ambient music player', 'ambient.play': 'Play ambient music', 'ambient.pause': 'Pause ambient music',
+        'ambient.progress': 'Ambient music progress', 'ambient.volume': 'Ambient music volume', 'ambient.mute': 'Mute ambient music', 'ambient.unmute': 'Unmute ambient music',
+        'ambient.ready': 'Ambient music ready', 'ambient.loading': 'Loading ambient music', 'ambient.playing': 'Ambient music playing', 'ambient.paused': 'Ambient music paused', 'ambient.error': 'Ambient music could not be played',
         'about.title': 'About',
         'about.p1': "I'm an Information Systems graduate from UTFPR. I work as a Full Stack developer on the university's institutional portal and as one of the maintainers of Nerdz, a cross-platform mobile and web application. I also volunteer as one of the coordinators of the VESPAS Alerts Channel, co-maintain the initiative's website, and contribute to its CTF labs and challenges.",
         'about.p2': 'My experience connects development, operations and security: React/TypeScript and Python on the UTFPR Portal; React Native, Expo and NestJS on Nerdz; automation, CI/CD, cloud and vulnerability investigation in corporate environments.',
@@ -1735,6 +1915,123 @@
       initialLang = supportedLocale?.startsWith('pt') ? 'pt' : 'en';
     }
     setLang(initialLang, { persist: false });
+
+    /* ═══════════ Ambient terminal radio ═══════════ */
+    const ambientPlayer = document.querySelector('[data-ambient-player]');
+    const ambientAudio = ambientPlayer?.querySelector('[data-ambient-audio]');
+    const ambientPlay = ambientPlayer?.querySelector('[data-audio-play]');
+    const ambientPlayIcon = ambientPlayer?.querySelector('[data-audio-play-icon]');
+    const ambientMute = ambientPlayer?.querySelector('[data-audio-mute]');
+    const ambientMuteIcon = ambientPlayer?.querySelector('[data-audio-mute-icon]');
+    const ambientProgress = ambientPlayer?.querySelector('[data-audio-progress]');
+    const ambientVolume = ambientPlayer?.querySelector('[data-audio-volume]');
+    const ambientCurrent = ambientPlayer?.querySelector('[data-audio-current]');
+    const ambientDuration = ambientPlayer?.querySelector('[data-audio-duration]');
+    const ambientStatus = ambientPlayer?.querySelector('[data-audio-status]');
+
+    if (ambientPlayer && ambientAudio && ambientPlay && ambientMute && ambientProgress && ambientVolume) {
+      const getAmbientLang = () => document.documentElement.lang === 'en' ? 'en' : 'pt';
+      const ambientText = key => I18N[getAmbientLang()][key];
+      const formatAmbientTime = seconds => {
+        if (!Number.isFinite(seconds) || seconds < 0) return '--:--';
+        const minutes = Math.floor(seconds / 60);
+        return `${minutes}:${String(Math.floor(seconds % 60)).padStart(2, '0')}`;
+      };
+      const saveAmbientPreference = (key, value) => {
+        try { localStorage.setItem(key, String(value)); } catch (e) {}
+      };
+      const setAmbientStatus = key => {
+        ambientStatus.dataset.i18n = key;
+        ambientStatus.textContent = ambientText(key);
+      };
+      const syncAmbientPlay = state => {
+        ambientPlayer.dataset.state = state;
+        const playing = state === 'playing';
+        ambientPlay.dataset.i18nAriaLabel = playing ? 'ambient.pause' : 'ambient.play';
+        ambientPlay.setAttribute('aria-label', ambientText(playing ? 'ambient.pause' : 'ambient.play'));
+        ambientPlay.setAttribute('aria-pressed', String(playing));
+        ambientPlayIcon.textContent = playing ? '❚❚' : '▶';
+      };
+      const syncAmbientMute = () => {
+        const key = ambientAudio.muted ? 'ambient.unmute' : 'ambient.mute';
+        ambientMute.dataset.i18nAriaLabel = key;
+        ambientMute.setAttribute('aria-label', ambientText(key));
+        ambientMute.setAttribute('aria-pressed', String(ambientAudio.muted));
+        ambientMuteIcon.textContent = ambientAudio.muted ? '×' : '♪';
+      };
+      const syncAmbientTime = () => {
+        const duration = Number.isFinite(ambientAudio.duration) ? ambientAudio.duration : 0;
+        ambientProgress.max = String(duration || 100);
+        ambientProgress.value = String(Math.min(ambientAudio.currentTime || 0, duration || 100));
+        ambientCurrent.textContent = formatAmbientTime(ambientAudio.currentTime || 0);
+        ambientDuration.textContent = duration ? formatAmbientTime(duration) : '--:--';
+      };
+
+      let storedVolume = .3;
+      let storedMuted = false;
+      try {
+        const volumeValue = Number.parseFloat(localStorage.getItem('ambient-volume'));
+        if (Number.isFinite(volumeValue) && volumeValue >= 0 && volumeValue <= 1) storedVolume = volumeValue;
+        storedMuted = localStorage.getItem('ambient-muted') === 'true';
+      } catch (e) {}
+      ambientAudio.volume = storedVolume;
+      ambientAudio.muted = storedMuted;
+      ambientVolume.value = String(storedVolume);
+      syncAmbientMute();
+      syncAmbientTime();
+
+      ambientPlay.addEventListener('click', async () => {
+        if (!ambientAudio.paused) {
+          ambientAudio.pause();
+          return;
+        }
+        syncAmbientPlay('loading');
+        setAmbientStatus('ambient.loading');
+        try {
+          await ambientAudio.play();
+        } catch (error) {
+          syncAmbientPlay('error');
+          setAmbientStatus('ambient.error');
+        }
+      });
+      ambientAudio.addEventListener('play', () => {
+        syncAmbientPlay('playing');
+        setAmbientStatus('ambient.playing');
+      });
+      ambientAudio.addEventListener('pause', () => {
+        if (ambientPlayer.dataset.state === 'idle' || ambientPlayer.dataset.state === 'error') return;
+        syncAmbientPlay('paused');
+        setAmbientStatus('ambient.paused');
+      });
+      ambientAudio.addEventListener('loadedmetadata', syncAmbientTime);
+      ambientAudio.addEventListener('durationchange', syncAmbientTime);
+      ambientAudio.addEventListener('timeupdate', syncAmbientTime);
+      ambientAudio.addEventListener('error', () => {
+        syncAmbientPlay('error');
+        setAmbientStatus('ambient.error');
+      });
+      ambientProgress.addEventListener('input', () => {
+        if (Number.isFinite(ambientAudio.duration)) ambientAudio.currentTime = Number(ambientProgress.value);
+        syncAmbientTime();
+      });
+      ambientVolume.addEventListener('input', () => {
+        ambientAudio.volume = Number(ambientVolume.value);
+        saveAmbientPreference('ambient-volume', ambientAudio.volume);
+      });
+      ambientMute.addEventListener('click', () => {
+        ambientAudio.muted = !ambientAudio.muted;
+        saveAmbientPreference('ambient-muted', ambientAudio.muted);
+        syncAmbientMute();
+      });
+      document.addEventListener('visibilitychange', () => {
+        if (document.hidden && !ambientAudio.paused) ambientAudio.pause();
+      });
+      window.addEventListener('portfolio:languagechange', () => {
+        syncAmbientPlay(ambientPlayer.dataset.state);
+        syncAmbientMute();
+        ambientStatus.textContent = ambientText(ambientStatus.dataset.i18n || 'ambient.ready');
+      });
+    }
 
     const discordCopyButton = document.querySelector('[data-discord-copy]');
     discordCopyButton?.addEventListener('click', async () => {
