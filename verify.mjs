@@ -45,6 +45,7 @@ async function gotoSection(page, id) {
 
 const results = {};
 results.iconNetworkRequests = [];
+results.audioNetworkRequests = [];
 const browser = await puppeteer.launch({
   executablePath: process.env.CHROME_PATH || '/usr/bin/google-chrome',
   args: ['--no-sandbox', '--disable-setuid-sandbox'],
@@ -55,6 +56,7 @@ const page = await browser.newPage();
 await emulateLanguages(page, ['pt-BR', 'pt']);
 page.on('request', request => {
   const url = request.url();
+  if (url.includes('/assets/audio/')) results.audioNetworkRequests.push(url);
   if (/lucide|tabler|iconify|\/icons\//i.test(url) && !url.startsWith(BASE)) {
     results.iconNetworkRequests.push(url);
   }
@@ -379,6 +381,28 @@ results.profile = await page.evaluate(() => ({
     reticlePresent: Boolean(document.querySelector('#reticle')),
   },
 }));
+results.audioPlayerInitial = await page.evaluate(() => {
+  const player = document.querySelector('[data-ambient-player]');
+  const audio = player?.querySelector('audio');
+  const play = player?.querySelector('[data-audio-play]');
+  const progress = player?.querySelector('[data-audio-progress]');
+  const volume = player?.querySelector('[data-audio-volume]');
+  const credit = player?.querySelector('[data-audio-credit]');
+  return {
+    present: Boolean(player),
+    state: player?.dataset.state,
+    src: audio?.getAttribute('src'),
+    preload: audio?.preload,
+    loop: audio?.loop,
+    paused: audio?.paused,
+    playLabel: play?.getAttribute('aria-label'),
+    progressLabel: progress?.getAttribute('aria-label'),
+    volumeLabel: volume?.getAttribute('aria-label'),
+    creditHref: credit?.href,
+    creditTarget: credit?.target,
+    creditRel: credit?.rel,
+  };
+});
 await shot(page, 'desktop-01-hero-pt');
 
 results.discordCopyInteraction = await page.evaluate(async () => {
@@ -527,6 +551,17 @@ await sleep(300);
 results.en = await page.evaluate(() => ({
   htmlLang: document.documentElement.lang,
   heroRole: document.querySelector('[data-i18n="hero.role"]').textContent.trim(),
+  audioLabels: (() => {
+    const player = document.querySelector('[data-ambient-player]');
+    return {
+      player: player?.getAttribute('aria-label'),
+      play: player?.querySelector('[data-audio-play]')?.getAttribute('aria-label'),
+      progress: player?.querySelector('[data-audio-progress]')?.getAttribute('aria-label'),
+      volume: player?.querySelector('[data-audio-volume]')?.getAttribute('aria-label'),
+      mute: player?.querySelector('[data-audio-mute]')?.getAttribute('aria-label'),
+      status: player?.querySelector('[data-audio-status]')?.textContent.trim(),
+    };
+  })(),
   terminalRenderedLines: [...document.querySelectorAll('#terminal-body > div')]
     .map(line => line.textContent.trim())
     .filter(Boolean),
@@ -617,6 +652,108 @@ await sleep(250);
 results.localeSelection.savedPreference = await localePage.evaluate(() => document.documentElement.lang);
 await localePage.evaluate(() => localStorage.removeItem('lang'));
 await localePage.close();
+
+// ── Ambient player: opt-in playback, persistence and background behavior ──
+const audioPage = await browser.newPage();
+await emulateLanguages(audioPage, ['pt-BR', 'pt']);
+const audioResponses = [];
+audioPage.on('response', response => {
+  if (response.url().includes('/assets/audio/')) {
+    audioResponses.push({ status: response.status(), type: response.headers()['content-type'] });
+  }
+});
+await audioPage.goto(BASE, { waitUntil: 'domcontentloaded', timeout: 30000 });
+await sleep(250);
+const requestsBeforePlay = audioResponses.length;
+await audioPage.keyboard.press('Escape');
+await sleep(700);
+if (await audioPage.$('[data-audio-play]')) await audioPage.click('[data-audio-play]');
+const started = await audioPage.waitForFunction(
+  () => {
+    const audio = document.querySelector('[data-ambient-audio]');
+    return audio && !audio.paused && audio.readyState >= 2;
+  },
+  { timeout: 5000 },
+).then(() => true).catch(() => false);
+if (started) {
+  await audioPage.evaluate(() => {
+    const audio = document.querySelector('[data-ambient-audio]');
+    const progress = document.querySelector('[data-audio-progress]');
+    const volume = document.querySelector('[data-audio-volume]');
+    volume.value = '0.4';
+    volume.dispatchEvent(new Event('input', { bubbles: true }));
+    progress.value = String(Math.min(1, audio.duration / 2));
+    progress.dispatchEvent(new Event('input', { bubbles: true }));
+    document.querySelector('[data-audio-mute]').click();
+  });
+  await audioPage.waitForFunction(() => {
+    const audio = document.querySelector('[data-ambient-audio]');
+    const progress = document.querySelector('[data-audio-progress]');
+    return audio?.currentTime >= 0.5 && Number(progress?.value) >= 0.5;
+  }, { timeout: 2000 }).catch(() => {});
+}
+const playingState = await audioPage.evaluate(() => {
+  const player = document.querySelector('[data-ambient-player]');
+  const audio = document.querySelector('[data-ambient-audio]');
+  return {
+    state: player?.dataset.state,
+    volume: audio?.volume,
+    muted: audio?.muted,
+    progress: Number(document.querySelector('[data-audio-progress]')?.value),
+    current: document.querySelector('[data-audio-current]')?.textContent.trim(),
+  };
+});
+if (started) {
+  await audioPage.evaluate(() => {
+    Object.defineProperty(document, 'hidden', { configurable: true, get: () => true });
+    Object.defineProperty(document, 'visibilityState', { configurable: true, get: () => 'hidden' });
+    document.dispatchEvent(new Event('visibilitychange'));
+  });
+  await sleep(100);
+}
+const pausedWhenHidden = await audioPage.evaluate(() => ({
+  paused: document.querySelector('[data-ambient-audio]')?.paused,
+  state: document.querySelector('[data-ambient-player]')?.dataset.state,
+}));
+if (started) {
+  await audioPage.evaluate(() => {
+    Object.defineProperty(document, 'hidden', { configurable: true, get: () => false });
+    Object.defineProperty(document, 'visibilityState', { configurable: true, get: () => 'visible' });
+    document.dispatchEvent(new Event('visibilitychange'));
+  });
+  await sleep(100);
+}
+const stayedPausedWhenVisible = await audioPage.evaluate(() =>
+  document.querySelector('[data-ambient-audio]')?.paused,
+);
+await audioPage.reload({ waitUntil: 'domcontentloaded' });
+await sleep(250);
+const restored = await audioPage.evaluate(() => {
+  const player = document.querySelector('[data-ambient-player]');
+  const audio = document.querySelector('[data-ambient-audio]');
+  return {
+    state: player?.dataset.state,
+    paused: audio?.paused,
+    volume: audio?.volume,
+    muted: audio?.muted,
+    storedVolume: localStorage.getItem('ambient-volume'),
+    storedMuted: localStorage.getItem('ambient-muted'),
+  };
+});
+results.audioInteraction = {
+  requestsBeforePlay,
+  started,
+  playingState,
+  pausedWhenHidden,
+  stayedPausedWhenVisible,
+  restored,
+  responses: audioResponses,
+};
+await audioPage.evaluate(() => {
+  localStorage.removeItem('ambient-volume');
+  localStorage.removeItem('ambient-muted');
+});
+await audioPage.close();
 
 // ── Published PDFs ──
 // Personal CV/résumé PDFs are intentionally not hosted (kept local-only); only the TCC research PDF is published.
@@ -718,6 +855,18 @@ results.mobileLinkedinAvailability = await mob.evaluate(() => {
     centered: Boolean(rect && Math.abs((rect.left + rect.right) / 2 - window.innerWidth / 2) <= 1),
   };
 });
+results.mobileAmbientPlayer = await mob.evaluate(() => {
+  const player = document.querySelector('[data-ambient-player]');
+  const rect = player?.getBoundingClientRect();
+  return {
+    present: Boolean(player && rect),
+    withinViewport: Boolean(rect && rect.left >= 0 && rect.right <= window.innerWidth && rect.bottom <= window.innerHeight),
+    sideGapsBalanced: Boolean(rect && Math.abs(rect.left - (window.innerWidth - rect.right)) <= 1),
+    bottomClearance: rect ? window.innerHeight - rect.bottom : null,
+    bodyBottomPadding: Number.parseFloat(getComputedStyle(document.body).paddingBottom),
+    height: rect?.height,
+  };
+});
 await shot(mob, 'mobile-01-hero-pt');
 await revealAll(mob);
 await gotoSection(mob, '#skills');
@@ -771,6 +920,11 @@ results.reducedMotionOrgNetwork = await reducedMotion.evaluate(() => {
   const branches = document.querySelector('[data-org-network="vespas"] [data-org-branches]');
   return branches ? getComputedStyle(branches).transitionDuration : null;
 });
+results.reducedMotionAmbientPlayer = await reducedMotion.evaluate(() => {
+  const bar = document.querySelector('.ambient-eq-bar');
+  document.querySelector('[data-ambient-player]')?.setAttribute('data-state', 'playing');
+  return bar ? getComputedStyle(bar).animationName : null;
+});
 
 await browser.close();
 
@@ -783,6 +937,57 @@ const assertions = [
     'the page-load recon scan remains readable for roughly 4 seconds',
   ],
   [results.reloadScanIntro, 'refreshing the page starts the recon scan again'],
+  [
+    results.audioPlayerInitial.present && results.audioPlayerInitial.state === 'idle' &&
+      results.audioPlayerInitial.src === 'assets/audio/dimly-lit.mp3' &&
+      results.audioPlayerInitial.preload === 'none' && results.audioPlayerInitial.loop &&
+      results.audioPlayerInitial.paused && results.audioNetworkRequests.length === 0,
+    'the ambient player starts silent and defers its self-hosted audio request until play',
+  ],
+  [
+    results.audioPlayerInitial.playLabel === 'Reproduzir música ambiente' &&
+      results.audioPlayerInitial.progressLabel === 'Progresso da música ambiente' &&
+      results.audioPlayerInitial.volumeLabel === 'Volume da música ambiente' &&
+      results.audioPlayerInitial.creditHref === 'https://opengameart.org/content/dimly-lit' &&
+      results.audioPlayerInitial.creditTarget === '_blank' &&
+      results.audioPlayerInitial.creditRel.includes('noopener'),
+    'the ambient player exposes accessible controls and transparent CC0 provenance',
+  ],
+  [
+    results.audioInteraction.requestsBeforePlay === 0 && results.audioInteraction.started &&
+      results.audioInteraction.responses.some(response => response.status === 200 && response.type?.startsWith('audio/mpeg')),
+    'manual play starts the self-hosted MP3 and serves it with the correct audio MIME type',
+  ],
+  [
+    results.audioInteraction.playingState.state === 'playing' &&
+      Math.abs(results.audioInteraction.playingState.volume - 0.4) < 0.01 &&
+      results.audioInteraction.playingState.muted && results.audioInteraction.playingState.progress > 0 &&
+      results.audioInteraction.playingState.current !== '00:00',
+    'playback updates player state, time, seeking, volume and mute controls',
+  ],
+  [
+    results.audioInteraction.pausedWhenHidden.paused &&
+      results.audioInteraction.pausedWhenHidden.state === 'paused' &&
+      results.audioInteraction.stayedPausedWhenVisible,
+    'leaving the tab pauses ambient audio without automatically resuming it',
+  ],
+  [
+    results.audioInteraction.restored.state === 'idle' && results.audioInteraction.restored.paused &&
+      Math.abs(results.audioInteraction.restored.volume - 0.4) < 0.01 &&
+      results.audioInteraction.restored.muted &&
+      results.audioInteraction.restored.storedVolume === '0.4' &&
+      results.audioInteraction.restored.storedMuted === 'true',
+    'volume and mute persist while every page load still requires manual play',
+  ],
+  [
+    results.en.audioLabels.player === 'Ambient music player' &&
+      results.en.audioLabels.play === 'Play ambient music' &&
+      results.en.audioLabels.progress === 'Ambient music progress' &&
+      results.en.audioLabels.volume === 'Ambient music volume' &&
+      results.en.audioLabels.mute === 'Mute ambient music' &&
+      results.en.audioLabels.status === 'Ambient music ready',
+    'ambient-player labels and status localize to English',
+  ],
   [
     results.localeSelection.firstVisit === 'en' && results.localeSelection.savedPreference === 'pt-BR',
     'browser language selects the first-visit locale while a saved manual choice takes precedence',
@@ -1228,6 +1433,12 @@ const assertions = [
       results.mobileLinkedinAvailability.centered,
     'the LinkedIn availability status stays fully visible and centered on mobile',
   ],
+  [
+    results.mobileAmbientPlayer.present && results.mobileAmbientPlayer.withinViewport &&
+      results.mobileAmbientPlayer.sideGapsBalanced && results.mobileAmbientPlayer.bottomClearance >= 12 &&
+      results.mobileAmbientPlayer.bodyBottomPadding >= results.mobileAmbientPlayer.height + 12,
+    'the mobile ambient player respects balanced safe-area clearance without covering final content',
+  ],
   [results.mobileAiSkillGroup.graphHidden, 'the dense relationship graph remains hidden on mobile'],
   [
     results.profile.lineIcons.length === 19 && results.profile.spriteSymbols.length === 16,
@@ -1241,6 +1452,7 @@ const assertions = [
   [results.en.iconMap === results.profile.iconMap, 'switching to English preserves the semantic icon map'],
   [results.reducedMotion.iconTransform === 'none', 'reduced-motion mode disables icon hover translation'],
   [results.reducedMotionOrgNetwork === '0s', 'reduced-motion mode removes organization-graph transitions'],
+  [results.reducedMotionAmbientPlayer === 'none', 'reduced-motion mode keeps the ambient equalizer static'],
   [results.profile.employerLogos.length === 4, 'each employer group has one logo'],
   [results.profile.employerLogos.every(l => l.alt && l.alt.length > 0), 'all employer logos have alt text'],
   [results.profile.employerLogos.filter(l => l.bg === 'light').length === 1, 'only Volkswagen uses the light pill'],
