@@ -27,10 +27,10 @@ const MIME = {
 
 // RFC 8288 Link headers for agent discovery
 const LINK_HEADERS = [
-  '<https://taresu.github.io/index.md>; rel="alternate"; type="text/markdown"',
-  '<https://taresu.github.io/sitemap.xml>; rel="sitemap"',
-  '<https://taresu.github.io/.well-known/mcp/server-card.json>; rel="service-desc"',
-  '<https://taresu.github.io/.well-known/agent-skills/index.json>; rel="agent-skills"',
+  '<https://thales-salata.dev/index.md>; rel="alternate"; type="text/markdown"',
+  '<https://thales-salata.dev/sitemap.xml>; rel="sitemap"',
+  '<https://thales-salata.dev/.well-known/mcp/server-card.json>; rel="service-desc"',
+  '<https://thales-salata.dev/.well-known/agent-skills/index.json>; rel="agent-skills"',
 ].join(', ');
 
 const server = http.createServer((req, res) => {
