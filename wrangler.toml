@@ -7,3 +7,7 @@ compatibility_date = "2025-01-01"
 [assets]
 directory = "."
 binding = "ASSETS"
+# Run worker.js before serving assets only for the home, so its Accept:
+# text/markdown content negotiation (serving index.md to agents) actually
+# fires. Every other path is served directly by the asset server.
+run_worker_first = ["/", "/index.html"]
