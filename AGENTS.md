@@ -19,6 +19,27 @@ This is a zero-build, bilingual static portfolio. `index.html` contains the appl
 
 Use two-space indentation, semicolons, and single quotes in JavaScript. Prefer `camelCase` for functions and variables, `UPPER_SNAKE_CASE` for constants such as `I18N`, and kebab-case for HTML IDs and data-attribute values. Preserve accessible controls, descriptive image `alt` text, safe external links (`target="_blank"` with `rel="noopener"`), bilingual PT-BR/EN content, and reduced-motion behavior. Avoid runtime icon dependencies; icons must reference the inline SVG sprite.
 
+## CSP Inline Script Hash
+
+`index.html` contains an inline `<script>` block with the `I18N` dictionary. Its SHA-256 hash is hardcoded in **two places** that must always be kept in sync:
+
+- `_headers` — `script-src` directive (served by Cloudflare)
+- `worker.js` — same CSP header injected by the Worker
+
+**Any edit to that inline script invalidates the hash.** After touching it, regenerate:
+
+```bash
+node -e "
+const fs = require('fs'), crypto = require('crypto');
+const html = fs.readFileSync('index.html','utf8');
+const m = html.match(/<script>([\s\S]*?)<\/script>/);
+const hash = crypto.createHash('sha256').update(m[1]).digest('base64');
+console.log('sha256-' + hash);
+"
+```
+
+Then update both `_headers` and `worker.js` with the new hash. The `test:security` suite validates that both files agree.
+
 ## Testing Guidelines
 
 Write hook tests as `test/*.test.mjs` using `node:test` and `node:assert/strict`. There is no numeric coverage target. For content or UI changes, run static checks and the browser suite; inspect desktop and mobile screenshots when layout changes. Treat `verify.mjs` assertions as acceptance requirements.
