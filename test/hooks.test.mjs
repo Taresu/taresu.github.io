@@ -72,7 +72,7 @@ test('hooks:install configures the repository to use versioned hooks', () => {
     const installCommand = packageJson.scripts?.['hooks:install'];
     assert.ok(installCommand, 'package.json must expose the hooks:install command');
 
-    const installation = run('npm', ['run', '--silent', 'hooks:install'], { cwd: repository });
+    const installation = run('sh', ['-c', installCommand], { cwd: repository });
     assert.equal(installation.status, 0, installation.stderr);
 
     const configuredPath = run('git', ['config', '--get', 'core.hooksPath'], { cwd: repository });
