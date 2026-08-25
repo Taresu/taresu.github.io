@@ -71,8 +71,6 @@ function startServer(port) {
 }
 
 function containsLegacyOrigin(document) {
-  if (document.includes(legacyOrigin)) return true;
-
   const urlCandidates = document.match(/https?:\/\/[^\s"'<>]+/g) || [];
   return urlCandidates.some(candidate => {
     try {
