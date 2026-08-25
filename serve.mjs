@@ -26,6 +26,13 @@ const MIME = {
   '.md':   'text/markdown',
 };
 
+function isSafeUrlPath(p) {
+  // Require absolute URL path and block traversal / poison null bytes.
+  if (!p || p[0] !== '/' || p.includes('\0') || p.includes('..')) return false;
+  // Allow common static-file path characters only.
+  return /^\/[A-Za-z0-9\-._~\/%]*$/.test(p);
+}
+
 // RFC 8288 Link headers for agent discovery
 const LINK_HEADERS = [
   '<https://thales-salata.dev/index.md>; rel="alternate"; type="text/markdown"',
@@ -39,6 +46,12 @@ const server = http.createServer((req, res) => {
   try {
     urlPath = decodeURIComponent(urlPath);
   } catch {
+    res.writeHead(400);
+    res.end('Bad request');
+    return;
+  }
+
+  if (!isSafeUrlPath(urlPath)) {
     res.writeHead(400);
     res.end('Bad request');
     return;
