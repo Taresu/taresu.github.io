@@ -45,6 +45,14 @@ test('Volkswagen employer logo uses the sanitized vector asset', () => {
   assert.equal(existsSync(path.join(projectRoot, 'assets/Volkswagen-Emblem.png')), false);
 });
 
+test('the site exposes a self-hosted favicon', () => {
+  const html = readFileSync(path.join(projectRoot, 'index.html'), 'utf8');
+  const favicon = readFileSync(path.join(projectRoot, 'assets/favicon.svg'), 'utf8');
+  assert.match(html, /<link rel="icon" href="assets\/favicon\.svg" type="image\/svg\+xml"\/>/);
+  assert.match(favicon, /<svg[\s\S]*viewBox="0 0 32 32"/);
+  assert.doesNotMatch(favicon, /<script|javascript:|moz-extension:/i);
+});
+
 test('local cleanup targets are ignored by Git', () => {
   for (const target of [
     '.playwright-cli/session.log',
