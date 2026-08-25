@@ -1,0 +1,10 @@
+*
+!index.html
+!index.md
+!robots.txt
+!sitemap.xml
+!_headers
+!assets/
+!assets/**
+!.well-known/
+!.well-known/**

@@ -1,7 +1,16 @@
 import assert from 'node:assert/strict';
 import { spawn, spawnSync } from 'node:child_process';
-import { readFileSync, readdirSync } from 'node:fs';
+import {
+  existsSync,
+  mkdirSync,
+  mkdtempSync,
+  readFileSync,
+  readdirSync,
+  rmSync,
+  writeFileSync,
+} from 'node:fs';
 import net from 'node:net';
+import os from 'node:os';
 import path from 'node:path';
 import test from 'node:test';
 import { fileURLToPath } from 'node:url';
@@ -105,19 +114,67 @@ test('public SEO endpoints identify the custom domain as the only canonical host
   );
 });
 
-test('Cloudflare deploys only assembled public site artifacts', () => {
+test('Cloudflare default deploy works from a clean checkout with an asset allowlist', () => {
+  rmSync(path.join(projectRoot, 'public'), { recursive: true, force: true });
+  const wranglerConfig = readFileSync(path.join(projectRoot, 'wrangler.toml'), 'utf8');
+  const assetsDirectory = wranglerConfig.match(/\[assets\][\s\S]*?directory = "([^"]+)"/)?.[1];
+  assert.ok(assetsDirectory, 'Wrangler must configure an assets directory');
+  assert.equal(
+    existsSync(path.join(projectRoot, assetsDirectory)),
+    true,
+    'the configured assets directory must exist in a fresh checkout before any build command',
+  );
+
+  const ignoreRules = readFileSync(path.join(projectRoot, '.assetsignore'), 'utf8');
+  const fixture = mkdtempSync(path.join(os.tmpdir(), 'portfolio-assets-'));
+  const allowed = [
+    'index.html',
+    'index.md',
+    'robots.txt',
+    'sitemap.xml',
+    '_headers',
+    path.join('assets', 'vendor', 'bundle.js'),
+    path.join('.well-known', 'mcp', 'server-card.json'),
+  ];
+  const forbidden = [
+    'worker.js',
+    'wrangler.toml',
+    'package.json',
+    'LICENSE',
+    path.join('docs', 'internal.md'),
+    path.join('test', 'seo.test.mjs'),
+    path.join('.wrangler', 'cache', 'account.json'),
+  ];
+
+  try {
+    assert.equal(spawnSync('git', ['init', '--quiet'], { cwd: fixture }).status, 0);
+    mkdirSync(path.join(fixture, '.git', 'info'), { recursive: true });
+    writeFileSync(path.join(fixture, '.git', 'info', 'exclude'), ignoreRules);
+    for (const file of [...allowed, ...forbidden]) {
+      const filePath = path.join(fixture, file);
+      mkdirSync(path.dirname(filePath), { recursive: true });
+      writeFileSync(filePath, 'fixture');
+    }
+
+    for (const file of allowed) {
+      const result = spawnSync('git', ['check-ignore', '--quiet', '--no-index', file], { cwd: fixture });
+      assert.equal(result.status, 1, `${file} must be included in Worker assets`);
+    }
+    for (const file of forbidden) {
+      const result = spawnSync('git', ['check-ignore', '--quiet', '--no-index', file], { cwd: fixture });
+      assert.equal(result.status, 0, `${file} must be excluded from Worker assets`);
+    }
+  } finally {
+    rmSync(fixture, { recursive: true, force: true });
+  }
+});
+
+test('the Pages build contains only published site artifacts', () => {
   const build = spawnSync('npm', ['run', 'build:pages'], {
     cwd: projectRoot,
     encoding: 'utf8',
   });
   assert.equal(build.status, 0, build.stderr);
-
-  const wranglerConfig = readFileSync(path.join(projectRoot, 'wrangler.toml'), 'utf8');
-  assert.match(
-    wranglerConfig,
-    /\[assets\][\s\S]*?directory = "public"/,
-    'Wrangler must publish the assembled public directory, not the repository root',
-  );
 
   const deployedFiles = listFiles(path.join(projectRoot, 'public'));
   assert.ok(deployedFiles.includes('index.html'));
