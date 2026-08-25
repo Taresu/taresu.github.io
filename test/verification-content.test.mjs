@@ -21,5 +21,7 @@ test('public verification copy is direct and the score badge keeps its score vis
   assert.match(html, /href="https:\/\/crawlindex\.org\/submit"/);
   assert.match(html, /https:\/\/validator\.w3\.org\/nu\/\?doc=https%3A%2F%2Fthales-salata\.dev%2F&out=html/);
   assert.match(html, /data-i18n="verification\.w3c"/);
+  assert.match(html, /ferramenta automatizada de avaliação de acessibilidade/);
+  assert.doesNotMatch(html, /AIM automatizado 6\/10/);
   assert.doesNotMatch(html, /data-verification-score/);
 });

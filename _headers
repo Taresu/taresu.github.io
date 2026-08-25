@@ -2,7 +2,7 @@
 # https://developers.cloudflare.com/workers/static-assets/headers/
 
 /*
-  Content-Security-Policy: default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; frame-src 'none'; form-action 'self'; script-src 'self' 'sha256-ViNC/VHt4jfqj/aHF8mCa+8F5HpHglzjY7e121V280w=' 'sha256-nD0G06XBfPbVkT8muoOANdG15pZU25Ivqa8biSX70iA=' 'sha256-i1fepjD+8wjzShChLhL2biTis7Nh1g+ii/JR37slmnM=' 'sha256-8oVi9sFqf8BZlQy7BXq7K9pLFJIoUUts2gzIu0LqAtc='; script-src-attr 'none'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://crawlindex.org https://webanalyzer.dev; media-src 'self'; connect-src 'self' https://crawlindex.org; worker-src 'none'
+  Content-Security-Policy: default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; frame-src 'none'; form-action 'self'; script-src 'self' 'sha256-ViNC/VHt4jfqj/aHF8mCa+8F5HpHglzjY7e121V280w=' 'sha256-koKt7QJF0oHxFn/vGMJbJo3b6YFqOGhDS0uo5xiENlI=' 'sha256-i1fepjD+8wjzShChLhL2biTis7Nh1g+ii/JR37slmnM=' 'sha256-8oVi9sFqf8BZlQy7BXq7K9pLFJIoUUts2gzIu0LqAtc='; script-src-attr 'none'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://crawlindex.org https://webanalyzer.dev; media-src 'self'; connect-src 'self' https://crawlindex.org; worker-src 'none'
   Permissions-Policy: camera=(), geolocation=(), microphone=(), payment=(), usb=()
   Referrer-Policy: strict-origin-when-cross-origin
   X-Content-Type-Options: nosniff
