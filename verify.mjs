@@ -551,6 +551,11 @@ await sleep(300);
 results.en = await page.evaluate(() => ({
   htmlLang: document.documentElement.lang,
   heroRole: document.querySelector('[data-i18n="hero.role"]').textContent.trim(),
+  seo: {
+    title: document.title,
+    description: document.querySelector('meta[name="description"]')?.content,
+    projectsHeading: document.querySelector('[data-i18n="proj.title"]')?.textContent.trim(),
+  },
   audioLabels: (() => {
     const player = document.querySelector('[data-ambient-player]');
     return {
@@ -931,7 +936,7 @@ await browser.close();
 const expectedSkillIcons = ['crosshair', 'shield-check', 'cloud-cog', 'code-xml', 'brain-circuit'];
 
 const assertions = [
-  [results.profile.title.includes('Full Stack'), 'title positions the profile as Full Stack'],
+  [results.profile.title.includes('Thales Sgarbi Salata'), 'title identifies the portfolio owner'],
   [
     results.slowScanIntro.visibleAfterInitialRead && results.slowScanIntro.sweepDurationSeconds >= 3.9,
     'the page-load recon scan remains readable for roughly 4 seconds',
@@ -991,6 +996,13 @@ const assertions = [
   [
     results.localeSelection.firstVisit === 'en' && results.localeSelection.savedPreference === 'pt-BR',
     'browser language selects the first-visit locale while a saved manual choice takes precedence',
+  ],
+  [
+    ['security', 'react', 'utfpr', 'portal', 'projects'].every(keyword =>
+      [results.en.seo.title, results.en.seo.description, results.en.seo.projectsHeading]
+        .every(value => value?.toLowerCase().includes(keyword))
+    ),
+    'English SEO metadata and the projects heading reinforce the page common keywords',
   ],
   [results.profile.role.includes('Full Stack') && results.profile.role.includes('DevSecOps'), 'hero combines Full Stack and DevSecOps'],
   [

@@ -3,7 +3,7 @@
 > Portfólio profissional (recrutadores/empregadores) — Full Stack · DevSecOps · Segurança da Informação.
 > Bilíngue PT-BR / EN, tema dark cyber/terminal, página única e autocontida.
 
-Distinto do `WebDev-Portfolio/` (site de vendas freelance): este é o perfil pessoal, com sobre, experiência, projetos, skills, certificações e contato.
+Este repositório contém o perfil pessoal, com sobre, experiência, projetos, skills, certificações e contato.
 
 ---
 
@@ -11,11 +11,15 @@ Distinto do `WebDev-Portfolio/` (site de vendas freelance): este é o perfil pes
 
 ```text
 Personal-Portfolio/
-├── index.html        # Site inteiro (HTML + Tailwind CDN + JS vanilla)
+├── index.html        # Site inteiro (HTML + CSS + JS vanilla)
 ├── assets/
-│   └── curriculo-thales-salata.pdf   # CV para download (cópia de Curriculum/)
+│   ├── curriculo-thales-salata.pdf   # CV PT-BR para download
+│   ├── resume-thales-salata-en.pdf   # Résumé EN para download
+│   └── TCC_Thales_Sgarbi_Salata_corrigido_revisado-1.pdf
 ├── serve.mjs         # Servidor de desenvolvimento (porta 3000)
 ├── screenshot.mjs    # Captura de tela via Puppeteer
+├── worker.js          # Headers e negociação Markdown no Cloudflare Worker
+├── test/              # Testes de segurança, SEO, hooks e higiene do repositório
 └── package.json
 ```
 
@@ -44,24 +48,28 @@ Imagens salvas em `temporary screenshots/` (não versionado).
 - A escolha fica salva em `localStorage`
 - O conteúdo do terminal animado do hero é sempre em inglês (proposital — identidade)
 
-## Deploy no GitHub Pages
+## Deploy no Cloudflare Workers
 
-1. Crie um repositório (ex.: `portfolio` ou `<usuario>.github.io`)
-2. Faça push de `index.html` + `assets/` (os `.mjs` e `package.json` são só para dev, mas não atrapalham)
-3. No GitHub: **Settings → Pages → Source: Deploy from a branch → main / root**
-4. O site fica em `https://<usuario>.github.io/<repo>/`
+`wrangler.toml` publica o diretório raiz, mas `.assetsignore` permite somente os arquivos públicos do site: HTML/Markdown, descoberta, sitemap, robots e `assets/`. Código de desenvolvimento, testes, configuração e documentação não são enviados como assets.
 
-Não há build: o que está no repositório é o que vai ao ar.
+```bash
+npm run build:pages       # monta uma cópia local da publicação
+npm run deploy:cloudflare
+```
 
 ## Manutenção de conteúdo
 
 - Textos bilíngues: dicionário `I18N` no final do `index.html` (chaves `data-i18n`)
-- Fonte de verdade do conteúdo: `../Curriculum/` (CV PDF, LinkedIn-BIO.md, GitHub-README.md)
-- Ao atualizar o CV, substitua `assets/curriculo-thales-salata.pdf`
+- O conteúdo público é mantido no dicionário `I18N`, no HTML e no `index.md`.
+- Ao atualizar um documento publicado, substitua o PDF correspondente em `assets/` e valide os links com `npm run test:seo`.
 
 ## Tecnologias
 
-- HTML + Tailwind CSS via CDN (versão pinada com SRI)
+- HTML + Tailwind runtime auto-hospedado em `assets/vendor/`
 - Vanilla JavaScript (i18n, animação de terminal, scroll reveal)
 - Google Fonts: Space Grotesk, Inter, JetBrains Mono
 - Node.js + Puppeteer (apenas desenvolvimento)
+
+## Arquivos locais
+
+Screenshots, sessões de ferramentas, planos de trabalho, instaladores, ambientes e chaves são ignorados pelo Git e não fazem parte do projeto público. Os únicos documentos deliberadamente publicados são os dois currículos e o TCC vinculados pelo portfólio.

@@ -2,3 +2,4 @@
 set -eu
 
 npm run verify:static
+npm run test:hygiene

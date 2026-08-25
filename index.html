@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Thales Sgarbi Salata — Full Stack · DevSecOps · Segurança</title>
-  <meta name="description" content="Portfólio de Thales Sgarbi Salata — desenvolvedor Full Stack com experiência em aplicações web e mobile, DevSecOps, integrações e Segurança da Informação."/>
+  <title>Thales Sgarbi Salata | Projetos React, Segurança e Portal UTFPR</title>
+  <meta name="description" content="Conheça os projetos de React e segurança de Thales Salata, incluindo o Portal UTFPR, aplicações full stack web e mobile, DevSecOps, cloud e cibersegurança."/>
   <link rel="canonical" href="https://thales-salata.dev/"/>
   <meta property="og:type" content="profile"/>
   <meta property="og:locale" content="pt_BR"/>
@@ -1270,7 +1270,7 @@
         <article class="tl-item reveal pl-8" data-employer-group="volkswagen" data-org-network="volkswagen" data-open="false">
           <div class="org-network-control">
             <a data-org-primary-logo href="https://www.vw.com.br/" target="_blank" rel="noopener noreferrer" class="org-logo-link" aria-label="Abrir site da Volkswagen do Brasil" data-i18n-aria-label="exp.orgPrimary.volkswagen">
-              <img src="assets/Volkswagen_logo_2019.svg" alt="Volkswagen do Brasil" class="employer-logo" data-logo-bg="light">
+              <img src="assets/Volkswagen_logo_2019.svg" alt="Volkswagen do Brasil" class="employer-logo" data-logo-bg="dark">
             </a>
           </div>
           <header class="experience-employer">
@@ -1316,7 +1316,7 @@
   <section id="projetos" class="max-w-6xl mx-auto px-5 sm:px-8 py-20 md:py-28">
     <div class="reveal flex items-baseline gap-4 mb-12">
       <span class="font-mono text-sm text-purple">03</span>
-      <h2 class="font-display font-bold text-3xl md:text-4xl tracking-tight"><span class="text-fog font-mono text-xl align-middle mr-1">//</span> <span data-i18n="proj.title">Projetos em destaque</span></h2>
+      <h2 class="font-display font-bold text-3xl md:text-4xl tracking-tight"><span class="text-fog font-mono text-xl align-middle mr-1">//</span> <span data-i18n="proj.title">Projetos em destaque: React, Segurança e Portal UTFPR</span></h2>
       <div class="flex-1 h-px bg-line"></div>
     </div>
 
@@ -1765,6 +1765,8 @@
     const I18N = {
       pt: {
         'nav.about': 'sobre', 'nav.exp': 'experiência', 'nav.projects': 'projetos', 'nav.contact': 'contato', 'nav.mobileOpen': 'Abrir navegação', 'nav.mobileClose': 'Fechar navegação', 'nav.mobileLabel': 'Navegação mobile',
+        'seo.title': 'Thales Sgarbi Salata | Projetos React, Segurança e Portal UTFPR',
+        'seo.description': 'Conheça os projetos de React e segurança de Thales Salata, incluindo o Portal UTFPR, aplicações full stack web e mobile, DevSecOps, cloud e cibersegurança.',
         'hero.kicker': 'portfólio pessoal — Curitiba, PR · Brasil',
         'hero.role': 'Full Stack · DevSecOps · Segurança da Informação',
         'hero.pitch': 'Desenvolvo e mantenho aplicações web e mobile, integro serviços e automatizo infraestrutura com segurança incorporada ao ciclo de desenvolvimento.',
@@ -1806,7 +1808,7 @@
         'exp.vwtiRole': 'Estagiário de TI',
         'exp.vwti1': 'Apoiei as operações de TI no FIS Competence Center, com rotinas operacionais e suporte técnico em ambiente corporativo — base que levou à migração para a área de Segurança da Informação.',
         'exp.vwtiTag1': 'Operações de TI', 'exp.vwtiTag2': 'Infraestrutura de TI', 'exp.vwtiTag3': 'Suporte técnico',
-        'proj.title': 'Projetos em destaque',
+        'proj.title': 'Projetos em destaque: React, Segurança e Portal UTFPR',
         'proj.tcc.kicker': 'pesquisa acadêmica · TCC · UTFPR · 2026',
         'proj.tcc.cta': 'Ler pesquisa (PDF)',
         'proj.tcc.course': 'Acessar curso', 'proj.tcc.login': 'login Sophia-CT',
@@ -1840,6 +1842,8 @@
       },
       en: {
         'nav.about': 'about', 'nav.exp': 'experience', 'nav.projects': 'projects', 'nav.contact': 'contact', 'nav.mobileOpen': 'Open navigation', 'nav.mobileClose': 'Close navigation', 'nav.mobileLabel': 'Mobile navigation',
+        'seo.title': 'Thales Sgarbi Salata | React & Security Projects, UTFPR Portal',
+        'seo.description': "Explore Thales Salata's React and security projects, including the UTFPR Portal, full-stack web and mobile apps, DevSecOps, cloud, and cybersecurity work.",
         'hero.kicker': 'personal portfolio — Curitiba, Brazil',
         'hero.role': 'Full Stack · DevSecOps · Information Security',
         'hero.pitch': 'I build and maintain web and mobile applications, integrate services and automate infrastructure with security embedded in the development lifecycle.',
@@ -1881,7 +1885,7 @@
         'exp.vwtiRole': 'IT Intern',
         'exp.vwti1': 'Supported IT operations at the FIS Competence Center, handling operational routines and technical support in a corporate environment — the foundation that led to the move into Information Security.',
         'exp.vwtiTag1': 'IT Operations', 'exp.vwtiTag2': 'IT Infrastructure', 'exp.vwtiTag3': 'Technical Support',
-        'proj.title': 'Featured projects',
+        'proj.title': 'Featured projects: React, Security & UTFPR Portal',
         'proj.tcc.kicker': 'academic research · final paper · UTFPR · 2026',
         'proj.tcc.cta': 'Read research (PDF)',
         'proj.tcc.course': 'Access course', 'proj.tcc.login': 'Sophia-CT login',
@@ -1917,6 +1921,8 @@
 
     function setLang(lang, { persist = true } = {}) {
       document.documentElement.lang = lang === 'pt' ? 'pt-BR' : 'en';
+      document.title = I18N[lang]['seo.title'];
+      document.querySelector('meta[name="description"]').content = I18N[lang]['seo.description'];
       document.querySelectorAll('[data-i18n]').forEach(el => {
         const key = el.getAttribute('data-i18n');
         if (I18N[lang][key] !== undefined) el.textContent = I18N[lang][key];

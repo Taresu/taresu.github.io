@@ -1,6 +1,28 @@
 .worktrees/
 public/
 .wrangler/
+node_modules/
+
+# Local tooling, screenshots, generated output, and planning notes.
+.playwright-cli/
+.superpowers/
+output/
+temporary screenshots/
+docs/superpowers/
+CLAUDE.md
+
+# Packages and credentials must never enter the public repository.
+*.deb
+*.rpm
+*.dmg
+*.exe
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
 
 # Separate repo: GitHub profile README clone (github.com/Taresu/Taresu),
 # pushed independently to its own remote — never commit it into this repo.

@@ -54,15 +54,19 @@ test('pre-push propagates the static verification result', () => {
       JSON.stringify({
         scripts: {
           'verify:static': 'node -e "process.exit(Number(process.env.VERIFY_EXIT || 0))"',
+          'test:hygiene': 'node -e "process.exit(Number(process.env.HYGIENE_EXIT || 0))"',
         },
       }),
     );
 
-    const success = run(hook, [], { cwd: repository, env: { VERIFY_EXIT: '0' } });
+    const success = run(hook, [], { cwd: repository, env: { VERIFY_EXIT: '0', HYGIENE_EXIT: '0' } });
     assert.equal(success.status, 0, success.stderr);
 
-    const failure = run(hook, [], { cwd: repository, env: { VERIFY_EXIT: '23' } });
+    const failure = run(hook, [], { cwd: repository, env: { VERIFY_EXIT: '23', HYGIENE_EXIT: '0' } });
     assert.equal(failure.status, 23, 'the hook must block a push when verification fails');
+
+    const hygieneFailure = run(hook, [], { cwd: repository, env: { VERIFY_EXIT: '0', HYGIENE_EXIT: '29' } });
+    assert.equal(hygieneFailure.status, 29, 'the hook must block a push when repository hygiene fails');
   });
 });
 
