@@ -4,6 +4,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const ROOT_DIR = __dirname;
 const PORT = Number(process.env.PORT) || 3000;
 
 const MIME = {
@@ -35,6 +36,13 @@ const LINK_HEADERS = [
 
 const server = http.createServer((req, res) => {
   let urlPath = req.url.split('?')[0];
+  try {
+    urlPath = decodeURIComponent(urlPath);
+  } catch {
+    res.writeHead(400);
+    res.end('Bad request');
+    return;
+  }
 
   // Markdown content negotiation: serve index.md when client prefers text/markdown
   const accept = req.headers['accept'] || '';
@@ -57,7 +65,13 @@ const server = http.createServer((req, res) => {
   }
 
   if (urlPath === '/' || urlPath.endsWith('/')) urlPath = urlPath + 'index.html';
-  const filePath = path.join(__dirname, urlPath);
+  const relativePath = urlPath.replace(/^\/+/, '');
+  const filePath = path.resolve(ROOT_DIR, relativePath);
+  if (filePath !== ROOT_DIR && !filePath.startsWith(ROOT_DIR + path.sep)) {
+    res.writeHead(403);
+    res.end('Forbidden');
+    return;
+  }
   const ext = path.extname(filePath);
   const mime = MIME[ext] || 'text/plain';
 
