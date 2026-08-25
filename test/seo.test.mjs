@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
-import { spawn } from 'node:child_process';
+import { spawn, spawnSync } from 'node:child_process';
+import { readFileSync, readdirSync } from 'node:fs';
 import net from 'node:net';
 import path from 'node:path';
 import test from 'node:test';
@@ -8,6 +9,15 @@ import { fileURLToPath } from 'node:url';
 const projectRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const canonicalOrigin = 'https://thales-salata.dev';
 const legacyOrigin = 'https://taresu.github.io';
+
+function listFiles(directory, relativeTo = directory) {
+  return readdirSync(directory, { withFileTypes: true }).flatMap(entry => {
+    const entryPath = path.join(directory, entry.name);
+    return entry.isDirectory()
+      ? listFiles(entryPath, relativeTo)
+      : [path.relative(relativeTo, entryPath)];
+  });
+}
 
 function reservePort() {
   return new Promise((resolve, reject) => {
@@ -93,4 +103,28 @@ test('public SEO endpoints identify the custom domain as the only canonical host
     publicDocuments.every(document => !document.includes(legacyOrigin)),
     'public SEO and discovery documents must not advertise the legacy origin',
   );
+});
+
+test('Cloudflare deploys only assembled public site artifacts', () => {
+  const build = spawnSync('npm', ['run', 'build:pages'], {
+    cwd: projectRoot,
+    encoding: 'utf8',
+  });
+  assert.equal(build.status, 0, build.stderr);
+
+  const wranglerConfig = readFileSync(path.join(projectRoot, 'wrangler.toml'), 'utf8');
+  assert.match(
+    wranglerConfig,
+    /\[assets\][\s\S]*?directory = "public"/,
+    'Wrangler must publish the assembled public directory, not the repository root',
+  );
+
+  const deployedFiles = listFiles(path.join(projectRoot, 'public'));
+  assert.ok(deployedFiles.includes('index.html'));
+  assert.ok(deployedFiles.includes('robots.txt'));
+  assert.ok(deployedFiles.includes('sitemap.xml'));
+  assert.ok(deployedFiles.includes(path.join('.well-known', 'mcp', 'server-card.json')));
+  assert.equal(deployedFiles.some(file => file.startsWith('.wrangler')), false);
+  assert.equal(deployedFiles.some(file => file.startsWith('docs')), false);
+  assert.equal(deployedFiles.includes('wrangler.toml'), false);
 });

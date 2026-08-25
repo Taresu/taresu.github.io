@@ -5,7 +5,7 @@ main = "worker.js"
 compatibility_date = "2025-01-01"
 
 [assets]
-directory = "."
+directory = "public"
 binding = "ASSETS"
 # Run worker.js before serving assets only for the home, so its Accept:
 # text/markdown content negotiation (serving index.md to agents) actually

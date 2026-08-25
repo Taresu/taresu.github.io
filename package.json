@@ -9,7 +9,8 @@
     "test:hooks": "node test/hooks.test.mjs",
     "test:seo": "node test/seo.test.mjs",
     "verify:static": "node --check serve.mjs && node --check verify.mjs && node --check screenshot.mjs",
-    "build:pages": "rm -rf public && mkdir -p public && cp -r index.html assets robots.txt sitemap.xml index.md _headers .well-known public/"
+    "build:pages": "rm -rf public && mkdir -p public && cp -r index.html assets robots.txt sitemap.xml index.md _headers .well-known public/",
+    "deploy:cloudflare": "npm run build:pages && npx wrangler@latest deploy"
   },
   "author": "Thales Sgarbi Salata",
   "license": "ISC",

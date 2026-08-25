@@ -1,5 +1,6 @@
 .worktrees/
 public/
+.wrangler/
 
 # Separate repo: GitHub profile README clone (github.com/Taresu/Taresu),
 # pushed independently to its own remote — never commit it into this repo.
