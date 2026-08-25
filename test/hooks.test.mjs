@@ -11,6 +11,7 @@ const projectRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '
 function run(command, args, options = {}) {
   return spawnSync(command, args, {
     encoding: 'utf8',
+    shell: false,
     ...options,
     env: { ...process.env, ...options.env },
   });
@@ -35,12 +36,12 @@ test('pre-commit accepts clean staged content and rejects whitespace errors', ()
 
     writeFileSync(stagedFile, 'clean content\n');
     assert.equal(run('git', ['add', 'example.txt'], { cwd: repository }).status, 0);
-    const cleanResult = run('sh', [hook], { cwd: repository });
+    const cleanResult = run(hook, [], { cwd: repository });
     assert.equal(cleanResult.status, 0, cleanResult.stderr);
 
     writeFileSync(stagedFile, 'trailing whitespace  \n');
     assert.equal(run('git', ['add', 'example.txt'], { cwd: repository }).status, 0);
-    const invalidResult = run('sh', [hook], { cwd: repository });
+    const invalidResult = run(hook, [], { cwd: repository });
     assert.notEqual(invalidResult.status, 0, 'the hook must reject staged whitespace errors');
   });
 });
@@ -57,10 +58,10 @@ test('pre-push propagates the static verification result', () => {
       }),
     );
 
-    const success = run('sh', [hook], { cwd: repository, env: { VERIFY_EXIT: '0' } });
+    const success = run(hook, [], { cwd: repository, env: { VERIFY_EXIT: '0' } });
     assert.equal(success.status, 0, success.stderr);
 
-    const failure = run('sh', [hook], { cwd: repository, env: { VERIFY_EXIT: '23' } });
+    const failure = run(hook, [], { cwd: repository, env: { VERIFY_EXIT: '23' } });
     assert.equal(failure.status, 23, 'the hook must block a push when verification fails');
   });
 });
