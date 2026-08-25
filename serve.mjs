@@ -66,8 +66,18 @@ const server = http.createServer((req, res) => {
 
   if (urlPath === '/' || urlPath.endsWith('/')) urlPath = urlPath + 'index.html';
   const relativePath = urlPath.replace(/^\/+/, '');
-  const filePath = path.resolve(ROOT_DIR, relativePath);
-  if (filePath !== ROOT_DIR && !filePath.startsWith(ROOT_DIR + path.sep)) {
+  const resolvedPath = path.resolve(ROOT_DIR, relativePath);
+  let rootRealPath;
+  let filePath;
+  try {
+    rootRealPath = fs.realpathSync(ROOT_DIR);
+    filePath = fs.realpathSync(resolvedPath);
+  } catch {
+    res.writeHead(404);
+    res.end('Not found');
+    return;
+  }
+  if (filePath !== rootRealPath && !filePath.startsWith(rootRealPath + path.sep)) {
     res.writeHead(403);
     res.end('Forbidden');
     return;
