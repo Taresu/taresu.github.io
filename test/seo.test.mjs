@@ -70,6 +70,19 @@ function startServer(port) {
   });
 }
 
+function containsLegacyOrigin(document) {
+  if (document.includes(legacyOrigin)) return true;
+
+  const urlCandidates = document.match(/https?:\/\/[^\s"'<>]+/g) || [];
+  return urlCandidates.some(candidate => {
+    try {
+      return new URL(candidate).origin === legacyOrigin;
+    } catch {
+      return false;
+    }
+  });
+}
+
 test('public SEO endpoints identify the custom domain as the only canonical host', async t => {
   const port = await reservePort();
   const server = await startServer(port);
@@ -109,7 +122,7 @@ test('public SEO endpoints identify the custom domain as the only canonical host
   assert.doesNotMatch(robots, /^Disallow: \/assets\/$/m);
   assert.match(sitemap, new RegExp(`<loc>${canonicalOrigin}/</loc>`));
   assert.ok(
-    publicDocuments.every(document => !document.includes(legacyOrigin)),
+    publicDocuments.every(document => !containsLegacyOrigin(document)),
     'public SEO and discovery documents must not advertise the legacy origin',
   );
 });
