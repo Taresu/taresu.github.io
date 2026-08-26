@@ -4,6 +4,10 @@ name = "tsalata"
 main = "worker.js"
 compatibility_date = "2025-01-01"
 
+[[routes]]
+pattern = "thales-salata.dev"
+custom_domain = true
+
 [assets]
 directory = "."
 binding = "ASSETS"

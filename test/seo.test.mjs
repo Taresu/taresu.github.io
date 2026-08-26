@@ -199,6 +199,14 @@ test('Cloudflare default deploy works from a clean checkout with an asset allowl
   }
 });
 
+test('Wrangler deploys the Worker to the canonical custom domain', () => {
+  const wranglerConfig = readFileSync(path.join(projectRoot, 'wrangler.toml'), 'utf8');
+  assert.match(
+    wranglerConfig,
+    /\[\[routes\]\][\s\S]*?pattern = "thales-salata\.dev"[\s\S]*?custom_domain = true/,
+  );
+});
+
 test('the Pages build contains only published site artifacts', () => {
   const build = spawnSync('npm', ['run', 'build:pages'], {
     cwd: projectRoot,
