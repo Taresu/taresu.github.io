@@ -139,6 +139,7 @@ test('Cloudflare default deploy works from a clean checkout with an asset allowl
   const ignoreRules = readFileSync(path.join(projectRoot, '.assetsignore'), 'utf8');
   const fixture = mkdtempSync(path.join(os.tmpdir(), 'portfolio-assets-'));
   const allowed = [
+    'favicon.ico',
     'index.html',
     'index.md',
     'robots.txt',
@@ -188,6 +189,7 @@ test('the Pages build contains only published site artifacts', () => {
   assert.equal(build.status, 0, build.stderr);
 
   const deployedFiles = listFiles(path.join(projectRoot, 'public'));
+  assert.ok(deployedFiles.includes('favicon.ico'));
   assert.ok(deployedFiles.includes('index.html'));
   assert.ok(deployedFiles.includes('robots.txt'));
   assert.ok(deployedFiles.includes('sitemap.xml'));

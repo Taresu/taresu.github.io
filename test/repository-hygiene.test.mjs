@@ -47,8 +47,17 @@ test('Volkswagen employer logo uses the sanitized vector asset', () => {
 
 test('the site exposes a self-hosted favicon', () => {
   const html = readFileSync(path.join(projectRoot, 'index.html'), 'utf8');
+  const rootFavicon = readFileSync(path.join(projectRoot, 'favicon.ico'));
   const favicon = readFileSync(path.join(projectRoot, 'assets/favicon.svg'), 'utf8');
-  assert.match(html, /<link rel="icon" href="assets\/favicon\.svg" type="image\/svg\+xml"\/>/);
+  const iconCount = rootFavicon.readUInt16LE(4);
+  const iconSizes = Array.from({ length: iconCount }, (_, index) => {
+    const offset = 6 + (index * 16);
+    return rootFavicon[offset] || 256;
+  });
+
+  assert.match(html, /<link rel="icon" href="\/favicon\.ico" type="image\/x-icon"\/>/);
+  assert.equal((html.match(/<link rel="icon"/g) || []).length, 1);
+  assert.ok(iconSizes.some(size => size >= 48), 'favicon.ico must include a Google-sized icon');
   assert.match(favicon, /<svg[\s\S]*viewBox="0 0 32 32"/);
   assert.doesNotMatch(favicon, /<script|javascript:|moz-extension:/i);
 });

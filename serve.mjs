@@ -9,6 +9,7 @@ const PORT = Number(process.env.PORT) || 3000;
 const HOST = process.env.PORTFOLIO_HOST || '127.0.0.1';
 
 const PUBLIC_ROOT_FILES = new Set([
+  'favicon.ico',
   'index.html',
   'index.md',
   'robots.txt',
