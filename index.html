@@ -13,9 +13,17 @@
   <meta property="og:title" content="Thales Sgarbi Salata — Full Stack · DevSecOps · Segurança"/>
   <meta property="og:description" content="Desenvolvedor Full Stack com experiência em aplicações web e mobile, DevSecOps, integrações e Segurança da Informação."/>
   <meta property="og:url" content="https://thales-salata.dev/"/>
-  <meta name="twitter:card" content="summary"/>
+  <meta property="og:image" content="https://thales-salata.dev/assets/brand/portfolio-social.png"/>
+  <meta property="og:image:secure_url" content="https://thales-salata.dev/assets/brand/portfolio-social.png"/>
+  <meta property="og:image:type" content="image/png"/>
+  <meta property="og:image:width" content="1200"/>
+  <meta property="og:image:height" content="630"/>
+  <meta property="og:image:alt" content="Portfólio de Thales Sgarbi Salata com escudo autoral e especialidades em Full Stack, DevSecOps e Segurança"/>
+  <meta name="twitter:card" content="summary_large_image"/>
   <meta name="twitter:title" content="Thales Sgarbi Salata — Full Stack · DevSecOps · Segurança"/>
   <meta name="twitter:description" content="Desenvolvedor Full Stack com experiência em aplicações web e mobile, DevSecOps, integrações e Segurança da Informação."/>
+  <meta name="twitter:image" content="https://thales-salata.dev/assets/brand/portfolio-social.png"/>
+  <meta name="twitter:image:alt" content="Portfólio de Thales Sgarbi Salata com escudo autoral e especialidades em Full Stack, DevSecOps e Segurança"/>
   <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -30,6 +38,7 @@
         "@id": "https://thales-salata.dev/#person",
         "name": "Thales Sgarbi Salata",
         "url": "https://thales-salata.dev/",
+        "image": "https://thales-salata.dev/assets/brand/thales-salata-shield.png",
         "jobTitle": "Desenvolvedor Full Stack",
         "homeLocation": {
           "@type": "Place",
@@ -134,6 +143,43 @@
     }
     .cursor-blink { animation: blink 1.05s steps(1) infinite; }
     @keyframes blink { 50% { opacity: 0; } }
+
+    .brand-shield { display: block; object-fit: contain; }
+    .hero-brand-lockup { display: flex; align-items: center; gap: 18px; margin-bottom: 22px; }
+    .hero-brand-lockup p { margin: 0; }
+    .hero-brand-shield {
+      width: 80px;
+      height: 80px;
+      flex: none;
+      filter: drop-shadow(0 12px 24px rgba(124,58,237,.24));
+    }
+    .about-brand-body {
+      display: grid;
+      grid-template-columns: minmax(0,1fr) 112px;
+      align-items: center;
+      gap: 18px;
+      padding: 20px;
+    }
+    .about-brand-body pre { min-width: 0; margin: 0; padding: 0; }
+    .about-brand-shield {
+      width: 112px;
+      height: 112px;
+      filter: drop-shadow(0 14px 28px rgba(124,58,237,.2));
+    }
+    .about-authorial-stack { display: grid; gap: 18px; align-self: start; }
+    .ascii-portrait-media {
+      display: grid;
+      place-items: center;
+      grid-template-rows: minmax(0,1fr);
+      height: clamp(320px,34vw,430px);
+      overflow: hidden;
+      background: #020303;
+      border-bottom: 1px solid rgba(30,42,58,.85);
+    }
+    .ascii-portrait-image { width: 100%; height: 100%; min-height: 0; max-height: 100%; object-fit: contain; }
+    .ascii-portrait-caption { padding: 12px 16px 14px; color: rgba(139,152,172,.9); }
+    .footer-brand-lockup { display: flex; align-items: center; gap: 14px; }
+    .footer-brand-shield { width: 56px; height: 56px; flex: none; }
 
     /* ── Reveal on scroll ── */
     .reveal { opacity: 0; transform: translateY(22px); transition: opacity .7s ease, transform .7s cubic-bezier(.22,1,.36,1); }
@@ -865,6 +911,11 @@
     transform: translateX(-50%);
   }
   @media (max-width: 639px) {
+    .hero-brand-lockup { align-items: flex-start; gap: 14px; margin-bottom: 20px; }
+    .hero-brand-shield { width: 56px; height: 56px; }
+    .about-brand-body { grid-template-columns: minmax(0,1fr) 80px; gap: 10px; padding: 18px; }
+    .about-brand-shield { width: 80px; height: 80px; }
+    .footer-brand-lockup { flex-direction: column; text-align: center; }
     .linkedin-contact { display: flex; width: 100%; flex-direction: column; align-items: center; }
     .linkedin-availability {
       position: static;
@@ -1035,9 +1086,12 @@
     <div class="max-w-6xl mx-auto px-5 sm:px-8 pt-32 pb-20 md:pt-40 md:pb-28 grid lg:grid-cols-[1.1fr,0.9fr] gap-14 items-center relative">
 
       <div>
-        <p class="rise font-mono text-[13px] text-terminal mb-5" style="animation-delay:.05s">
-          <span class="text-fog">//</span> <span data-i18n="hero.kicker">portfólio pessoal — Curitiba, PR · Brasil</span>
-        </p>
+        <div class="rise hero-brand-lockup" style="animation-delay:.05s">
+          <img data-brand-shield="hero" src="assets/brand/thales-salata-shield.png" width="80" height="80" alt="" aria-hidden="true" decoding="async" class="brand-shield hero-brand-shield">
+          <p class="font-mono text-[13px] text-terminal">
+            <span class="text-fog">//</span> <span data-i18n="hero.kicker">portfólio pessoal — Curitiba, PR · Brasil</span>
+          </p>
+        </div>
         <h1 class="rise font-display font-bold text-[clamp(2.4rem,6vw,4.2rem)] leading-[1.05] tracking-tight mb-6" style="animation-delay:.15s">
           Thales<br/>Sgarbi <span class="grad-purple">Salata</span>
         </h1>
@@ -1127,18 +1181,34 @@
         </div>
       </div>
 
-      <!-- S.G.A.R.B.I -->
-      <div class="reveal term rounded-xl overflow-hidden">
-        <div class="flex items-center gap-2 px-4 py-2.5 border-b border-line bg-black/30">
-          <span class="font-mono text-[11px] text-fog">$ git diff --method sgarbi</span>
-        </div>
-        <pre class="p-5 font-mono text-[13px] leading-relaxed overflow-x-auto"><code><span class="diff-del">- S.G.A.R.B.I</span>
+      <div class="about-authorial-stack">
+        <!-- S.G.A.R.B.I -->
+        <div class="reveal term rounded-xl overflow-hidden">
+          <div class="flex items-center gap-2 px-4 py-2.5 border-b border-line bg-black/30">
+            <span class="font-mono text-[11px] text-fog">$ git diff --method sgarbi</span>
+          </div>
+          <div class="about-brand-body">
+            <pre class="font-mono text-[13px] leading-relaxed overflow-x-auto"><code><span class="diff-del">- S.G.A.R.B.I</span>
 <span class="diff-add">+ S → Scan</span>
 <span class="diff-add">+ G → Gain Access</span>
 <span class="diff-add">+ A → Analyze Impact</span>
 <span class="diff-add">+ R → Report Clearly</span>
 <span class="diff-add">+ B → Build Defenses</span>
 <span class="diff-add">+ I → Improve Continuously</span></code></pre>
+            <img data-brand-shield="about" src="assets/brand/thales-salata-shield.png" width="112" height="112" alt="" aria-hidden="true" loading="lazy" decoding="async" class="brand-shield about-brand-shield">
+          </div>
+        </div>
+
+        <figure data-ascii-portrait class="reveal term rounded-xl overflow-hidden">
+          <div class="flex flex-wrap items-center justify-between gap-2 px-4 py-2.5 border-b border-line bg-black/30 font-mono text-[11px]">
+            <span class="text-fog">$ cat ~/identity/ascii-self-portrait.svg</span>
+            <span class="text-terminal" data-i18n="about.asciiTitle">autorretrato ASCII autoral</span>
+          </div>
+          <div class="ascii-portrait-media">
+            <img src="assets/brand/ascii-self-portrait.svg" width="3074" height="3208" alt="Autorretrato ASCII autoral de Thales Sgarbi Salata formado por caracteres claros sobre fundo escuro." data-i18n-alt="about.asciiAlt" loading="lazy" decoding="async" class="ascii-portrait-image">
+          </div>
+          <figcaption class="ascii-portrait-caption font-mono text-[11px] leading-relaxed" data-i18n="about.asciiCaption">Autorretrato construído em caracteres — uma assinatura visual entre identidade, código e segurança.</figcaption>
+        </figure>
       </div>
     </div>
   </section>
@@ -1801,7 +1871,10 @@
   <!-- ═══════════ FOOTER ═══════════ -->
   <footer class="border-t border-line/60">
     <div class="max-w-6xl mx-auto px-5 sm:px-8 py-8 flex flex-col sm:flex-row items-center justify-between gap-3 font-mono text-xs text-fog/70">
-      <p>© <span id="year">2026</span> Thales Sgarbi Salata — <span data-i18n="footer.tag">produto, operação e segurança no mesmo fluxo.</span></p>
+      <div class="footer-brand-lockup">
+        <img data-brand-shield="footer" src="assets/brand/thales-salata-shield.png" width="56" height="56" alt="" aria-hidden="true" loading="lazy" decoding="async" class="brand-shield footer-brand-shield">
+        <p>© <span id="year">2026</span> Thales Sgarbi Salata — <span data-i18n="footer.tag">produto, operação e segurança no mesmo fluxo.</span></p>
+      </div>
       <p class="text-terminal/80">[ operator_status: <span class="text-terminal">ONLINE</span> ]</p>
     </div>
   </footer>
@@ -1851,6 +1924,9 @@
         'about.p2': 'Minha trajetória conecta desenvolvimento, operações e segurança: React/TypeScript e Python no Portal UTFPR; React Native, Expo e NestJS no Nerdz; automação, CI/CD, cloud e investigação de vulnerabilidades em ambientes corporativos.',
         'about.p3': 'Também utilizo IA generativa e agêntica no desenvolvimento e implementei um orquestrador multiagente com Anthropic API e MCP, mantendo revisão crítica sobre o código produzido.',
         'about.stat1': 'cursos Cisco Networking Academy', 'about.stat2': 'dispositivos VoIP migrados', 'about.stat3': 'plataformas no Nerdz',
+        'about.asciiTitle': 'autorretrato ASCII autoral',
+        'about.asciiCaption': 'Autorretrato construído em caracteres — uma assinatura visual entre identidade, código e segurança.',
+        'about.asciiAlt': 'Autorretrato ASCII autoral de Thales Sgarbi Salata formado por caracteres claros sobre fundo escuro.',
         'exp.title': 'Experiência', 'exp.employer': 'organização', 'exp.present': 'jul 2026', 'exp.present3': 'presente', 'exp.present4': 'presente',
         'exp.utfsRole': 'Desenvolvedor Full Stack',
         'exp.utfsDate': 'mar 2026', 'exp.utfDate': 'set 2025 — jul 2026', 'exp.cmcDate': 'mar 2025', 'exp.vwDate': 'mai 2024 — fev 2025', 'exp.vwtiDate': 'mai 2023 — abr 2024',
@@ -1929,6 +2005,9 @@
         'about.p2': 'My experience connects development, operations and security: React/TypeScript and Python on the UTFPR Portal; React Native, Expo and NestJS on Nerdz; automation, CI/CD, cloud and vulnerability investigation in corporate environments.',
         'about.p3': 'I also use generative and agentic AI in software development and implemented a multi-agent orchestrator with the Anthropic API and MCP, while maintaining critical review of AI-assisted code.',
         'about.stat1': 'Cisco Networking Academy courses', 'about.stat2': 'VoIP devices migrated', 'about.stat3': 'Nerdz platforms',
+        'about.asciiTitle': 'authorial ASCII self-portrait',
+        'about.asciiCaption': 'A self-portrait built from characters — a visual signature connecting identity, code and security.',
+        'about.asciiAlt': 'Authorial ASCII self-portrait of Thales Sgarbi Salata formed by light characters on a dark background.',
         'exp.title': 'Experience', 'exp.employer': 'organization', 'exp.present': 'Jul 2026', 'exp.present3': 'present', 'exp.present4': 'present',
         'exp.utfsRole': 'Full Stack Developer',
         'exp.utfsDate': 'Mar 2026', 'exp.utfDate': 'Sep 2025 — Jul 2026', 'exp.cmcDate': 'Mar 2025', 'exp.vwDate': 'May 2024 — Feb 2025', 'exp.vwtiDate': 'May 2023 — Apr 2024',

@@ -78,6 +78,12 @@ await page.waitForFunction(
   () => [...document.querySelectorAll('[data-credential-badge]')].every(image => image.complete && image.naturalWidth > 0),
   { timeout: 5000 },
 );
+await revealAll(page);
+await page.evaluate(async () => {
+  await Promise.all(
+    [...document.querySelectorAll('[data-brand-shield], [data-ascii-portrait] img')].map(image => image.decode()),
+  );
+});
 await page.evaluate(() => window.scrollTo({ top: 0, behavior: 'instant' }));
 results.profile = await page.evaluate(() => ({
   title: document.title,
@@ -267,6 +273,35 @@ results.profile = await page.evaluate(() => ({
     alt: img.alt,
     bg: img.dataset.logoBg,
   })),
+  brandShields: [...document.querySelectorAll('[data-brand-shield]')].map(image => {
+    const bounds = image.getBoundingClientRect();
+    return {
+      context: image.dataset.brandShield,
+      src: image.getAttribute('src'),
+      alt: image.alt,
+      ariaHidden: image.getAttribute('aria-hidden'),
+      naturalWidth: image.naturalWidth,
+      width: bounds.width,
+      height: bounds.height,
+    };
+  }),
+  asciiPortrait: (() => {
+    const figure = document.querySelector('[data-ascii-portrait]');
+    const image = figure?.querySelector('img');
+    const bounds = image?.getBoundingClientRect();
+    return {
+      present: Boolean(figure && image),
+      src: image?.getAttribute('src'),
+      alt: image?.alt,
+      naturalWidth: image?.naturalWidth,
+      naturalHeight: image?.naturalHeight,
+      width: bounds?.width,
+      height: bounds?.height,
+      objectFit: image ? getComputedStyle(image).objectFit : null,
+      title: figure?.querySelector('[data-i18n="about.asciiTitle"]')?.textContent.trim(),
+      caption: figure?.querySelector('[data-i18n="about.asciiCaption"]')?.textContent.trim(),
+    };
+  })(),
   organizationNetworks: [...document.querySelectorAll('[data-org-network]')].map(network => ({
     organization: network.dataset.orgNetwork,
     logoHref: network.querySelector('[data-org-primary-logo]')?.href,
@@ -535,6 +570,8 @@ for (const [id, name] of [['#sobre', 'sobre'], ['#experiencia', 'experiencia'], 
   await gotoSection(page, id);
   await shot(page, `desktop-02-${name}-pt`);
 }
+await gotoSection(page, '[data-ascii-portrait]');
+await shot(page, 'desktop-02-ascii-portrait-pt');
 await gotoSection(page, '[data-employer-group="volkswagen"]');
 await shot(page, 'desktop-02-experiencia-volkswagen-pt');
 await gotoSection(page, '[data-project="portal"]');
@@ -571,6 +608,11 @@ results.en = await page.evaluate(() => ({
     .map(line => line.textContent.trim())
     .filter(Boolean),
   aboutTitle: document.querySelector('[data-i18n="about.title"]').textContent.trim(),
+  asciiPortrait: {
+    title: document.querySelector('[data-i18n="about.asciiTitle"]')?.textContent.trim(),
+    caption: document.querySelector('[data-i18n="about.asciiCaption"]')?.textContent.trim(),
+    alt: document.querySelector('[data-ascii-portrait] img')?.alt,
+  },
   contactTitle: document.querySelector('[data-i18n="contact.title"]').textContent.trim(),
   tcc: document.querySelector('[data-project="tcc"]')?.textContent,
   credentials: document.querySelector('[data-credentials]')?.textContent,
@@ -889,6 +931,8 @@ for (const [id, name] of [['#sobre', 'sobre'], ['#experiencia', 'experiencia'], 
   await gotoSection(mob, id);
   await shot(mob, `mobile-02-${name}-pt`);
 }
+await gotoSection(mob, '[data-ascii-portrait]');
+await shot(mob, 'mobile-02-ascii-portrait-pt');
 await gotoSection(mob, '[data-employer-group="volkswagen"]');
 await shot(mob, 'mobile-02-experiencia-volkswagen-pt');
 await gotoSection(mob, '[data-project="portal"]');
@@ -899,6 +943,28 @@ await gotoSection(mob, '[data-credential-group="technical"]');
 await shot(mob, 'mobile-03-credentials-technical-pt');
 await gotoSection(mob, '[data-credential-group="professional"]');
 await shot(mob, 'mobile-03-credentials-professional-pt');
+results.mobileBrandShields = await mob.evaluate(() =>
+  [...document.querySelectorAll('[data-brand-shield]')].map(image => {
+    const bounds = image.getBoundingClientRect();
+    return {
+      context: image.dataset.brandShield,
+      naturalWidth: image.naturalWidth,
+      width: bounds.width,
+      height: bounds.height,
+    };
+  }),
+);
+results.mobileAsciiPortrait = await mob.evaluate(() => {
+  const image = document.querySelector('[data-ascii-portrait] img');
+  const bounds = image?.getBoundingClientRect();
+  return {
+    naturalWidth: image?.naturalWidth,
+    naturalHeight: image?.naturalHeight,
+    width: bounds?.width,
+    height: bounds?.height,
+    withinViewport: Boolean(bounds && bounds.left >= 0 && bounds.right <= document.documentElement.clientWidth),
+  };
+});
 results.mobileOverflowX = await mob.evaluate(() => document.body.scrollWidth > window.innerWidth);
 
 // ── Reduced motion ──
@@ -1005,6 +1071,31 @@ const assertions = [
     'English SEO metadata and the projects heading reinforce the page common keywords',
   ],
   [results.profile.role.includes('Full Stack') && results.profile.role.includes('DevSecOps'), 'hero combines Full Stack and DevSecOps'],
+  [
+    results.profile.brandShields.map(image => image.context).join(',') === 'hero,about,footer' &&
+      results.profile.brandShields.every(image =>
+        image.src === 'assets/brand/thales-salata-shield.png' && image.alt === '' &&
+        image.ariaHidden === 'true' && image.naturalWidth === 500 && image.width === image.height
+      ),
+    'the authorial shield loads accessibly at the three desktop brand touchpoints',
+  ],
+  [
+    results.profile.asciiPortrait.present &&
+      results.profile.asciiPortrait.src === 'assets/brand/ascii-self-portrait.svg' &&
+      results.profile.asciiPortrait.naturalWidth === 3074 &&
+      results.profile.asciiPortrait.naturalHeight === 3208 &&
+      results.profile.asciiPortrait.objectFit === 'contain' &&
+      results.profile.asciiPortrait.title === 'autorretrato ASCII autoral' &&
+      results.profile.asciiPortrait.caption.includes('identidade, código e segurança') &&
+      results.profile.asciiPortrait.alt.includes('Thales Sgarbi Salata'),
+    'the authorial ASCII portrait loads as accessible content in the About section',
+  ],
+  [
+    results.en.asciiPortrait.title === 'authorial ASCII self-portrait' &&
+      results.en.asciiPortrait.caption.includes('identity, code and security') &&
+      results.en.asciiPortrait.alt.includes('light characters on a dark background'),
+    'the authorial ASCII portrait localizes its title, caption and alternative text',
+  ],
   [
     ['Construir produtos resilientes.', 'Automatizar entregas com segurança.', 'Transformar inteligência ofensiva em defesa.']
       .every(line => results.profile.terminalRenderedLines.includes(line)),
@@ -1433,6 +1524,21 @@ const assertions = [
     'the dedicated mobile node button expands the VESPAS branch list without relying on hover',
   ],
   [results.mobileOverflowX === false, 'mobile layout has no horizontal overflow'],
+  [
+    results.mobileBrandShields.map(image => image.context).join(',') === 'hero,about,footer' &&
+      results.mobileBrandShields.every(image => image.naturalWidth === 500 && image.width === image.height) &&
+      results.mobileBrandShields.find(image => image.context === 'hero')?.width === 56 &&
+      results.mobileBrandShields.find(image => image.context === 'about')?.width === 80 &&
+      results.mobileBrandShields.find(image => image.context === 'footer')?.width === 56,
+    'the authorial shield keeps its intended mobile hierarchy and square proportions',
+  ],
+  [
+      results.mobileAsciiPortrait.naturalWidth === 3074 &&
+      results.mobileAsciiPortrait.naturalHeight === 3208 &&
+      results.mobileAsciiPortrait.height >= 318 && results.mobileAsciiPortrait.height <= 320 &&
+      results.mobileAsciiPortrait.withinViewport,
+    'the ASCII portrait loads at its intended mobile height without horizontal overflow',
+  ],
   [results.mobileExperienceLogoOverlaps.length === 0, 'mobile employer logos do not overlap experience titles'],
   [
     results.mobilePortalHeader.present && results.mobilePortalHeader.pathFitsOneLine &&
