@@ -436,6 +436,12 @@ results.audioPlayerInitial = await page.evaluate(() => {
     creditHref: credit?.href,
     creditTarget: credit?.target,
     creditRel: credit?.rel,
+    title: player?.querySelector('.ambient-player__title')?.textContent.trim(),
+    scene: player?.dataset.scene,
+    audioMode: player?.dataset.audioMode,
+    cueCount: Number(player?.dataset.cueCount),
+    visualizer: player?.dataset.visualizer,
+    sceneLabel: player?.querySelector('[data-audio-scene]')?.textContent.trim(),
   };
 });
 await shot(page, 'desktop-01-hero-pt');
@@ -602,6 +608,7 @@ results.en = await page.evaluate(() => ({
       volume: player?.querySelector('[data-audio-volume]')?.getAttribute('aria-label'),
       mute: player?.querySelector('[data-audio-mute]')?.getAttribute('aria-label'),
       status: player?.querySelector('[data-audio-status]')?.textContent.trim(),
+      sceneLabel: player?.querySelector('[data-audio-scene]')?.textContent.trim(),
     };
   })(),
   terminalRenderedLines: [...document.querySelectorAll('#terminal-body > div')]
@@ -1010,7 +1017,7 @@ const assertions = [
   [results.reloadScanIntro, 'refreshing the page starts the recon scan again'],
   [
     results.audioPlayerInitial.present && results.audioPlayerInitial.state === 'idle' &&
-      results.audioPlayerInitial.src === 'assets/audio/dimly-lit.mp3' &&
+      results.audioPlayerInitial.src === 'assets/audio/chill-lofi-inspired-loop.mp3' &&
       results.audioPlayerInitial.preload === 'none' && results.audioPlayerInitial.loop &&
       results.audioPlayerInitial.paused && results.audioNetworkRequests.length === 0,
     'the ambient player starts silent and defers its self-hosted audio request until play',
@@ -1019,10 +1026,19 @@ const assertions = [
     results.audioPlayerInitial.playLabel === 'Reproduzir música ambiente' &&
       results.audioPlayerInitial.progressLabel === 'Progresso da música ambiente' &&
       results.audioPlayerInitial.volumeLabel === 'Volume da música ambiente' &&
-      results.audioPlayerInitial.creditHref === 'https://opengameart.org/content/dimly-lit' &&
+      results.audioPlayerInitial.creditHref === 'https://opengameart.org/content/chill-lofi-inspired-loop-edit' &&
       results.audioPlayerInitial.creditTarget === '_blank' &&
       results.audioPlayerInitial.creditRel.includes('noopener'),
     'the ambient player exposes accessible controls and transparent CC0 provenance',
+  ],
+  [
+    results.audioPlayerInitial.title === 'Chill Lofi Inspired · omfgdude' &&
+      results.audioPlayerInitial.scene === 'top' &&
+      results.audioPlayerInitial.audioMode === 'pending' &&
+      results.audioPlayerInitial.cueCount === 0 &&
+      results.audioPlayerInitial.visualizer === 'stopped' &&
+      results.audioPlayerInitial.sceneLabel === 'signal://início',
+    'the ambient player exposes reactive scene metadata and localized scene label',
   ],
   [
     results.audioInteraction.requestsBeforePlay === 0 && results.audioInteraction.started &&
@@ -1056,8 +1072,9 @@ const assertions = [
       results.en.audioLabels.progress === 'Ambient music progress' &&
       results.en.audioLabels.volume === 'Ambient music volume' &&
       results.en.audioLabels.mute === 'Mute ambient music' &&
-      results.en.audioLabels.status === 'Ambient music ready',
-    'ambient-player labels and status localize to English',
+      results.en.audioLabels.status === 'Ambient music ready' &&
+      results.en.audioLabels.sceneLabel === 'signal://home',
+    'ambient-player labels, status and scene label localize to English',
   ],
   [
     results.localeSelection.firstVisit === 'en' && results.localeSelection.savedPreference === 'pt-BR',
