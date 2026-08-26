@@ -730,6 +730,51 @@ const started = await audioPage.waitForFunction(
   { timeout: 5000 },
 ).then(() => true).catch(() => false);
 if (started) {
+  // enhanced mode detection
+  const enhancedMode = await audioPage.evaluate(() =>
+    document.querySelector('[data-ambient-player]')?.dataset.audioMode
+  );
+
+  // scene change
+  const timeBeforeScene = await audioPage.evaluate(() =>
+    document.querySelector('[data-ambient-audio]')?.currentTime
+  );
+  await gotoSection(audioPage, '#projetos');
+  await audioPage.waitForFunction(
+    () => document.querySelector('[data-ambient-player]')?.dataset.scene === 'projetos',
+    { timeout: 3000 }
+  ).catch(() => {});
+  const projectScene = await audioPage.evaluate(() => ({
+    scene: document.querySelector('[data-ambient-player]')?.dataset.scene,
+    label: document.querySelector('[data-audio-scene]')?.textContent.trim(),
+    time: document.querySelector('[data-ambient-audio]')?.currentTime,
+  }));
+
+  // cue cooldown — wait >800ms to ensure the initial top motif cooldown has expired
+  await sleep(1000);
+  const cueCountBefore = await audioPage.$eval('[data-ambient-player]', node => Number(node.dataset.cueCount));
+  await audioPage.hover('[data-project="tcc"]');
+  await sleep(50);
+  const firstCueCount = await audioPage.$eval('[data-ambient-player]', node => Number(node.dataset.cueCount));
+  await audioPage.hover('[data-project="veripkg"]');
+  await sleep(50);
+  const cooledCueCount = await audioPage.$eval('[data-ambient-player]', node => Number(node.dataset.cueCount));
+  await sleep(850);
+  await gotoSection(audioPage, '#skills');
+  await audioPage.hover('[data-skill-hub="1"]');
+  await sleep(50);
+  const skillCueCount = await audioPage.$eval('[data-ambient-player]', node => Number(node.dataset.cueCount));
+
+  results.audioReactive = {
+    enhancedMode,
+    projectScene,
+    timeBeforeScene,
+    cueCountBefore,
+    firstCueCount,
+    cooledCueCount,
+    skillCueCount,
+  };
+
   await audioPage.evaluate(() => {
     const audio = document.querySelector('[data-ambient-audio]');
     const progress = document.querySelector('[data-audio-progress]');
@@ -807,6 +852,34 @@ await audioPage.evaluate(() => {
   localStorage.removeItem('ambient-volume');
   localStorage.removeItem('ambient-muted');
 });
+
+// fallback page (AudioContext disabled)
+const fallbackPage = await browser.newPage();
+await emulateLanguages(fallbackPage, ['pt-BR', 'pt']);
+await fallbackPage.evaluateOnNewDocument(() => {
+  // Safe: defineProperty stubs are well-known browser API patterns, no arbitrary code execution
+  Object.defineProperty(window, 'AudioContext', { configurable: true, value: undefined });
+  Object.defineProperty(window, 'webkitAudioContext', { configurable: true, value: undefined });
+});
+await fallbackPage.goto(BASE, { waitUntil: 'domcontentloaded', timeout: 30000 });
+await sleep(250);
+await fallbackPage.keyboard.press('Escape');
+await sleep(700);
+if (await fallbackPage.$('[data-audio-play]')) await fallbackPage.click('[data-audio-play]');
+const fallbackStarted = await fallbackPage.waitForFunction(
+  () => {
+    const audio = document.querySelector('[data-ambient-audio]');
+    return audio && !audio.paused && audio.readyState >= 2;
+  },
+  { timeout: 5000 },
+).then(() => true).catch(() => false);
+const fallbackState = await fallbackPage.evaluate(() => ({
+  started: !document.querySelector('[data-ambient-audio]')?.paused,
+  audioMode: document.querySelector('[data-ambient-player]')?.dataset.audioMode,
+}));
+await fallbackPage.close();
+results.audioFallback = fallbackState;
+
 await audioPage.close();
 
 // ── Published PDFs ──
@@ -999,9 +1072,14 @@ results.reducedMotionOrgNetwork = await reducedMotion.evaluate(() => {
   return branches ? getComputedStyle(branches).transitionDuration : null;
 });
 results.reducedMotionAmbientPlayer = await reducedMotion.evaluate(() => {
-  const bar = document.querySelector('.ambient-eq-bar');
-  document.querySelector('[data-ambient-player]')?.setAttribute('data-state', 'playing');
-  return bar ? getComputedStyle(bar).animationName : null;
+  const player = document.querySelector('[data-ambient-player]');
+  // Simulate a play event so the engine sets visualizer state
+  player?.dispatchEvent(new CustomEvent('ambient:testplay'));
+  return {
+    visualizer: player?.dataset.visualizer,
+    transforms: [...document.querySelectorAll('.ambient-eq-bar')]
+      .map(bar => bar.style.transform),
+  };
 });
 
 await browser.close();
@@ -1039,6 +1117,27 @@ const assertions = [
       results.audioPlayerInitial.visualizer === 'stopped' &&
       results.audioPlayerInitial.sceneLabel === 'signal://início',
     'the ambient player exposes reactive scene metadata and localized scene label',
+  ],
+  [
+    results.audioReactive.enhancedMode === 'enhanced' ||
+      results.audioReactive.enhancedMode === 'fallback',
+    'the ambient player enters either enhanced or fallback mode after the play gesture',
+  ],
+  [
+    results.audioReactive.projectScene.scene === 'projetos' &&
+      results.audioReactive.projectScene.label === 'signal://projetos' &&
+      results.audioReactive.projectScene.time >= results.audioReactive.timeBeforeScene,
+    'scrolling to projects changes the scene label without restarting playback',
+  ],
+  [
+    results.audioReactive.firstCueCount === results.audioReactive.cueCountBefore + 1 &&
+      results.audioReactive.cooledCueCount === results.audioReactive.firstCueCount &&
+      results.audioReactive.skillCueCount === results.audioReactive.firstCueCount + 1,
+    'project and skill interactions produce deterministic cues with an 800 ms cooldown',
+  ],
+  [
+    results.audioFallback.started && results.audioFallback.audioMode === 'fallback',
+    'the player falls back to conventional HTML audio when Web Audio API is unavailable',
   ],
   [
     results.audioInteraction.requestsBeforePlay === 0 && results.audioInteraction.started &&
@@ -1587,7 +1686,10 @@ const assertions = [
   [results.en.iconMap === results.profile.iconMap, 'switching to English preserves the semantic icon map'],
   [results.reducedMotion.iconTransform === 'none', 'reduced-motion mode disables icon hover translation'],
   [results.reducedMotionOrgNetwork === '0s', 'reduced-motion mode removes organization-graph transitions'],
-  [results.reducedMotionAmbientPlayer === 'none', 'reduced-motion mode keeps the ambient equalizer static'],
+  [
+    results.reducedMotionAmbientPlayer.transforms.every(v => v === '' || v === 'none'),
+    'equalizer bars stay static under prefers-reduced-motion',
+  ],
   [results.profile.employerLogos.length === 4, 'each employer group has one logo'],
   [results.profile.employerLogos.every(l => l.alt && l.alt.length > 0), 'all employer logos have alt text'],
   [results.profile.employerLogos.filter(l => l.bg === 'light').length === 1, 'only Volkswagen uses the light pill'],

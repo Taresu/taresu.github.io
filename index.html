@@ -2212,6 +2212,303 @@
       syncAmbientTime();
       syncAmbientSceneLabel();
 
+      // ── Web Audio engine ──
+      const AMBIENT_AUDIO_CONFIG = Object.freeze({
+        tempoBpm: 79,
+        beatOffsetSeconds: 0,
+        cueCooldownMs: 800,
+        motifHz: [261.63, 329.63, 392, 493.88],
+        scenes: Object.freeze({
+          top: { frequency: 2600, gain: .88, pulse: false, percussion: false },
+          sobre: { frequency: 3400, gain: .9, pulse: true, percussion: false },
+          experiencia: { frequency: 3900, gain: .92, pulse: true, percussion: true },
+          projetos: { frequency: 5200, gain: .95, pulse: false, percussion: false },
+          skills: { frequency: 4300, gain: .92, pulse: false, percussion: false },
+          contato: { frequency: 2200, gain: .86, pulse: false, percussion: false },
+        }),
+      });
+
+      let ambientContext;
+      let ambientSource;
+      let ambientFilter;
+      let ambientMaster;
+      let ambientCompressor;
+      let ambientAnalyser;
+      let ambientNoiseBuffer;
+      let ambientVisualizerFrame;
+      let ambientLastCueAt = -Infinity;
+      let ambientSceneTimer;
+      let ambientTopMotifPlayed = false;
+      const ambientVoices = new Set();
+      const AMBIENT_BARS = [...(ambientPlayer.querySelectorAll('.ambient-eq-bar') || [])];
+      const ambientReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+      const initAmbientGraph = async () => {
+        if (ambientContext) return ambientContext.state !== 'closed';
+        const Ctx = window.AudioContext || window.webkitAudioContext;
+        if (!Ctx) { ambientPlayer.dataset.audioMode = 'fallback'; return false; }
+        try {
+          ambientContext = new Ctx();
+          if (ambientContext.state === 'suspended') await ambientContext.resume();
+          ambientFilter = ambientContext.createBiquadFilter();
+          ambientFilter.type = 'lowpass';
+          ambientFilter.frequency.value = 3400;
+          ambientMaster = ambientContext.createGain();
+          ambientMaster.gain.value = storedMuted ? 0 : storedVolume * .9;
+          ambientCompressor = ambientContext.createDynamicsCompressor();
+          ambientCompressor.threshold.value = -8;
+          ambientCompressor.knee.value = 3;
+          ambientCompressor.ratio.value = 12;
+          ambientCompressor.attack.value = .003;
+          ambientCompressor.release.value = .25;
+          ambientAnalyser = ambientContext.createAnalyser();
+          ambientAnalyser.fftSize = 128;
+          ambientAnalyser.smoothingTimeConstant = .78;
+          ambientSource = ambientContext.createMediaElementSource(ambientAudio);
+          ambientSource.connect(ambientFilter);
+          ambientFilter.connect(ambientMaster);
+          ambientMaster.connect(ambientCompressor);
+          ambientCompressor.connect(ambientAnalyser);
+          ambientAnalyser.connect(ambientContext.destination);
+          // generate deterministic noise buffer (2 s)
+          const sampleRate = ambientContext.sampleRate;
+          const length = sampleRate * 2;
+          ambientNoiseBuffer = ambientContext.createBuffer(1, length, sampleRate);
+          const data = ambientNoiseBuffer.getChannelData(0);
+          let seed = 0xdeadbeef;
+          for (let i = 0; i < length; i++) {
+            seed = (seed ^ (seed << 13)) >>> 0;
+            seed = (seed ^ (seed >> 17)) >>> 0;
+            seed = (seed ^ (seed << 5)) >>> 0;
+            data[i] = (seed / 0xffffffff) * 2 - 1;
+          }
+          ambientPlayer.dataset.audioMode = 'enhanced';
+          return true;
+        } catch (e) {
+          if (ambientSource) {
+            try { ambientSource.connect(ambientContext.destination); } catch (_) {}
+          }
+          ambientPlayer.dataset.audioMode = 'fallback';
+          return false;
+        }
+      };
+
+      const syncAmbientMasterGain = () => {
+        if (ambientPlayer.dataset.audioMode !== 'enhanced' || !ambientMaster) return;
+        const sceneName = ambientPlayer.dataset.scene || 'top';
+        const sceneGain = AMBIENT_AUDIO_CONFIG.scenes[sceneName]?.gain ?? .9;
+        const target = ambientAudio.muted ? 0 : storedVolume * sceneGain;
+        const now = ambientContext.currentTime;
+        ambientMaster.gain.cancelScheduledValues(now);
+        ambientMaster.gain.setValueAtTime(ambientMaster.gain.value, now);
+        ambientMaster.gain.linearRampToValueAtTime(target, now + .1);
+      };
+
+      const AMBIENT_BEAT_SECONDS = 60 / AMBIENT_AUDIO_CONFIG.tempoBpm;
+      const nextAmbientBeatDelay = () => {
+        const elapsed = Math.max(0, ambientAudio.currentTime - AMBIENT_AUDIO_CONFIG.beatOffsetSeconds);
+        return AMBIENT_BEAT_SECONDS - (elapsed % AMBIENT_BEAT_SECONDS);
+      };
+
+      let ambientContatoCued = false;
+      const checkContatoCue = () => {
+        if (!ambientContatoCued && ambientPlayer.dataset.scene === 'contato') {
+          ambientContatoCued = true;
+          setTimeout(() => scheduleAmbientCue('motif', 'contato'), 600);
+        }
+      };
+
+      // Forward declaration: scheduleAmbientCue defined after voice helpers
+      let scheduleAmbientCue;
+
+      const setAmbientScene = (sceneName, immediate = false) => {
+        if (!AMBIENT_AUDIO_CONFIG.scenes[sceneName]) return;
+        ambientPlayer.dataset.scene = sceneName;
+        syncAmbientSceneLabel();
+        checkContatoCue();
+        if (sceneName === 'sobre') setTimeout(() => scheduleAmbientCue('pulse', 'sobre'), 200);
+        if (sceneName === 'experiencia') setTimeout(() => scheduleAmbientCue('percussion', 'experiencia'), 200);
+        if (ambientSceneTimer) { clearTimeout(ambientSceneTimer); ambientSceneTimer = null; }
+        const applyScene = () => {
+          if (ambientPlayer.dataset.audioMode !== 'enhanced' || !ambientFilter) return;
+          const scene = AMBIENT_AUDIO_CONFIG.scenes[sceneName];
+          const now = ambientContext.currentTime;
+          ambientFilter.frequency.cancelScheduledValues(now);
+          ambientFilter.frequency.setValueAtTime(ambientFilter.frequency.value, now);
+          ambientFilter.frequency.linearRampToValueAtTime(scene.frequency, now + .5);
+          syncAmbientMasterGain();
+        };
+        const playing = ambientPlayer.dataset.audioMode === 'enhanced' &&
+          ambientContext && ambientContext.state === 'running' && !ambientAudio.paused;
+        if (!immediate && playing) {
+          ambientSceneTimer = setTimeout(applyScene, nextAmbientBeatDelay() * 1000);
+        } else {
+          applyScene();
+        }
+      };
+
+      const ambientSectionRatios = {};
+      const ambientSectionObserver = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+          ambientSectionRatios[entry.target.id] = entry.intersectionRatio;
+        });
+        const best = Object.entries(ambientSectionRatios)
+          .filter(([, r]) => r >= .1)
+          .sort(([, a], [, b]) => b - a)[0];
+        if (best) setAmbientScene(best[0]);
+      }, { threshold: [0, .1, .25, .5, .75, 1] });
+      ['top', 'sobre', 'experiencia', 'projetos', 'skills', 'contato'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) ambientSectionObserver.observe(el);
+      });
+
+      const stopAmbientVoices = () => {
+        ambientVoices.forEach(node => { try { node.stop(); } catch (_) {} });
+        ambientVoices.clear();
+        if (ambientSceneTimer) { clearTimeout(ambientSceneTimer); ambientSceneTimer = null; }
+      };
+
+      const makeAmbientGain = (peak, attackTime, releaseTime) => {
+        const env = ambientContext.createGain();
+        env.gain.value = 0;
+        const now = ambientContext.currentTime;
+        env.gain.setValueAtTime(0, now);
+        env.gain.linearRampToValueAtTime(peak, now + attackTime);
+        env.gain.exponentialRampToValueAtTime(0.0001, now + attackTime + releaseTime);
+        env.connect(ambientMaster);
+        return env;
+      };
+
+      const hashVariation = key => {
+        let h = 0;
+        for (let i = 0; i < key.length; i++) h = (h + key.charCodeAt(i)) | 0;
+        return Math.abs(h);
+      };
+
+      const playMotifNote = (hz, delay) => {
+        const osc = ambientContext.createOscillator();
+        osc.type = 'sine';
+        osc.frequency.value = hz;
+        const env = ambientContext.createGain();
+        env.gain.value = 0;
+        const t = ambientContext.currentTime + delay;
+        env.gain.setValueAtTime(0, t);
+        env.gain.linearRampToValueAtTime(.035, t + .01);
+        env.gain.exponentialRampToValueAtTime(0.0001, t + .01 + .18);
+        osc.connect(env);
+        env.connect(ambientMaster);
+        osc.start(t);
+        osc.stop(t + .2);
+        ambientVoices.add(osc);
+        osc.onended = () => ambientVoices.delete(osc);
+      };
+
+      const playMotif = (variationKey = 'top') => {
+        const offset = hashVariation(variationKey) % AMBIENT_AUDIO_CONFIG.motifHz.length;
+        const notes = [0, 1, 2, 3].map(i =>
+          AMBIENT_AUDIO_CONFIG.motifHz[(i + offset) % AMBIENT_AUDIO_CONFIG.motifHz.length]
+        );
+        notes.forEach((hz, i) => playMotifNote(hz, i * .12));
+      };
+
+      const playLowPulse = () => {
+        const osc = ambientContext.createOscillator();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(65.41, ambientContext.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(49, ambientContext.currentTime + .22);
+        const env = makeAmbientGain(.025, .005, .22);
+        osc.connect(env);
+        osc.start();
+        osc.stop(ambientContext.currentTime + .23);
+        ambientVoices.add(osc);
+        osc.onended = () => ambientVoices.delete(osc);
+      };
+
+      const playPercussion = () => {
+        if (!ambientNoiseBuffer) return;
+        // rim
+        const rimSrc = ambientContext.createBufferSource();
+        rimSrc.buffer = ambientNoiseBuffer;
+        rimSrc.loop = false;
+        const rimFilter = ambientContext.createBiquadFilter();
+        rimFilter.type = 'bandpass';
+        rimFilter.frequency.value = 1800;
+        const rimEnv = makeAmbientGain(.012, .002, .045);
+        rimSrc.connect(rimFilter);
+        rimFilter.connect(rimEnv);
+        rimSrc.start();
+        rimSrc.stop(ambientContext.currentTime + .05);
+        ambientVoices.add(rimSrc);
+        rimSrc.onended = () => ambientVoices.delete(rimSrc);
+        // shaker
+        const shakeSrc = ambientContext.createBufferSource();
+        shakeSrc.buffer = ambientNoiseBuffer;
+        shakeSrc.loop = false;
+        const shakeFilter = ambientContext.createBiquadFilter();
+        shakeFilter.type = 'highpass';
+        shakeFilter.frequency.value = 5200;
+        const shakeEnv = makeAmbientGain(.008, .002, .07);
+        shakeSrc.connect(shakeFilter);
+        shakeFilter.connect(shakeEnv);
+        shakeSrc.start();
+        shakeSrc.stop(ambientContext.currentTime + .08);
+        ambientVoices.add(shakeSrc);
+        shakeSrc.onended = () => ambientVoices.delete(shakeSrc);
+      };
+
+      scheduleAmbientCue = (kind, variationKey = '') => {
+        const mode = ambientPlayer.dataset.audioMode;
+        if (ambientAudio.paused || ambientAudio.muted || mode !== 'enhanced' ||
+            !ambientContext || ambientContext.state !== 'running') return false;
+        const now = performance.now();
+        if (now - ambientLastCueAt < AMBIENT_AUDIO_CONFIG.cueCooldownMs) return false;
+        ambientLastCueAt = now;
+        const count = Number(ambientPlayer.dataset.cueCount || 0);
+        ambientPlayer.dataset.cueCount = String(count + 1);
+        if (kind === 'motif' || kind === 'project') {
+          playMotif(variationKey || kind);
+        } else if (kind === 'pulse') {
+          playLowPulse();
+        } else if (kind === 'percussion') {
+          playPercussion();
+        } else if (kind === 'skill') {
+          const offset = hashVariation(variationKey) % AMBIENT_AUDIO_CONFIG.motifHz.length;
+          playMotifNote(AMBIENT_AUDIO_CONFIG.motifHz[offset], 0);
+          playMotifNote(AMBIENT_AUDIO_CONFIG.motifHz[(offset + 1) % AMBIENT_AUDIO_CONFIG.motifHz.length], .1);
+        }
+        return true;
+      };
+
+      const startAmbientVisualizer = () => {
+        if (ambientReducedMotion.matches) {
+          ambientPlayer.dataset.visualizer = 'reduced';
+          return;
+        }
+        ambientPlayer.dataset.visualizer = 'running';
+        const freqData = new Uint8Array(ambientAnalyser.frequencyBinCount);
+        const drawFrame = () => {
+          if (ambientPlayer.dataset.visualizer !== 'running') return;
+          ambientAnalyser.getByteFrequencyData(freqData);
+          const step = Math.floor(freqData.length / AMBIENT_BARS.length);
+          AMBIENT_BARS.forEach((bar, i) => {
+            const level = freqData[i * step] / 255;
+            bar.style.transform = `scaleY(${.2 + level * .8})`;
+          });
+          ambientVisualizerFrame = requestAnimationFrame(drawFrame);
+        };
+        ambientVisualizerFrame = requestAnimationFrame(drawFrame);
+      };
+
+      const stopAmbientVisualizer = () => {
+        if (ambientVisualizerFrame) cancelAnimationFrame(ambientVisualizerFrame);
+        ambientVisualizerFrame = null;
+        if (ambientPlayer.dataset.visualizer === 'reduced') return;
+        AMBIENT_BARS.forEach(bar => { bar.style.transform = ''; });
+        ambientPlayer.dataset.visualizer = 'stopped';
+      };
+
+      // ── Event handlers ──
+      let ambientGraphInit = false;
       ambientPlay.addEventListener('click', async () => {
         if (!ambientAudio.paused) {
           ambientAudio.pause();
@@ -2219,6 +2516,12 @@
         }
         syncAmbientPlay('loading');
         setAmbientStatus('ambient.loading');
+        if (!ambientGraphInit) {
+          ambientGraphInit = true;
+          await initAmbientGraph();
+        } else if (ambientContext?.state === 'suspended') {
+          await ambientContext.resume();
+        }
         try {
           await ambientAudio.play();
         } catch (error) {
@@ -2229,11 +2532,22 @@
       ambientAudio.addEventListener('play', () => {
         syncAmbientPlay('playing');
         setAmbientStatus('ambient.playing');
+        if (ambientPlayer.dataset.audioMode === 'enhanced') {
+          startAmbientVisualizer();
+          setAmbientScene(ambientPlayer.dataset.scene || 'top', true);
+          syncAmbientMasterGain();
+          if (!ambientTopMotifPlayed) {
+            ambientTopMotifPlayed = true;
+            setTimeout(() => scheduleAmbientCue('motif', 'top'), 400);
+          }
+        }
       });
       ambientAudio.addEventListener('pause', () => {
         if (ambientPlayer.dataset.state === 'idle' || ambientPlayer.dataset.state === 'error') return;
         syncAmbientPlay('paused');
         setAmbientStatus('ambient.paused');
+        stopAmbientVoices();
+        stopAmbientVisualizer();
       });
       ambientAudio.addEventListener('loadedmetadata', syncAmbientTime);
       ambientAudio.addEventListener('durationchange', syncAmbientTime);
@@ -2241,19 +2555,32 @@
       ambientAudio.addEventListener('error', () => {
         syncAmbientPlay('error');
         setAmbientStatus('ambient.error');
+        stopAmbientVoices();
+        stopAmbientVisualizer();
+      });
+      ambientAudio.addEventListener('seeked', () => {
+        stopAmbientVoices();
+        if (ambientPlayer.dataset.audioMode === 'enhanced' && !ambientAudio.paused) {
+          setAmbientScene(ambientPlayer.dataset.scene || 'top', true);
+        }
       });
       ambientProgress.addEventListener('input', () => {
         if (Number.isFinite(ambientAudio.duration)) ambientAudio.currentTime = Number(ambientProgress.value);
         syncAmbientTime();
       });
       ambientVolume.addEventListener('input', () => {
-        ambientAudio.volume = Number(ambientVolume.value);
-        saveAmbientPreference('ambient-volume', ambientAudio.volume);
+        storedVolume = Number(ambientVolume.value);
+        // Always update audio.volume so the value is readable; in enhanced mode
+        // the master gain controls perceived loudness, not this property directly.
+        ambientAudio.volume = storedVolume;
+        saveAmbientPreference('ambient-volume', storedVolume);
+        syncAmbientMasterGain();
       });
       ambientMute.addEventListener('click', () => {
         ambientAudio.muted = !ambientAudio.muted;
         saveAmbientPreference('ambient-muted', ambientAudio.muted);
         syncAmbientMute();
+        syncAmbientMasterGain();
       });
       document.addEventListener('visibilitychange', () => {
         if (document.hidden && !ambientAudio.paused) ambientAudio.pause();
@@ -2263,6 +2590,27 @@
         syncAmbientMute();
         ambientStatus.textContent = ambientText(ambientStatus.dataset.i18n || 'ambient.ready');
         syncAmbientSceneLabel();
+      });
+
+      // ── Interaction listeners ──
+      document.querySelectorAll('[data-project]').forEach(card => {
+        let cardCued = false;
+        const triggerProjectCue = () => {
+          if (scheduleAmbientCue('project', card.dataset.project)) cardCued = true;
+        };
+        card.addEventListener('pointerenter', () => { cardCued = false; triggerProjectCue(); });
+        card.addEventListener('focusin', () => { if (!cardCued) triggerProjectCue(); });
+        card.addEventListener('click', () => triggerProjectCue());
+        card.addEventListener('pointerleave', () => { cardCued = false; });
+      });
+
+      document.querySelectorAll('[data-skill-hub]').forEach(hub => {
+        hub.addEventListener('pointerenter', () => scheduleAmbientCue('skill', hub.dataset.skillHub || hub.dataset.skillGroup || ''));
+        hub.addEventListener('focusin', e => {
+          if (e.target === hub || hub.contains(e.target)) {
+            scheduleAmbientCue('skill', hub.dataset.skillHub || hub.dataset.skillGroup || '');
+          }
+        });
       });
     }
 
