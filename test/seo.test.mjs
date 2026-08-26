@@ -142,6 +142,26 @@ test('the sitemap advertises the canonical services page', () => {
   assert.match(sitemap, new RegExp(`<loc>${canonicalOrigin}/servicos</loc>`));
 });
 
+test('portfolio and services expose large social cards and authorial identity metadata', () => {
+  const home = readFileSync(path.join(projectRoot, 'index.html'), 'utf8');
+  const services = readFileSync(path.join(projectRoot, 'servicos.html'), 'utf8');
+  const shieldUrl = `${canonicalOrigin}/assets/brand/thales-salata-shield.png`;
+
+  for (const [document, cardName] of [
+    [home, 'portfolio-social.png'],
+    [services, 'services-social.png'],
+  ]) {
+    const cardUrl = `${canonicalOrigin}/assets/brand/${cardName}`;
+    assert.ok(document.includes(`<meta property="og:image" content="${cardUrl}"/>`));
+    assert.ok(document.includes('<meta property="og:image:width" content="1200"/>'));
+    assert.ok(document.includes('<meta property="og:image:height" content="630"/>'));
+    assert.match(document, /<meta property="og:image:alt" content="[^"]+"\/>/);
+    assert.ok(document.includes('<meta name="twitter:card" content="summary_large_image"/>'));
+    assert.ok(document.includes(`<meta name="twitter:image" content="${cardUrl}"/>`));
+    assert.ok(document.includes(`"image": "${shieldUrl}"`));
+  }
+});
+
 test('Cloudflare default deploy works from a clean checkout with an asset allowlist', () => {
   rmSync(path.join(projectRoot, 'public'), { recursive: true, force: true });
   const wranglerConfig = readFileSync(path.join(projectRoot, 'wrangler.toml'), 'utf8');
@@ -220,6 +240,9 @@ test('the Pages build contains only published site artifacts', () => {
   assert.ok(deployedFiles.includes('robots.txt'));
   assert.ok(deployedFiles.includes('servicos.html'));
   assert.ok(deployedFiles.includes('sitemap.xml'));
+  assert.ok(deployedFiles.includes(path.join('assets', 'brand', 'portfolio-social.png')));
+  assert.ok(deployedFiles.includes(path.join('assets', 'brand', 'services-social.png')));
+  assert.ok(deployedFiles.includes(path.join('assets', 'brand', 'thales-salata-shield.png')));
   assert.ok(deployedFiles.includes(path.join('.well-known', 'mcp', 'server-card.json')));
   assert.equal(deployedFiles.some(file => file.startsWith('.wrangler')), false);
   assert.equal(deployedFiles.some(file => file.startsWith('docs')), false);

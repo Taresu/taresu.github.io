@@ -13,9 +13,17 @@
   <meta property="og:title" content="Serviços — Perfil no Google, conserto e criação de sites"/>
   <meta property="og:description" content="Perfil da Empresa suspenso, site fora do ar ou cliente que não te encontra. Diagnóstico gratuito e preço fechado antes de começar."/>
   <meta property="og:url" content="https://thales-salata.dev/servicos"/>
-  <meta name="twitter:card" content="summary"/>
+  <meta property="og:image" content="https://thales-salata.dev/assets/brand/services-social.png"/>
+  <meta property="og:image:secure_url" content="https://thales-salata.dev/assets/brand/services-social.png"/>
+  <meta property="og:image:type" content="image/png"/>
+  <meta property="og:image:width" content="1200"/>
+  <meta property="og:image:height" content="630"/>
+  <meta property="og:image:alt" content="Serviços de Thales Sgarbi Salata para Perfil no Google, conserto e criação de sites"/>
+  <meta name="twitter:card" content="summary_large_image"/>
   <meta name="twitter:title" content="Serviços — Perfil no Google, conserto e criação de sites"/>
   <meta name="twitter:description" content="Perfil da Empresa suspenso, site fora do ar ou cliente que não te encontra. Diagnóstico gratuito e preço fechado antes de começar."/>
+  <meta name="twitter:image" content="https://thales-salata.dev/assets/brand/services-social.png"/>
+  <meta name="twitter:image:alt" content="Serviços de Thales Sgarbi Salata para Perfil no Google, conserto e criação de sites"/>
   <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -33,7 +41,8 @@
           "@type": "Person",
           "@id": "https://thales-salata.dev/#person",
           "name": "Thales Sgarbi Salata",
-          "url": "https://thales-salata.dev/"
+          "url": "https://thales-salata.dev/",
+          "image": "https://thales-salata.dev/assets/brand/thales-salata-shield.png"
         },
         "areaServed": { "@type": "Country", "name": "Brasil" },
         "availableChannel": {
@@ -145,6 +154,10 @@
     .honesty li{position:relative;padding-left:22px;color:var(--fog);max-width:64ch;}
     .honesty li::before{content:'!';position:absolute;left:2px;font-family:var(--mono);font-size:13px;color:var(--amber,#FBBF24);}
 
+    .brand-shield{display:block;object-fit:contain;}
+    .services-about-lockup{display:grid;grid-template-columns:104px minmax(0,1fr);align-items:center;gap:24px;}
+    .services-about-shield{width:104px;height:104px;filter:drop-shadow(0 14px 28px rgba(124,58,237,.2));}
+
     dl.creds{display:flex;flex-direction:column;}
     dl.creds > div{display:grid;grid-template-columns:120px 1fr;gap:14px;padding:12px 0;border-bottom:1px solid var(--line);}
     dl.creds > div:last-child{border-bottom:none;}
@@ -155,14 +168,19 @@
     .channels{list-style:none;display:flex;flex-direction:column;gap:12px;}
     .channels .k{display:block;font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--fog);margin-bottom:2px;}
 
-    footer{border-top:1px solid var(--line);margin-top:24px;padding:28px 0 60px;display:flex;flex-direction:column;gap:8px;color:var(--fog);font-size:14px;}
+    footer{border-top:1px solid var(--line);margin-top:24px;padding:28px 0 60px;display:flex;flex-direction:column;gap:12px;color:var(--fog);font-size:14px;}
     footer p{max-width:70ch;}
+    .services-footer-brand{display:flex;align-items:center;gap:14px;color:var(--paper);}
+    .services-footer-shield{width:56px;height:56px;flex:none;}
 
     @media (max-width:560px){
       body{font-size:16px;}
       main{gap:60px;}
       .hero{padding-top:44px;}
       .svc,.honesty,.contact{padding:20px;}
+      .services-about-lockup{grid-template-columns:80px minmax(0,1fr);gap:16px;}
+      .services-about-shield{width:80px;height:80px;}
+      .services-footer-brand{align-items:flex-start;}
       dl.creds > div{grid-template-columns:1fr;gap:4px;}
     }
     @media (prefers-reduced-motion:reduce){
@@ -320,7 +338,10 @@
 
     <section>
       <h2>Quem faz<span class="dot">.</span></h2>
-      <p class="muted">Sou Thales Sgarbi Salata, desenvolvedor e profissional de segurança da informação em Curitiba. Trabalho com sites, sistemas e segurança todos os dias — o que significa que, quando o problema é perfil invadido, acesso perdido ou site comprometido, você não está contratando alguém que só mexe em rede social.</p>
+      <div class="services-about-lockup">
+        <img data-brand-shield="services-about" src="/assets/brand/thales-salata-shield.png" width="104" height="104" alt="" aria-hidden="true" loading="lazy" decoding="async" class="brand-shield services-about-shield">
+        <p class="muted">Sou Thales Sgarbi Salata, desenvolvedor e profissional de segurança da informação em Curitiba. Trabalho com sites, sistemas e segurança todos os dias — o que significa que, quando o problema é perfil invadido, acesso perdido ou site comprometido, você não está contratando alguém que só mexe em rede social.</p>
+      </div>
       <dl class="creds">
         <div><dt>Formação</dt><dd>Sistemas de Informação — UTFPR Curitiba, com trabalho de conclusão em cibersegurança</dd></div>
         <div><dt>Hoje</dt><dd>Desenvolvedor full stack do portal da UTFPR</dd></div>
@@ -347,7 +368,10 @@
   </main>
 
   <footer>
-    <p>Thales Sgarbi Salata · Curitiba, PR · atendimento remoto para todo o Brasil</p>
+    <div class="services-footer-brand">
+      <img data-brand-shield="services-footer" src="/assets/brand/thales-salata-shield.png" width="56" height="56" alt="" aria-hidden="true" loading="lazy" decoding="async" class="brand-shield services-footer-shield">
+      <p>Thales Sgarbi Salata · Curitiba, PR · atendimento remoto para todo o Brasil</p>
+    </div>
     <p>Serviço independente prestado por profissional autônomo. Não sou funcionário do Google nem represento o Google. As diretrizes oficiais de Perfil da Empresa estão em <a href="https://support.google.com/business/answer/4569145?hl=pt-BR" target="_blank" rel="noopener">support.google.com ↗</a>.</p>
   </footer>
   </div>
