@@ -125,6 +125,23 @@ test('public SEO endpoints identify the custom domain as the only canonical host
   );
 });
 
+test('the services page is available at its canonical URL', async t => {
+  const port = await reservePort();
+  const server = await startServer(port);
+  t.after(() => server.kill());
+
+  const response = await fetch(`http://127.0.0.1:${port}/servicos`);
+  const html = await response.text();
+
+  assert.equal(response.status, 200);
+  assert.ok(html.includes(`<link rel="canonical" href="${canonicalOrigin}/servicos"/>`));
+});
+
+test('the sitemap advertises the canonical services page', () => {
+  const sitemap = readFileSync(path.join(projectRoot, 'sitemap.xml'), 'utf8');
+  assert.match(sitemap, new RegExp(`<loc>${canonicalOrigin}/servicos</loc>`));
+});
+
 test('Cloudflare default deploy works from a clean checkout with an asset allowlist', () => {
   rmSync(path.join(projectRoot, 'public'), { recursive: true, force: true });
   const wranglerConfig = readFileSync(path.join(projectRoot, 'wrangler.toml'), 'utf8');
@@ -143,6 +160,7 @@ test('Cloudflare default deploy works from a clean checkout with an asset allowl
     'index.html',
     'index.md',
     'robots.txt',
+    'servicos.html',
     'sitemap.xml',
     '_headers',
     path.join('assets', 'vendor', 'bundle.js'),
@@ -192,6 +210,7 @@ test('the Pages build contains only published site artifacts', () => {
   assert.ok(deployedFiles.includes('favicon.ico'));
   assert.ok(deployedFiles.includes('index.html'));
   assert.ok(deployedFiles.includes('robots.txt'));
+  assert.ok(deployedFiles.includes('servicos.html'));
   assert.ok(deployedFiles.includes('sitemap.xml'));
   assert.ok(deployedFiles.includes(path.join('.well-known', 'mcp', 'server-card.json')));
   assert.equal(deployedFiles.some(file => file.startsWith('.wrangler')), false);

@@ -92,8 +92,8 @@ function assertSecurityPolicy(response) {
   assert.equal(directives.get('connect-src'), "'self' https://crawlindex.org");
   assert.equal(directives.get('img-src'), "'self' data: https://crawlindex.org https://webanalyzer.dev");
   assert.equal(directives.get('media-src'), "'self'");
-  assert.equal(directives.get('font-src'), "'self' https://fonts.gstatic.com");
-  assert.equal(directives.get('style-src'), "'self' 'unsafe-inline' https://fonts.googleapis.com");
+  assert.equal(directives.get('font-src'), "'self'");
+  assert.equal(directives.get('style-src'), "'self' 'unsafe-inline'");
 
   const scriptSources = directives.get('script-src')?.split(/\s+/) || [];
   assert.ok(scriptSources.includes("'self'"));

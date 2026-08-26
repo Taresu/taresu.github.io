@@ -11,7 +11,7 @@
     "test:seo": "node test/seo.test.mjs",
     "test:hygiene": "node --test test/repository-hygiene.test.mjs",
     "verify:static": "node --check worker.js && node --check serve.mjs && node --check verify.mjs && node --check screenshot.mjs",
-    "build:pages": "rm -rf public && mkdir -p public && cp -r favicon.ico index.html assets robots.txt sitemap.xml index.md _headers .well-known public/",
+    "build:pages": "rm -rf public && mkdir -p public && cp -r favicon.ico index.html servicos.html assets robots.txt sitemap.xml index.md _headers .well-known public/",
     "deploy:cloudflare": "npx wrangler@latest deploy"
   },
   "author": "Thales Sgarbi Salata",
