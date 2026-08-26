@@ -2166,6 +2166,7 @@
       };
       const ambientScene = ambientPlayer.querySelector('[data-audio-scene]');
       const syncAmbientSceneLabel = () => {
+        if (!ambientScene) return;
         const key = `ambient.scene.${ambientPlayer.dataset.scene || 'top'}`;
         ambientScene.dataset.i18n = key;
         ambientScene.textContent = ambientText(key);

@@ -439,7 +439,7 @@ results.audioPlayerInitial = await page.evaluate(() => {
     title: player?.querySelector('.ambient-player__title')?.textContent.trim(),
     scene: player?.dataset.scene,
     audioMode: player?.dataset.audioMode,
-    cueCount: Number(player?.dataset.cueCount),
+    cueCount: player?.dataset.cueCount,
     visualizer: player?.dataset.visualizer,
     sceneLabel: player?.querySelector('[data-audio-scene]')?.textContent.trim(),
   };
@@ -1035,7 +1035,7 @@ const assertions = [
     results.audioPlayerInitial.title === 'Chill Lofi Inspired · omfgdude' &&
       results.audioPlayerInitial.scene === 'top' &&
       results.audioPlayerInitial.audioMode === 'pending' &&
-      results.audioPlayerInitial.cueCount === 0 &&
+      results.audioPlayerInitial.cueCount === '0' &&
       results.audioPlayerInitial.visualizer === 'stopped' &&
       results.audioPlayerInitial.sceneLabel === 'signal://início',
     'the ambient player exposes reactive scene metadata and localized scene label',
