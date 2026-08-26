@@ -1693,7 +1693,7 @@ const assertions = [
   ],
   [results.profile.employerLogos.length === 4, 'each employer group has one logo'],
   [results.profile.employerLogos.every(l => l.alt && l.alt.length > 0), 'all employer logos have alt text'],
-  [results.profile.employerLogos.filter(l => l.bg === 'light').length === 1, 'only Volkswagen uses the light pill'],
+  [results.profile.employerLogos.every(l => l.bg === 'dark'), 'all employer logos use the dark pill'],
   [
     results.profile.reconGraph.canvasPresent && results.profile.reconGraph.canvasAriaHidden === 'true',
     'the recon-graph canvas exists and is decorative (aria-hidden)',
