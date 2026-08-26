@@ -709,6 +709,7 @@ await localePage.close();
 
 // ── Ambient player: opt-in playback, persistence and background behavior ──
 const audioPage = await browser.newPage();
+await audioPage.setViewport({ width: 1440, height: 900 });
 await emulateLanguages(audioPage, ['pt-BR', 'pt']);
 const audioResponses = [];
 audioPage.on('response', response => {

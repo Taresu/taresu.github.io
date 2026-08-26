@@ -2254,7 +2254,7 @@
           ambientFilter.type = 'lowpass';
           ambientFilter.frequency.value = 3400;
           ambientMaster = ambientContext.createGain();
-          ambientMaster.gain.value = storedMuted ? 0 : storedVolume * .9;
+          ambientMaster.gain.value = ambientAudio.muted ? 0 : storedVolume * .9;
           ambientCompressor = ambientContext.createDynamicsCompressor();
           ambientCompressor.threshold.value = -8;
           ambientCompressor.knee.value = 3;
@@ -2306,6 +2306,7 @@
 
       const AMBIENT_BEAT_SECONDS = 60 / AMBIENT_AUDIO_CONFIG.tempoBpm;
       const nextAmbientBeatDelay = () => {
+        if (!Number.isFinite(ambientAudio.currentTime)) return AMBIENT_BEAT_SECONDS;
         const elapsed = Math.max(0, ambientAudio.currentTime - AMBIENT_AUDIO_CONFIG.beatOffsetSeconds);
         return AMBIENT_BEAT_SECONDS - (elapsed % AMBIENT_BEAT_SECONDS);
       };
@@ -2353,10 +2354,10 @@
           ambientSectionRatios[entry.target.id] = entry.intersectionRatio;
         });
         const best = Object.entries(ambientSectionRatios)
-          .filter(([, r]) => r >= .1)
+          .filter(([, r]) => r >= .35)
           .sort(([, a], [, b]) => b - a)[0];
         if (best) setAmbientScene(best[0]);
-      }, { threshold: [0, .1, .25, .5, .75, 1] });
+      }, { threshold: [0, .35, .5, .75, 1] });
       ['top', 'sobre', 'experiencia', 'projetos', 'skills', 'contato'].forEach(id => {
         const el = document.getElementById(id);
         if (el) ambientSectionObserver.observe(el);
@@ -2385,9 +2386,9 @@
         return Math.abs(h);
       };
 
-      const playMotifNote = (hz, delay) => {
+      const playMotifNote = (hz, delay, noteIndex = 0) => {
         const osc = ambientContext.createOscillator();
-        osc.type = 'sine';
+        osc.type = noteIndex % 2 === 0 ? 'sine' : 'triangle';
         osc.frequency.value = hz;
         const env = ambientContext.createGain();
         env.gain.value = 0;
@@ -2408,7 +2409,7 @@
         const notes = [0, 1, 2, 3].map(i =>
           AMBIENT_AUDIO_CONFIG.motifHz[(i + offset) % AMBIENT_AUDIO_CONFIG.motifHz.length]
         );
-        notes.forEach((hz, i) => playMotifNote(hz, i * .12));
+        notes.forEach((hz, i) => playMotifNote(hz, i * .12, i));
       };
 
       const playLowPulse = () => {
@@ -2484,6 +2485,7 @@
           ambientPlayer.dataset.visualizer = 'reduced';
           return;
         }
+        stopAmbientVisualizer();
         ambientPlayer.dataset.visualizer = 'running';
         const freqData = new Uint8Array(ambientAnalyser.frequencyBinCount);
         const drawFrame = () => {
