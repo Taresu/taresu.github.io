@@ -44,6 +44,25 @@ Then update both `_headers` and `worker.js` with the new hash. The `test:securit
 
 Write hook tests as `test/*.test.mjs` using `node:test` and `node:assert/strict`. There is no numeric coverage target. For content or UI changes, run static checks and the browser suite; inspect desktop and mobile screenshots when layout changes. Treat `verify.mjs` assertions as acceptance requirements.
 
+## Intelligence Tools
+
+Use these in preference order — faster and cheaper than raw file reads.
+
+**RTK** — prefix all shell commands:
+```bash
+rtk git status | rtk git diff | rtk grep -n "pattern" file | rtk find . -name "*.mjs"
+```
+
+**CodeGraph** — `.codegraph/` is indexed; reach for it before grep or file reads:
+- MCP: `codegraph_explore` returns verbatim source + call graph in one call
+- Shell: `codegraph explore "<symbol or question>"`
+
+**graphify** — `graphify-out/graph.json` is built; use for architecture and navigation questions:
+```bash
+graphify query "<question>"
+```
+Rebuild with `/graphify .` after significant file additions.
+
 ## Commit & Pull Request Guidelines
 
 History follows Conventional Commit-style subjects, for example `feat(agent-readiness): add discovery files` or `fix(webmcp): align agent-facing facts`. Use an imperative, concise subject with a relevant scope. Pull requests should explain the user-visible change, list verification performed, link related issues or plans, and include before/after screenshots for visual changes. Do not commit generated `public/`, temporary screenshots, unrelated binaries, secrets, or local-only personal files.
