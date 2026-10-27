@@ -9,7 +9,7 @@ I build and maintain web and mobile products, automate infrastructure, and bring
 
 ## Profile
 
-I am an Information Systems graduate from UTFPR working across application development, platform integration, cloud operations, and cybersecurity. My current work includes the UTFPR institutional portal, the Nerdz cross-platform product, security research, and AI-assisted engineering with careful human review.
+I am an Information Systems graduate from UTFPR working across application development, platform integration, cloud operations, and cybersecurity. My work spans the UTFPR institutional portal (Full Stack, through Sep 2026), the Nerdz cross-platform product (maintainer), VESPAS security research where I coordinate the Alerts Channel and mentor members in Blue Team, and AI-assisted engineering with careful human review.
 
 ## Selected work
 
@@ -33,7 +33,7 @@ A dependency-free Go CLI for honest verification of downloaded packages using Op
 
 ### VESPAS
 
-Cybersecurity alerts, CTF labs, and security research through UTFPR’s VESPAS extension program.
+Cybersecurity alerts, CTF labs, and security research through UTFPR’s VESPAS extension program. I coordinate the Alerts Channel and mentor members in Blue Team.
 
 [View organization](https://github.com/vespas-utfpr)
 
