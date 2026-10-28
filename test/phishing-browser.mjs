@@ -95,6 +95,11 @@ export async function verifyPhishing(browser, base) {
       assert.equal(posterActions.download, '/assets/phishing/poster-vespascon26.pdf');
       assert.ok(posterActions.downloadName, 'the poster can be downloaded directly');
       assert.equal(links.desafio.href, '/phishing/desafio/');
+      const shark = await page.evaluate(() => {
+        const img = document.querySelector('#desafio a[href="/phishing/desafio/"] img[src="/assets/phishing/shark.svg"]');
+        return { present: Boolean(img), loaded: Boolean(img?.complete && img.naturalWidth > 0), alt: img?.alt };
+      });
+      assert.ok(shark.present && shark.loaded && shark.alt, 'the challenge card shows the game shark and links to the game');
       const body = await page.evaluate(() => document.body.textContent);
       assert.ok(body.includes('9,5') && body.includes('10/11/2026'), 'grade and poster date are shown');
       assert.doesNotMatch(body, /7[,.]54|9[,.]85/, 'no pilot score');
@@ -126,6 +131,23 @@ export async function verifyPhishing(browser, base) {
       await (await dialButtons(page))[5].click();
       assert.match(await page.$eval('[data-journey-final]', el => el.textContent), /Portuguese/);
       scenarios.push('english from saved preference');
+    } finally {
+      await page.close();
+    }
+  }
+
+  {
+    const { page } = await openJourney(browser, base, p => p.setViewport({ width: 1440, height: 900 }));
+    try {
+      const layout = await page.evaluate(() => {
+        const scene = document.querySelector('[data-journey-scene]').getBoundingClientRect();
+        const title = document.querySelector('[data-journey-title]').getBoundingClientRect();
+        return { height: scene.height, right: scene.right, titleLeft: title.left, titleTop: title.top, sceneTop: scene.top };
+      });
+      assert.ok(layout.height <= 420, `scene stays compact on desktop (${Math.round(layout.height)}px)`);
+      assert.ok(layout.right <= layout.titleLeft && layout.titleTop < layout.sceneTop + layout.height,
+        'scene sits beside the stop on desktop');
+      scenarios.push('desktop scene is compact and beside the stop');
     } finally {
       await page.close();
     }

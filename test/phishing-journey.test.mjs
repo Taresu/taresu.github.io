@@ -161,3 +161,11 @@ test('the course is presented as my free hands-on short course on a busy portal'
   const loose = Object.entries(DICT.pt).filter(([key, value]) => key !== 'curso.portal' && /\bcurso\b/i.test(value));
   assert.deepEqual(loose.map(([key]) => key), [], 'PT copy says minicurso, not curso');
 });
+
+test('the shark illustration is the game original, safe and standalone', () => {
+  const svg = readFileSync(path.join(projectRoot, 'assets', 'phishing', 'shark.svg'), 'utf8');
+  assert.match(svg, /^<svg[^>]+xmlns="http:\/\/www\.w3\.org\/2000\/svg"/);
+  assert.match(svg, /viewBox="0 0 600 560"/);
+  assert.doesNotMatch(svg, /<script|<foreignObject|javascript:|(?:href|src)="https?:\/\//i);
+  assert.ok(Buffer.byteLength(svg) < 8000, 'stays small');
+});

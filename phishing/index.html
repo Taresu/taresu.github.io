@@ -81,30 +81,33 @@
       <h1 class="font-display font-bold text-3xl sm:text-5xl tracking-tight mt-2" data-i18n="journey.title">Uma viagem pelo tempo do phishing</h1>
       <p class="text-fog text-lg mt-3" data-i18n="journey.lead">40 anos, a mesma isca. Escolha uma década e tente não cair.</p>
 
-      <div class="mt-8 rounded-2xl border border-line bg-panel overflow-hidden">
-        <svg class="journey-scene" data-journey-scene viewBox="-140 -60 320 245" role="img" aria-label="Terminal com monitor de fósforo verde e teclado sobre a mesa, pedindo login."></svg>
-      </div>
-
-      <div class="journey-dial mt-5" data-journey-dial role="group" aria-label="Escolha uma década" data-i18n-aria-label="journey.dialLabel">
-        <button type="button" class="journey-dial-button" aria-pressed="true">1980s</button>
-      </div>
-
-      <div class="grid gap-6 md:grid-cols-[minmax(0,18rem)_1fr] mt-6">
-        <img data-journey-cover src="/assets/phishing/covers/1980s.webp" width="768" height="512" alt="Capa do curso para esta época: O início do cibercrime" class="w-full h-auto rounded-xl border border-line">
-        <div>
-          <h2 class="font-display font-semibold text-2xl" data-journey-title>O início do cibercrime</h2>
-          <p class="text-fog mt-1" data-journey-chapter>A curiosidade vira ameaça: BBS, phreaks e as primeiras senhas roubadas.</p>
-          <p class="font-mono text-[11px] uppercase tracking-[0.14em] text-purple-light mt-5" data-i18n="journey.challengeLabel">Mini-desafio</p>
-          <p class="mt-1" data-journey-question>Mensagem no BBS. Qual destas é golpe?</p>
-          <div data-journey-options>
-            <p class="journey-option">"Sou o sysop. Me passe sua senha para manutenção."</p>
-            <p class="journey-option">Aviso no mural: manutenção às 22h, nenhuma ação necessária.</p>
+      <div class="mt-8 grid grid-cols-[minmax(0,1fr)] gap-8 lg:grid-cols-2 lg:items-start">
+        <div class="mx-auto w-full min-w-0 max-w-xl lg:max-w-none">
+          <div class="rounded-2xl border border-line bg-panel overflow-hidden">
+            <svg class="journey-scene" data-journey-scene viewBox="-140 -60 320 245" role="img" aria-label="Terminal com monitor de fósforo verde e teclado sobre a mesa, pedindo login."></svg>
           </div>
-          <p class="text-sm text-fog mt-3 min-h-[1.5rem]" data-journey-feedback aria-live="polite"></p>
-          <div data-journey-final hidden class="mt-4 rounded-xl border border-terminal/40 bg-terminal/5 p-4">
-            <a href="/phishing/desafio/" class="inline-flex items-center gap-2 rounded-lg border border-terminal bg-terminal/10 px-4 py-2.5 font-semibold text-terminal hover:bg-terminal/20 transition-colors" data-i18n="challenge.cta">Jogar o desafio completo (5 níveis)</a>
-            <p class="text-sm text-fog mt-3" data-i18n="challenge.credit">Criei este desafio para o estande do VESPAS na Tecnológica 2026, feira que recebeu mais de 3 mil visitantes.</p>
-            <p class="text-sm text-amber mt-1" data-lang-note data-i18n="challenge.languageNote">O desafio é em português.</p>
+
+          <div class="journey-dial mt-5" data-journey-dial role="group" aria-label="Escolha uma década" data-i18n-aria-label="journey.dialLabel">
+            <button type="button" class="journey-dial-button" aria-pressed="true">1980s</button>
+          </div>
+        </div>
+        <div class="min-w-0">
+          <img data-journey-cover src="/assets/phishing/covers/1980s.webp" width="768" height="512" alt="Capa do curso para esta época: O início do cibercrime" class="w-full max-w-sm h-auto rounded-xl border border-line">
+          <div class="mt-5">
+            <h2 class="font-display font-semibold text-2xl" data-journey-title>O início do cibercrime</h2>
+            <p class="text-fog mt-1" data-journey-chapter>A curiosidade vira ameaça: BBS, phreaks e as primeiras senhas roubadas.</p>
+            <p class="font-mono text-[11px] uppercase tracking-[0.14em] text-purple-light mt-5" data-i18n="journey.challengeLabel">Mini-desafio</p>
+            <p class="mt-1" data-journey-question>Mensagem no BBS. Qual destas é golpe?</p>
+            <div data-journey-options>
+              <p class="journey-option">"Sou o sysop. Me passe sua senha para manutenção."</p>
+              <p class="journey-option">Aviso no mural: manutenção às 22h, nenhuma ação necessária.</p>
+            </div>
+            <p class="text-sm text-fog mt-3 min-h-[1.5rem]" data-journey-feedback aria-live="polite"></p>
+            <div data-journey-final hidden class="mt-4 rounded-xl border border-terminal/40 bg-terminal/5 p-4">
+              <a href="/phishing/desafio/" class="inline-flex items-center gap-2 rounded-lg border border-terminal bg-terminal/10 px-4 py-2.5 font-semibold text-terminal hover:bg-terminal/20 transition-colors" data-i18n="challenge.cta">Jogar o desafio completo (5 níveis)</a>
+              <p class="text-sm text-fog mt-3" data-i18n="challenge.credit">Criei este desafio para o estande do VESPAS na Tecnológica 2026, feira que recebeu mais de 3 mil visitantes.</p>
+              <p class="text-sm text-amber mt-1" data-lang-note data-i18n="challenge.languageNote">O desafio é em português.</p>
+            </div>
           </div>
         </div>
       </div>
@@ -152,13 +155,18 @@
             </div>
           </article>
 
-          <article id="desafio" class="rounded-xl border border-line bg-card p-6">
+          <article id="desafio" class="rounded-xl border border-line bg-card p-6 grid gap-5 sm:grid-cols-[9rem_1fr]">
+            <a href="/phishing/desafio/" class="block self-start rounded-lg bg-[#082d42] p-2 transition-transform hover:-translate-y-0.5">
+              <img src="/assets/phishing/shark.svg" width="600" height="560" loading="lazy" alt="Tubarão do desafio anti-phishing do VESPAS" data-i18n-alt="desafio.sharkAlt" class="w-full h-auto">
+            </a>
+            <div>
             <p class="font-mono text-[11px] uppercase tracking-[0.14em] text-terminal" data-i18n="desafio.kicker">desafio · Tecnológica 2026</p>
             <h3 class="font-display font-semibold text-xl mt-2"><span data-i18n="desafio.titleBefore">Cuidado que o</span> <s data-i18n="desafio.titleStrike">tubarão</s> <span data-i18n="desafio.titleAfter">phishing vai te pegar</span></h3>
             <p class="text-fog mt-3" data-i18n="desafio.body">Cinco pares de links, do typosquatting ao link mascarado. Representei o VESPAS no estande, e o público jogava pelo QR code no celular.</p>
             <p class="text-sm text-fog mt-2" data-i18n="challenge.credit">Criei este desafio para o estande do VESPAS na Tecnológica 2026, feira que recebeu mais de 3 mil visitantes.</p>
             <a data-product-link href="/phishing/desafio/" class="mt-4 inline-flex items-center gap-2 rounded-lg border border-terminal bg-terminal/10 px-4 py-2.5 font-semibold text-terminal hover:bg-terminal/20 transition-colors"><span data-i18n="desafio.cta">Jogar o desafio</span> <span aria-hidden="true">→</span></a>
             <p class="text-sm text-amber mt-2" data-lang-note data-i18n="challenge.languageNote">O desafio é em português.</p>
+            </div>
           </article>
         </div>
       </div>
