@@ -200,3 +200,9 @@ test('both options of every mini-challenge are about the same thing', () => {
     assert.ok(ratio > 0.55, `${era.key}: the scam is not given away by length alone (${ratio.toFixed(2)})`);
   }
 });
+
+test('the 3,000-visitor claim links to the UTFPR Curitiba post', () => {
+  const page = readFileSync(path.join(projectRoot, 'phishing', 'index.html'), 'utf8');
+  const source = page.slice(page.indexOf('id="fonte-9"'), page.indexOf('id="fonte-10"'));
+  assert.match(source, /<a href="https:\/\/www\.instagram\.com\/p\/DeANToDlpeT\/" target="_blank" rel="noopener noreferrer"/);
+});
