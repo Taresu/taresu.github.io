@@ -47,15 +47,28 @@
   }
 
   // A flat panel lying on a +y plane (a screen on the front-left face of a device).
-  function screen(group, x, y, z, w, h, fill) {
-    return polygon(group, [[x, y, z], [x + w, y, z], [x + w, y, z + h], [x, y, z + h]], fill);
+  // Panels that hold text are marked so the text that follows them can be checked against their bounds.
+  function screen(group, x, y, z, w, h, fill, holdsText = false) {
+    const el = polygon(group, [[x, y, z], [x + w, y, z], [x + w, y, z + h], [x, y, z + h]], fill);
+    if (holdsText) el.setAttribute('data-screen', '');
+    return el;
+  }
+
+  // Monospace-ish glyphs average 0.62 em wide; shrink the type until the text fits the panel width.
+  const GLYPH = 0.62;
+  const BASE_SIZE = 6;
+  function fitFontSize(text, maxUnits, base = BASE_SIZE) {
+    return Math.min(base, (maxUnits * UNIT) / (Math.max(1, text.length) * GLYPH));
   }
 
   // Text glued to the +y plane: its baseline follows the x axis and its height follows z.
-  function label(group, x, y, z, text, className) {
+  function label(group, x, y, z, text, { fill, font, maxUnits, size = BASE_SIZE, weight = 600 }) {
     const [sx, sy] = project(x, y, z);
     const el = node('text', {
-      class: className,
+      fill,
+      'font-family': font,
+      'font-weight': String(weight),
+      'font-size': fitFontSize(text, maxUnits, size).toFixed(2),
       transform: `matrix(${COS.toFixed(4)},${SIN.toFixed(4)},0,1,${sx.toFixed(2)},${sy.toFixed(2)})`,
     });
     el.textContent = text;
@@ -63,5 +76,5 @@
     return el;
   }
 
-  globalThis.PhishingIso = { NS, UNIT, project, shade, box, screen, label, node, polygon };
+  globalThis.PhishingIso = { NS, UNIT, project, shade, box, screen, label, node, polygon, fitFontSize };
 })();

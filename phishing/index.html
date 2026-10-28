@@ -52,6 +52,11 @@
     .journey-option[data-picked="true"] { box-shadow: inset 0 0 0 1px currentColor; }
     .journey-option[aria-disabled="true"] { cursor: default; }
 
+    /* Each stop borrows the colors and type of its course module. */
+    [data-journey] { --era-accent: #00ff41; --era-font: 'Courier New', Courier, monospace; }
+    [data-journey-cover] { border: 2px solid var(--era-accent) !important; box-shadow: 0 0 0 4px rgba(255,255,255,.04); }
+    [data-journey-title], [data-journey-question] { font-family: var(--era-font); }
+
     html:not([lang="en"]) [data-lang-note] { display: none; }
     .lang-switch[aria-pressed="true"] { color: #00FF87; }
 

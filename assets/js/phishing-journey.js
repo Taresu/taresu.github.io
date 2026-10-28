@@ -59,6 +59,8 @@
     function renderStop() {
       const era = ERAS[state.index];
       const text = era.text[current];
+      root.style.setProperty('--era-accent', era.theme.accent);
+      root.style.setProperty('--era-font', era.theme.font);
       cover.src = `/${era.cover}`;
       cover.alt = `${t('journey.coverAlt')}: ${text.title}`;
       q('[data-journey-title]').textContent = text.title;

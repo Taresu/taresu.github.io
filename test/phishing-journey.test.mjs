@@ -130,3 +130,23 @@ test('the challenge title strikes through the shark', () => {
   const page = readFileSync(path.join(projectRoot, 'phishing', 'index.html'), 'utf8');
   assert.match(page, /<s data-i18n="desafio\.titleStrike">tubarão<\/s>/);
 });
+
+test('fitFontSize shrinks long text to the available width', () => {
+  const { fitFontSize, UNIT } = loadJourney(['phishing-iso.js']).PhishingIso;
+  const size = fitFontSize('lojabbela.com.br', 1.2);
+  assert.ok(size * 'lojabbela.com.br'.length * 0.62 <= 1.2 * UNIT + 0.01, `size ${size} fits 1.2 units`);
+  assert.equal(fitFontSize('OK', 3), 6, 'short text keeps the base size');
+});
+
+test('every era carries the identity of its course module', () => {
+  const { ERAS } = loadJourney(['phishing-eras.js']).PhishingEras;
+  const accents = new Set();
+  for (const era of ERAS) {
+    assert.match(era.theme?.accent || '', /^#[0-9a-f]{6}$/i, `${era.key} accent`);
+    assert.ok(era.theme.font?.trim(), `${era.key} font`);
+    accents.add(era.theme.accent.toLowerCase());
+  }
+  assert.equal(accents.size, 6, 'each decade has its own accent');
+  assert.equal(ERAS[0].theme.accent.toLowerCase(), '#00ff41');
+  assert.equal(ERAS[1].theme.accent.toLowerCase(), '#000080');
+});

@@ -47,6 +47,26 @@ export async function verifyPhishing(browser, base) {
       assert.equal(pickedAfter, first.picked, 'a second click does not change the answer');
       scenarios.push('six eras and a working challenge');
 
+      for (let i = 0; i < 6; i++) {
+        await (await dialButtons(page))[i].click();
+        await wait(200);
+        const overflow = await page.evaluate(() => {
+          const svg = document.querySelector('[data-journey-scene]');
+          const out = [];
+          let host = null;
+          for (const el of svg.querySelectorAll('polygon[data-screen], text')) {
+            if (el.matches('polygon')) { host = el.getBoundingClientRect(); continue; }
+            const r = el.getBoundingClientRect();
+            if (!host || r.left < host.left - 1 || r.right > host.right + 1 || r.top < host.top - 1 || r.bottom > host.bottom + 1) {
+              out.push(el.textContent);
+            }
+          }
+          return out;
+        });
+        assert.deepEqual(overflow, [], `scene ${i}: texts stay inside their screens`);
+      }
+      scenarios.push('scene texts stay inside their screens');
+
       await (await dialButtons(page))[5].click();
       const finalStop = await page.evaluate(() => {
         const final = document.querySelector('[data-journey-final]');
