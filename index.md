@@ -98,7 +98,7 @@ Contribute to VESPAS labs and challenges and coordinate the Alerts Channel. For 
 
 ## Verifiable Credentials
 
-**Cisco Networking Academy:** CyberOps Associate (70h, 2022); Endpoint Security (27h, 2024); Cybersecurity Essentials (30h, 2022); CCNA: Introduction to Networks (70h, 2022)
+**Cisco Networking Academy:** Endpoint Security (27h, 2024); CyberOps Associate (70h, 2022); CCNA: Introduction to Networks (70h, 2022); Cybersecurity Essentials (30h, 2021)
 
 **Development & Security:** Digital Back-End Track — Santander Tech+ (Ada, 2025); Cybersecurity Fundamentals (UTFPR, 30h, 2021)
 

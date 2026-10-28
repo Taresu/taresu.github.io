@@ -263,6 +263,7 @@ results.profile = await page.evaluate(() => ({
   })(),
   credentials: [...document.querySelectorAll('[data-credential-link]')].map(link => ({
     title: link.closest('[data-credential]')?.querySelector('h4')?.textContent.trim(),
+    meta: link.closest('[data-credential]')?.querySelector('p.font-mono')?.textContent.trim(),
     href: link.href,
     target: link.target,
     rel: link.rel,
@@ -1506,6 +1507,15 @@ const assertions = [
   ],
   [results.profile.aiSkillGroup.title === 'IA aplicada', 'the applied-AI group uses the concise Portuguese heading'],
   [results.profile.credentials.length === 4, 'the four Cisco courses are presented as separate verifiable credentials'],
+  [
+    JSON.stringify(results.profile.credentials.map(c => [c.title, c.meta])) === JSON.stringify([
+      ['Endpoint Security', 'Cisco Networking Academy · 2024'],
+      ['CyberOps Associate', 'Cisco Networking Academy · 2022'],
+      ['CCNA: Introduction to Networks (ITN)', 'Cisco Networking Academy · 2022'],
+      ['Cybersecurity Essentials', 'Cisco Networking Academy · 2021'],
+    ]),
+    'Cisco credentials run from the newest issue date to the oldest, with the Credly issue year',
+  ],
   [
     results.profile.credentials.every(credential => credential.cardIsLink && credential.keyboardFocusable && credential.nestedLinkCount === 0),
     'each credential card is one keyboard-accessible link without nested anchors',
