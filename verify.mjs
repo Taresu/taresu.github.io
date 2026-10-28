@@ -188,6 +188,12 @@ results.profile = await page.evaluate(() => ({
       target: document.querySelector('[data-project="tcc"] [data-course-link]')?.target,
       rel: document.querySelector('[data-project="tcc"] [data-course-link]')?.rel,
     },
+    post: {
+      href: document.querySelector('[data-project="tcc"] [data-tcc-post]')?.href,
+      target: document.querySelector('[data-project="tcc"] [data-tcc-post]')?.target,
+      rel: document.querySelector('[data-project="tcc"] [data-tcc-post]')?.rel,
+      label: document.querySelector('[data-project="tcc"] [data-i18n="proj.tcc.post"]')?.textContent.trim(),
+    },
   },
   experienceGroups: Object.fromEntries(['possamai', 'vespas', 'utfpr', 'cmc', 'volkswagen'].map(employer => {
     const group = document.querySelector(`[data-employer-group="${employer}"]`);
@@ -1393,6 +1399,12 @@ const assertions = [
       results.profile.experienceGroups.vespas.logoCount === 1 &&
       JSON.stringify(results.profile.experienceGroups.vespas.roles) === JSON.stringify(['Voluntário — Alertas, CTF & Site']),
     'the VESPAS volunteer role sits inside its own organization group like the other entries',
+  ],
+  [
+    results.profile.tcc.post.href === 'https://www.linkedin.com/posts/thales-sgarbi-salata_ciberseguranaexa-phishing-educaaexaeto-activity-7488010229113217024-7BcI' &&
+      results.profile.tcc.post.target === '_blank' && results.profile.tcc.post.rel.includes('noopener') &&
+      results.profile.tcc.post.label === 'Post no LinkedIn',
+    'the TCC card links safely to the LinkedIn post without tracking parameters',
   ],
   [results.profile.assistantWebmasterCount === 0, 'the unrelated legacy Webmaster entry remains absent'],
   [results.profile.cmcRole === 'Estagiário DevOps', 'the CMC role is written naturally in Portuguese'],
