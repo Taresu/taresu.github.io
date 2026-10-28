@@ -169,3 +169,17 @@ test('the shark illustration is the game original, safe and standalone', () => {
   assert.doesNotMatch(svg, /<script|<foreignObject|javascript:|(?:href|src)="https?:\/\//i);
   assert.ok(Buffer.byteLength(svg) < 8000, 'stays small');
 });
+
+test('the TCC taxonomy figure is safe and standalone', () => {
+  const svg = readFileSync(path.join(projectRoot, 'assets', 'phishing', 'figures', 'taxonomia-phishing.svg'), 'utf8');
+  assert.match(svg, /^<svg[^>]+xmlns="http:\/\/www\.w3\.org\/2000\/svg"/);
+  assert.doesNotMatch(svg, /<script|<foreignObject|javascript:|@import|(?:href|src)="https?:\/\//i);
+});
+
+test('quick insights quote the poster reflections and stats', () => {
+  const { DICT } = loadJourney(['phishing-i18n.js']).PhishingI18n;
+  assert.equal(DICT.pt['insights.r1Title'], '40 anos, a mesma isca.');
+  assert.equal(DICT.pt['insights.r3Title'], 'A IA apagou os sinais clássicos.');
+  assert.equal(DICT.pt['insights.stat1Value'], '553 mi');
+  assert.equal(DICT.pt['insights.stat2Value'], '68–95%');
+});

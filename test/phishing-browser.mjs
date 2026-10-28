@@ -95,14 +95,42 @@ export async function verifyPhishing(browser, base) {
       assert.equal(posterActions.download, '/assets/phishing/poster-vespascon26.pdf');
       assert.ok(posterActions.downloadName, 'the poster can be downloaded directly');
       assert.equal(links.desafio.href, '/phishing/desafio/');
+      const body = await page.evaluate(() => document.body.textContent);
+      assert.ok(body.includes('9,5') && body.includes('10/11/2026'), 'grade and poster date are shown');
+      assert.doesNotMatch(body, /7[,.]54|9[,.]85/, 'no pilot score');
+      // Lazy images below the fold load only near the viewport: bring them in before checking.
+      await page.evaluate(async () => {
+        for (const img of document.querySelectorAll('img[loading="lazy"]')) {
+          img.scrollIntoView({ block: 'center' });
+          if (!img.complete) await new Promise(resolve => { img.addEventListener('load', resolve, { once: true }); img.addEventListener('error', resolve, { once: true }); });
+        }
+        window.scrollTo(0, 0);
+      });
+      const extras = await page.evaluate(() => {
+        const loaded = img => Boolean(img?.complete && img.naturalWidth > 0);
+        const hero = document.querySelector('a[href="https://sophia.ct.utfpr.edu.br/course/view.php?id=118"] img[data-hero-cover]');
+        const tccThumb = document.querySelector('#tcc a[href="/assets/TCC_Thales_Sgarbi_Salata_corrigido_revisado-1.pdf"] img');
+        const figures = [...document.querySelectorAll('#insights figure a img')];
+        return {
+          hero: loaded(hero) && hero.getAttribute('src'),
+          tccThumb: loaded(tccThumb) && tccThumb.getAttribute('src'),
+          reflections: document.querySelectorAll('#insights [data-insight]').length,
+          stats: document.querySelectorAll('#insights [data-insight-stat]').length,
+          figures: figures.map(img => loaded(img) && img.getAttribute('src')),
+          figureLinks: [...document.querySelectorAll('#insights figure a')].map(a => a.getAttribute('href')),
+        };
+      });
+      assert.equal(extras.hero, '/assets/phishing/course-cover.webp', 'the course cover opens the journey and links to the course');
+      assert.equal(extras.tccThumb, '/assets/phishing/tcc-folha-rosto.webp', 'the TCC title page thumbnail opens the paper');
+      assert.equal(extras.reflections, 4, 'four poster reflections');
+      assert.equal(extras.stats, 2, 'two poster stats');
+      assert.deepEqual(extras.figures, ['/assets/phishing/figures/mapa-mental-evolucao.webp', '/assets/phishing/figures/taxonomia-phishing.svg']);
+      assert.deepEqual(extras.figureLinks, ['/assets/phishing/figures/mapa-mental-evolucao.webp', '/assets/phishing/figures/taxonomia-phishing.svg']);
       const shark = await page.evaluate(() => {
         const img = document.querySelector('#desafio a[href="/phishing/desafio/"] img[src="/assets/phishing/shark.svg"]');
         return { present: Boolean(img), loaded: Boolean(img?.complete && img.naturalWidth > 0), alt: img?.alt };
       });
-      assert.ok(shark.present && shark.loaded && shark.alt, 'the challenge card shows the game shark and links to the game');
-      const body = await page.evaluate(() => document.body.textContent);
-      assert.ok(body.includes('9,5') && body.includes('10/11/2026'), 'grade and poster date are shown');
-      assert.doesNotMatch(body, /7[,.]54|9[,.]85/, 'no pilot score');
+      assert.ok(shark.present && shark.loaded && shark.alt, `the challenge card shows the game shark and links to the game ${JSON.stringify(shark)}`);
       scenarios.push('real product links are correct and safe');
 
       await page.focus('[data-journey-dial] button[aria-pressed="true"]');

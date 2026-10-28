@@ -77,9 +77,19 @@
 
   <main>
     <section class="max-w-5xl mx-auto px-5 sm:px-8 pt-10 pb-12" data-journey>
-      <p class="font-mono text-[11px] uppercase tracking-[0.14em] text-terminal" data-i18n="journey.kicker">pesquisa → minicurso → pôster → desafio</p>
-      <h1 class="font-display font-bold text-3xl sm:text-5xl tracking-tight mt-2" data-i18n="journey.title">Uma viagem pelo tempo do phishing</h1>
-      <p class="text-fog text-lg mt-3" data-i18n="journey.lead">40 anos, a mesma isca. Escolha uma década e tente não cair.</p>
+      <div class="grid grid-cols-[minmax(0,1fr)] gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)] lg:items-center">
+        <div class="min-w-0">
+        <p class="font-mono text-[11px] uppercase tracking-[0.14em] text-terminal" data-i18n="journey.kicker">pesquisa → minicurso → pôster → desafio</p>
+        <h1 class="font-display font-bold text-3xl sm:text-5xl tracking-tight mt-2" data-i18n="journey.title">Uma viagem pelo tempo do phishing</h1>
+        <p class="text-fog text-lg mt-3" data-i18n="journey.lead">40 anos, a mesma isca. Escolha uma década e tente não cair.</p>
+        </div>
+        <figure class="min-w-0">
+          <a href="https://sophia.ct.utfpr.edu.br/course/view.php?id=118" target="_blank" rel="noopener noreferrer" class="block overflow-hidden rounded-2xl border border-line transition-transform hover:-translate-y-0.5">
+            <img data-hero-cover src="/assets/phishing/course-cover.webp" width="1100" height="614" alt="Capa do minicurso &quot;Uma viagem pelo tempo&quot;: linha do tempo de 1980 a 2024, relógio, terminal antigo e um SMS de golpe no celular." data-i18n-alt="hero.coverAlt" class="w-full h-auto">
+          </a>
+          <figcaption class="font-mono text-[11px] text-fog mt-2" data-i18n="hero.coverCaption">A capa que criei para o minicurso: 40 anos de golpes numa linha do tempo.</figcaption>
+        </figure>
+      </div>
 
       <div class="mt-8 grid grid-cols-[minmax(0,1fr)] gap-8 lg:grid-cols-2 lg:items-start">
         <div class="mx-auto w-full min-w-0 max-w-xl lg:max-w-none">
@@ -113,6 +123,57 @@
       </div>
     </section>
 
+    <section id="insights" class="border-t border-line/60">
+      <div class="max-w-5xl mx-auto px-5 sm:px-8 py-14">
+        <h2 class="font-display font-bold text-2xl sm:text-3xl" data-i18n="insights.title">Insights rápidos</h2>
+        <p class="text-fog mt-2" data-i18n="insights.lead">Em poucos segundos, o que eu aprendi pesquisando e ensinando sobre phishing.</p>
+        <div class="grid gap-4 sm:grid-cols-2 mt-8">
+          <div data-insight-stat class="rounded-xl border border-line bg-card p-5">
+            <p class="font-mono text-4xl font-semibold text-terminal" data-i18n="insights.stat1Value">553 mi</p>
+            <p class="text-fog text-sm mt-1" data-i18n="insights.stat1Label">ataques de phishing bloqueados no Brasil entre jul/2024 e jul/2025</p>
+          </div>
+          <div data-insight-stat class="rounded-xl border border-line bg-card p-5">
+            <p class="font-mono text-4xl font-semibold text-amber" data-i18n="insights.stat2Value">68–95%</p>
+            <p class="text-fog text-sm mt-1" data-i18n="insights.stat2Label">das violações de segurança envolvem erro humano</p>
+          </div>
+        </div>
+        <p class="font-mono text-[11px] text-fog mt-3" data-i18n="insights.statNote">Números citados no meu pôster e no TCC. Tecnologia sozinha não basta: é preciso educar.</p>
+        <div class="grid gap-4 sm:grid-cols-2 mt-8">
+          <article data-insight class="rounded-xl border border-line bg-card p-5">
+            <h3 class="font-display font-semibold text-lg text-paper" data-i18n="insights.r1Title">40 anos, a mesma isca.</h3>
+            <p class="text-fog text-[15px] mt-2" data-i18n="insights.r1Body">Muda o canal, não o golpe: urgência, autoridade e confiança. Reconhecer o padrão vale mais que decorar golpes.</p>
+          </article>
+          <article data-insight class="rounded-xl border border-line bg-card p-5">
+            <h3 class="font-display font-semibold text-lg text-paper" data-i18n="insights.r2Title">Comportamento antes de técnica.</h3>
+            <p class="text-fog text-[15px] mt-2" data-i18n="insights.r2Body">Se o erro é humano, a defesa de quem não é da área é reconhecer sinais, e a prática com simulações foi o que mais ficou.</p>
+          </article>
+          <article data-insight class="rounded-xl border border-line bg-card p-5">
+            <h3 class="font-display font-semibold text-lg text-paper" data-i18n="insights.r3Title">A IA apagou os sinais clássicos.</h3>
+            <p class="text-fog text-[15px] mt-2" data-i18n="insights.r3Body">Sem erros de escrita, resta a regra de ouro: confirmar por outro canal.</p>
+          </article>
+          <article data-insight class="rounded-xl border border-line bg-card p-5">
+            <h3 class="font-display font-semibold text-lg text-paper" data-i18n="insights.r4Title">Educar não é ser resiliente.</h3>
+            <p class="text-fog text-[15px] mt-2" data-i18n="insights.r4Body">Um minicurso muda conhecimento, confiança e intenção, não um hábito duradouro. Resiliência é sistêmica e cultural.</p>
+          </article>
+        </div>
+        <h3 class="font-display font-semibold text-xl mt-12" data-i18n="insights.figuresTitle">Dois mapas que desenhei no TCC</h3>
+        <div class="grid gap-6 md:grid-cols-2 mt-5">
+          <figure class="min-w-0">
+            <a href="/assets/phishing/figures/mapa-mental-evolucao.webp" target="_blank" rel="noopener noreferrer" class="block overflow-hidden rounded-xl border border-line bg-white p-2 transition-transform hover:-translate-y-0.5" aria-label="Abrir em tamanho real" data-i18n-aria-label="insights.open">
+              <img src="/assets/phishing/figures/mapa-mental-evolucao.webp" width="1515" height="865" loading="lazy" alt="Mapa mental da evolução do phishing de 1980 a 2020, com uma caixa por década." data-i18n-alt="insights.fig1Alt" class="w-full h-auto">
+            </a>
+            <figcaption class="text-sm text-fog mt-2" data-i18n="insights.fig1Caption">Mapa mental: como o phishing evoluiu dos anos 80 aos anos 2020.</figcaption>
+          </figure>
+          <figure class="min-w-0">
+            <a href="/assets/phishing/figures/taxonomia-phishing.svg" target="_blank" rel="noopener noreferrer" class="block overflow-hidden rounded-xl border border-line bg-white p-2 transition-transform hover:-translate-y-0.5" aria-label="Abrir em tamanho real" data-i18n-aria-label="insights.open">
+              <img src="/assets/phishing/figures/taxonomia-phishing.svg" width="1600" height="980" loading="lazy" alt="Diagrama da taxonomia do phishing em três grupos: por canal, por alvo e por técnica ou objetivo." data-i18n-alt="insights.fig2Alt" class="w-full h-auto">
+            </a>
+            <figcaption class="text-sm text-fog mt-2" data-i18n="insights.fig2Caption">Taxonomia: o phishing por canal, por alvo e por técnica.</figcaption>
+          </figure>
+        </div>
+      </div>
+    </section>
+
     <section class="border-t border-line/60 bg-panel/40">
       <div class="max-w-5xl mx-auto px-5 sm:px-8 py-14">
         <h2 class="font-display font-bold text-2xl sm:text-3xl" data-i18n="origin.title">O que eu construí pelo caminho</h2>
@@ -127,7 +188,11 @@
             <p class="font-mono text-[11px] text-fog mt-2" data-i18n="curso.login">exige login no Sophia-CT</p>
           </article>
 
-          <article id="tcc" class="rounded-xl border border-line bg-card p-6">
+          <article id="tcc" class="rounded-xl border border-line bg-card p-6 grid gap-5 sm:grid-cols-[7rem_1fr]">
+            <a href="/assets/TCC_Thales_Sgarbi_Salata_corrigido_revisado-1.pdf" target="_blank" rel="noopener noreferrer" class="block self-start rounded-md bg-white shadow-lg transition-transform hover:-translate-y-0.5">
+              <img src="/assets/phishing/tcc-folha-rosto.webp" width="596" height="842" loading="lazy" alt="Folha de rosto do TCC &quot;Educação em cibersegurança&quot;." data-i18n-alt="tcc.thumbAlt" class="w-full h-auto rounded-md">
+            </a>
+            <div class="min-w-0">
             <p class="font-mono text-[11px] uppercase tracking-[0.14em] text-purple-light" data-i18n="tcc.kicker">pesquisa · TCC · UTFPR</p>
             <h3 class="font-display font-semibold text-xl mt-2" data-i18n="tcc.title">A pesquisa por trás do minicurso</h3>
             <p class="mt-3 flex items-baseline gap-2"><span class="font-mono text-3xl font-semibold text-terminal" data-i18n="tcc.grade">9,5</span><span class="font-mono text-[11px] uppercase tracking-wider text-fog" data-i18n="tcc.gradeLabel">nota final da banca</span></p>
@@ -136,6 +201,7 @@
             <div class="mt-4 flex flex-wrap items-center gap-4">
               <a data-product-link href="/assets/TCC_Thales_Sgarbi_Salata_corrigido_revisado-1.pdf" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 rounded-lg border border-purple bg-purple/10 px-4 py-2.5 font-semibold text-purple-light hover:bg-purple/20 transition-colors"><span data-i18n="tcc.cta">Ler o TCC (PDF)</span> <span aria-hidden="true">↗</span></a>
               <a href="https://www.linkedin.com/posts/thales-sgarbi-salata_ciberseguranaexa-phishing-educaaexaeto-activity-7488010229113217024-7BcI" target="_blank" rel="noopener noreferrer" class="font-mono text-[12px] text-purple-light hover:text-purple"><span data-i18n="tcc.post">Post no LinkedIn</span> ↗</a>
+            </div>
             </div>
           </article>
 
