@@ -1,12 +1,13 @@
+import { verifyMascot } from './test/mascot-browser.mjs';
 // Verificação end-to-end: screenshots desktop/mobile, toggle PT/EN, link do CV.
-// Usa o puppeteer já instalado em ../WebDev-Portfolio (evita novo download do Chromium).
+// Usa a versão de Puppeteer declarada neste projeto.
 import { createRequire } from 'module';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const require = createRequire(path.join(__dirname, '../WebDev-Portfolio/package.json'));
+const require = createRequire(import.meta.url);
 const puppeteer = require('puppeteer');
 
 const BASE = process.argv[2] || 'http://localhost:3100';
@@ -46,9 +47,10 @@ async function gotoSection(page, id) {
 const results = {};
 results.iconNetworkRequests = [];
 results.audioNetworkRequests = [];
+// Keep Canvas2D readback deterministic when the WebGL renderer uses SwiftShader.
 const browser = await puppeteer.launch({
   executablePath: process.env.CHROME_PATH || '/usr/bin/google-chrome',
-  args: ['--no-sandbox', '--disable-setuid-sandbox'],
+  args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-accelerated-2d-canvas', '--enable-unsafe-swiftshader', '--use-gl=angle', '--use-angle=swiftshader', '--blink-settings=primaryPointerType=4,availablePointerTypes=4,primaryHoverType=2,availableHoverTypes=2'],
 });
 
 // ── Desktop ──
@@ -81,7 +83,7 @@ await page.waitForFunction(
 await revealAll(page);
 await page.evaluate(async () => {
   await Promise.all(
-    [...document.querySelectorAll('[data-brand-shield], [data-ascii-portrait] img')].map(image => image.decode()),
+    [...document.querySelectorAll('[data-brand-shield], [data-mascot-poster]')].map(image => image.decode()),
   );
 });
 await page.evaluate(() => window.scrollTo({ top: 0, behavior: 'instant' }));
@@ -285,21 +287,17 @@ results.profile = await page.evaluate(() => ({
       height: bounds.height,
     };
   }),
-  asciiPortrait: (() => {
-    const figure = document.querySelector('[data-ascii-portrait]');
-    const image = figure?.querySelector('img');
-    const bounds = image?.getBoundingClientRect();
+  mascot: (() => {
+    const figure = document.querySelector('[data-mascot]');
+    const stage = figure?.querySelector('[data-mascot-stage]');
+    const poster = figure?.querySelector('[data-mascot-poster]');
     return {
-      present: Boolean(figure && image),
-      src: image?.getAttribute('src'),
-      alt: image?.alt,
-      naturalWidth: image?.naturalWidth,
-      naturalHeight: image?.naturalHeight,
-      width: bounds?.width,
-      height: bounds?.height,
-      objectFit: image ? getComputedStyle(image).objectFit : null,
-      title: figure?.querySelector('[data-i18n="about.asciiTitle"]')?.textContent.trim(),
-      caption: figure?.querySelector('[data-i18n="about.asciiCaption"]')?.textContent.trim(),
+      present: Boolean(figure && stage),
+      posterSrc: poster?.getAttribute('src'),
+      posterAlt: poster?.getAttribute('alt') || '',
+      asciiTitle: figure?.querySelector('[data-i18n="about.asciiTitle"]')?.textContent.trim(),
+      title: figure?.querySelector('[data-i18n="about.mascotTitle"]')?.textContent.trim(),
+      caption: figure?.querySelector('[data-i18n="about.mascotCaption"]')?.textContent.trim(),
     };
   })(),
   organizationNetworks: [...document.querySelectorAll('[data-org-network]')].map(network => ({
@@ -416,6 +414,11 @@ results.profile = await page.evaluate(() => ({
     reticlePresent: Boolean(document.querySelector('#reticle')),
   },
 }));
+// The 3D mascot may still be booting after the scroll sweep; let the section observer settle.
+await page.waitForFunction(
+  () => document.querySelector('[data-ambient-player]')?.dataset.scene === 'top',
+  { timeout: 5000 },
+).catch(() => {});
 results.audioPlayerInitial = await page.evaluate(() => {
   const player = document.querySelector('[data-ambient-player]');
   const audio = player?.querySelector('audio');
@@ -576,8 +579,8 @@ for (const [id, name] of [['#sobre', 'sobre'], ['#experiencia', 'experiencia'], 
   await gotoSection(page, id);
   await shot(page, `desktop-02-${name}-pt`);
 }
-await gotoSection(page, '[data-ascii-portrait]');
-await shot(page, 'desktop-02-ascii-portrait-pt');
+await gotoSection(page, '[data-mascot]');
+await shot(page, 'desktop-02-mascot-pt');
 await gotoSection(page, '[data-employer-group="volkswagen"]');
 await shot(page, 'desktop-02-experiencia-volkswagen-pt');
 await gotoSection(page, '[data-project="portal"]');
@@ -615,10 +618,9 @@ results.en = await page.evaluate(() => ({
     .map(line => line.textContent.trim())
     .filter(Boolean),
   aboutTitle: document.querySelector('[data-i18n="about.title"]').textContent.trim(),
-  asciiPortrait: {
-    title: document.querySelector('[data-i18n="about.asciiTitle"]')?.textContent.trim(),
-    caption: document.querySelector('[data-i18n="about.asciiCaption"]')?.textContent.trim(),
-    alt: document.querySelector('[data-ascii-portrait] img')?.alt,
+  mascot: {
+    title: document.querySelector('[data-i18n="about.mascotTitle"]')?.textContent.trim(),
+    caption: document.querySelector('[data-i18n="about.mascotCaption"]')?.textContent.trim(),
   },
   contactTitle: document.querySelector('[data-i18n="contact.title"]').textContent.trim(),
   tcc: document.querySelector('[data-project="tcc"]')?.textContent,
@@ -1012,8 +1014,8 @@ for (const [id, name] of [['#sobre', 'sobre'], ['#experiencia', 'experiencia'], 
   await gotoSection(mob, id);
   await shot(mob, `mobile-02-${name}-pt`);
 }
-await gotoSection(mob, '[data-ascii-portrait]');
-await shot(mob, 'mobile-02-ascii-portrait-pt');
+await gotoSection(mob, '[data-mascot]');
+await shot(mob, 'mobile-02-mascot-pt');
 await gotoSection(mob, '[data-employer-group="volkswagen"]');
 await shot(mob, 'mobile-02-experiencia-volkswagen-pt');
 await gotoSection(mob, '[data-project="portal"]');
@@ -1035,14 +1037,12 @@ results.mobileBrandShields = await mob.evaluate(() =>
     };
   }),
 );
-results.mobileAsciiPortrait = await mob.evaluate(() => {
-  const image = document.querySelector('[data-ascii-portrait] img');
-  const bounds = image?.getBoundingClientRect();
+results.mobileMascot = await mob.evaluate(() => {
+  const figure = document.querySelector('[data-mascot]');
+  const poster = figure?.querySelector('[data-mascot-poster]');
+  const bounds = poster?.getBoundingClientRect();
   return {
-    naturalWidth: image?.naturalWidth,
-    naturalHeight: image?.naturalHeight,
-    width: bounds?.width,
-    height: bounds?.height,
+    present: Boolean(figure && poster),
     withinViewport: Boolean(bounds && bounds.left >= 0 && bounds.right <= document.documentElement.clientWidth),
   };
 });
@@ -1082,6 +1082,9 @@ results.reducedMotionAmbientPlayer = await reducedMotion.evaluate(() => {
       .map(bar => bar.style.transform),
   };
 });
+
+try { results.mascotEffects = await verifyMascot(browser, BASE, outDir); }
+catch (error) { await browser.close(); throw error; }
 
 await browser.close();
 
@@ -1197,21 +1200,18 @@ const assertions = [
     'the authorial shield loads accessibly at the three desktop brand touchpoints',
   ],
   [
-    results.profile.asciiPortrait.present &&
-      results.profile.asciiPortrait.src === 'assets/brand/ascii-self-portrait.svg' &&
-      results.profile.asciiPortrait.naturalWidth === 3074 &&
-      results.profile.asciiPortrait.naturalHeight === 3208 &&
-      results.profile.asciiPortrait.objectFit === 'contain' &&
-      results.profile.asciiPortrait.title === 'autorretrato ASCII autoral' &&
-      results.profile.asciiPortrait.caption.includes('identidade, código e segurança') &&
-      results.profile.asciiPortrait.alt.includes('Thales Sgarbi Salata'),
-    'the authorial ASCII portrait loads as accessible content in the About section',
+    results.profile.mascot.present &&
+      results.profile.mascot.posterSrc === 'assets/brand/ascii-self-portrait.svg' &&
+      results.profile.mascot.posterAlt.length > 0 &&
+      results.profile.mascot.asciiTitle === 'autorretrato ASCII autoral' &&
+      results.profile.mascot.title === 'agente 3D · segue o mouse' &&
+      results.profile.mascot.caption.includes('segue o seu cursor'),
+    'the interactive 3D mascot mounts with an accessible static poster fallback in the About section',
   ],
   [
-    results.en.asciiPortrait.title === 'authorial ASCII self-portrait' &&
-      results.en.asciiPortrait.caption.includes('identity, code and security') &&
-      results.en.asciiPortrait.alt.includes('light characters on a dark background'),
-    'the authorial ASCII portrait localizes its title, caption and alternative text',
+    results.en.mascot.title === '3D agent · follows your mouse' &&
+      results.en.mascot.caption.includes('follows your cursor'),
+    'the 3D mascot localizes its title and caption',
   ],
   [
     ['Construir produtos resilientes.', 'Automatizar entregas com segurança.', 'Transformar inteligência ofensiva em defesa.']
@@ -1219,7 +1219,7 @@ const assertions = [
     'the Portuguese terminal mission is localized',
   ],
   [
-    ['Build resilient products.', 'Automate the path to production.', 'Turn attack insight into defense.']
+    ['Build resilient products.', 'Automate delivery securely.', 'Turn offensive intelligence into defense.']
       .every(line => results.en.terminalRenderedLines.includes(line)),
     'the English terminal mission remains localized',
   ],
@@ -1295,20 +1295,21 @@ const assertions = [
     'the VESPAS description stays close to the Portal card density',
   ],
   [
-    results.profile.vespasResponsibility.about?.includes('um dos coordenadores voluntários do Canal de Alertas') &&
+    results.profile.vespasResponsibility.about?.includes('coordeno o Canal de Alertas') &&
+      results.profile.vespasResponsibility.about?.includes('mentoro integrantes com foco em Blue Team') &&
       results.profile.vespasResponsibility.role === 'Voluntário — Alertas, CTF & Site' &&
-      results.profile.vespasResponsibility.alerts?.startsWith('Sou um dos coordenadores') &&
-      results.profile.vespasResponsibility.labs?.startsWith('Colaboro') &&
+      results.profile.vespasResponsibility.alerts?.startsWith('Coordeno o Canal de Alertas') &&
+      results.profile.vespasResponsibility.labs?.startsWith('Mentoro') &&
       results.profile.vespasResponsibility.site?.startsWith('Também sou um dos mantenedores') &&
       results.profile.vespasResponsibility.siteHref === 'https://utfpr.curitiba.br/vespas/' &&
       !results.profile.vespasChallenge.summary?.includes('Coordeno os labs'),
-    'the Portuguese VESPAS copy distinguishes Alerts Channel coordination from CTF-lab collaboration',
+    'the Portuguese VESPAS copy states volunteer role, Alerts Channel coordination and Blue Team mentoring',
   ],
   [
-    results.profile.chipLinks.total === 94 && results.profile.chipLinks.linked === 94 &&
+    results.profile.chipLinks.total === 108 && results.profile.chipLinks.linked === 108 &&
       results.profile.chipLinks.allSafeExternal && results.profile.chipLinks.nestedInteractive.length === 0 &&
       results.profile.chipLinks.emptyLabels === 0,
-    'all 94 experience, project and skill chips are safe external documentation links without nested interactions',
+    'all 108 experience, project and skill chips are safe external documentation links without nested interactions',
   ],
   [
     results.profile.tcc.title?.includes('Educação em Cibersegurança') &&
@@ -1571,10 +1572,11 @@ const assertions = [
     'the AInjection challenge context is translated in the English VESPAS card',
   ],
   [
-    results.en.vespasResponsibility.about?.includes('one of the coordinators of the VESPAS Alerts Channel') &&
+    results.en.vespasResponsibility.about?.includes('I coordinate the cybersecurity Alerts Channel') &&
+      results.en.vespasResponsibility.about?.includes('mentor members with a focus on Blue Team') &&
       results.en.vespasResponsibility.role === 'Volunteer — Alerts, CTF & Website' &&
-      results.en.vespasResponsibility.alerts?.startsWith('I am one of the coordinators') &&
-      results.en.vespasResponsibility.labs?.startsWith('I contribute') &&
+      results.en.vespasResponsibility.alerts?.startsWith('I coordinate the cybersecurity Alerts Channel') &&
+      results.en.vespasResponsibility.labs?.startsWith('I mentor') &&
       results.en.vespasResponsibility.site?.startsWith('I am also one of the maintainers') &&
       results.en.vespasResponsibility.siteHref === 'https://utfpr.curitiba.br/vespas/' &&
       results.en.vespasResponsibility.project?.startsWith('I contribute') &&
@@ -1626,7 +1628,7 @@ const assertions = [
     'the consolidated credential-verification note is translated in English',
   ],
   [
-    results.englishReloadChipLinks.total === 94 && results.englishReloadChipLinks.linked === 94,
+    results.englishReloadChipLinks.total === 108 && results.englishReloadChipLinks.linked === 108,
     'all documentation chips remain linked when English is the saved language at page load',
   ],
   [results.tccPdf.status === 200 && results.tccPdf.type === 'application/pdf', 'TCC PDF is readable from the portfolio'],
@@ -1650,11 +1652,9 @@ const assertions = [
     'the authorial shield keeps its intended mobile hierarchy and square proportions',
   ],
   [
-      results.mobileAsciiPortrait.naturalWidth === 3074 &&
-      results.mobileAsciiPortrait.naturalHeight === 3208 &&
-      results.mobileAsciiPortrait.height >= 318 && results.mobileAsciiPortrait.height <= 320 &&
-      results.mobileAsciiPortrait.withinViewport,
-    'the ASCII portrait loads at its intended mobile height without horizontal overflow',
+      results.mobileMascot.present &&
+      results.mobileMascot.withinViewport,
+    'the mascot poster fallback stays within the mobile viewport without horizontal overflow',
   ],
   [results.mobileExperienceLogoOverlaps.length === 0, 'mobile employer logos do not overlap experience titles'],
   [

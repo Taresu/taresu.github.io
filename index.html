@@ -167,17 +167,27 @@
       filter: drop-shadow(0 14px 28px rgba(124,58,237,.2));
     }
     .about-authorial-stack { display: grid; gap: 18px; align-self: start; }
-    .ascii-portrait-media {
+    .mascot-stat-trigger { font: inherit; color: inherit; background: transparent; border: 0; padding: 0; cursor: crosshair; }
+    .mascot-stat-trigger:disabled { cursor: default; }
+    .mascot-stat-trigger:focus-visible { outline: 2px solid #00ff87; outline-offset: 4px; border-radius: 2px; }
+    .mascot-effects { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 40; }
+    .mascot-media {
+      position: relative;
       display: grid;
       place-items: center;
       grid-template-rows: minmax(0,1fr);
       height: clamp(320px,34vw,430px);
       overflow: hidden;
-      background: #020303;
+      background: radial-gradient(120% 120% at 50% 32%, #0a0f18 0%, #020303 72%);
       border-bottom: 1px solid rgba(30,42,58,.85);
     }
-    .ascii-portrait-image { width: 100%; height: 100%; min-height: 0; max-height: 100%; object-fit: contain; }
-    .ascii-portrait-caption { padding: 12px 16px 14px; color: rgba(139,152,172,.9); }
+    .mascot-media canvas { position: absolute; inset: 0; width: 100% !important; height: 100% !important; display: block; cursor: crosshair; }
+    .mascot-media canvas[hidden] { display: none !important; }
+    .mascot-poster { width: 100%; height: 100%; min-height: 0; max-height: 100%; object-fit: contain; transition: opacity .6s ease; }
+    .mascot-media[data-mascot-live="true"] .mascot-poster { opacity: 0; }
+    [data-mascot]:not([data-mascot-live="true"]) .mascot-live-only,
+    [data-mascot][data-mascot-live="true"] .mascot-static-only { display: none; }
+    .mascot-caption { padding: 12px 16px 14px; color: rgba(139,152,172,.9); }
     .footer-brand-lockup { display: flex; align-items: center; gap: 14px; }
     .footer-brand-shield { width: 56px; height: 56px; flex: none; }
 
@@ -1095,7 +1105,7 @@
           Full Stack · DevSecOps · Segurança da Informação
         </p>
         <p class="rise text-fog max-w-lg mb-9 font-light" style="animation-delay:.35s" data-i18n="hero.pitch">
-          Desenvolvo e mantenho aplicações web e mobile, integro serviços e automatizo infraestrutura com segurança incorporada ao ciclo de desenvolvimento.
+          Construo e mantenho aplicações web e mobile, integro serviços e automatizo infraestrutura. Segurança entra desde o começo, não como remendo no fim.
         </p>
         <div class="rise flex flex-wrap items-center gap-3" style="animation-delay:.45s">
           <a id="cv-link" href="assets/curriculo-thales-salata.pdf" download
@@ -1153,26 +1163,30 @@
     <div class="grid lg:grid-cols-[1.15fr,0.85fr] gap-12 items-start">
       <div class="reveal space-y-5 text-fog font-light">
         <p data-i18n="about.p1">
-          Sou bacharel em Sistemas de Informação pela UTFPR. Atuo como desenvolvedor Full Stack no portal institucional da universidade e como um dos mantenedores do Nerdz, aplicação mobile e web multiplataforma. Também sou um dos coordenadores voluntários do Canal de Alertas do VESPAS, um dos mantenedores do site da iniciativa e colaboro no desenvolvimento de labs e desafios de CTF.
+          Sou bacharel em Sistemas de Informação pela UTFPR, universidade pública federal, com o curso avaliado com nota máxima (5 estrelas) pelo Guia do Estudante. Atuei como desenvolvedor Full Stack no portal institucional da universidade (até set/2026) e sou um dos mantenedores do Nerdz, aplicação mobile e web multiplataforma. No VESPAS, sou membro voluntário: coordeno o Canal de Alertas de cibersegurança, mentoro integrantes com foco em Blue Team, ajudo a manter o site da iniciativa e colaboro no desenvolvimento de labs e desafios de CTF.
         </p>
         <p data-i18n="about.p2">
-          Minha trajetória conecta desenvolvimento, operações e segurança: React/TypeScript e Python no Portal UTFPR; React Native, Expo e NestJS no Nerdz; automação, CI/CD, cloud e investigação de vulnerabilidades em ambientes corporativos.
+          Faço as três coisas no mesmo trabalho: desenvolvimento, operações e segurança. React/TypeScript e Python no Portal da UTFPR; React Native, Expo e NestJS no Nerdz; automação, CI/CD, cloud e investigação de vulnerabilidades em ambiente corporativo.
         </p>
         <p data-i18n="about.p3">
-          Também utilizo IA generativa e agêntica no desenvolvimento e implementei um orquestrador multiagente com Anthropic API e MCP, mantendo revisão crítica sobre o código produzido.
+          Uso IA generativa e agêntica no desenvolvimento e implementei um orquestrador multiagente com Anthropic API e MCP. Mas não largo na mão da IA: reviso de perto tudo o que ela escreve.
         </p>
         <div class="flex flex-wrap gap-6 pt-4 font-mono text-[13px]">
           <div>
-            <span class="text-terminal text-xl font-semibold">4</span>
-            <span class="block text-fog/80 mt-0.5" data-i18n="about.stat1">cursos Cisco Networking Academy</span>
+            <span data-mascot-stat="cisco" class="text-terminal text-xl font-semibold">4</span>
+            <span id="mascot-stat-cisco-label" class="block text-fog/80 mt-0.5" data-i18n="about.stat1">cursos Cisco Networking Academy</span>
           </div>
           <div>
-            <span class="text-terminal text-xl font-semibold">370</span>
-            <span class="block text-fog/80 mt-0.5" data-i18n="about.stat2">dispositivos VoIP migrados</span>
+            <span data-mascot-stat="voip" class="text-terminal text-xl font-semibold">370</span>
+            <span id="mascot-stat-voip-label" class="block text-fog/80 mt-0.5" data-i18n="about.stat2">dispositivos VoIP migrados</span>
           </div>
           <div>
-            <span class="text-terminal text-xl font-semibold">3</span>
-            <span class="block text-fog/80 mt-0.5" data-i18n="about.stat3">plataformas no Nerdz</span>
+            <span data-mascot-stat="nerdz" class="text-terminal text-xl font-semibold">3</span>
+            <span id="mascot-stat-nerdz-label" class="block text-fog/80 mt-0.5" data-i18n="about.stat3">plataformas no Nerdz</span>
+          </div>
+          <div>
+            <span data-mascot-stat="tcc" class="text-terminal text-xl font-semibold">9.85</span>
+            <span id="mascot-stat-tcc-label" class="block text-fog/80 mt-0.5" data-i18n="about.stat4">nota média no piloto do TCC (de 7,54)</span>
           </div>
         </div>
       </div>
@@ -1195,15 +1209,20 @@
           </div>
         </div>
 
-        <figure data-ascii-portrait class="reveal term rounded-xl overflow-hidden">
+        <figure data-mascot class="reveal term rounded-xl overflow-hidden">
           <div class="flex flex-wrap items-center justify-between gap-2 px-4 py-2.5 border-b border-line bg-black/30 font-mono text-[11px]">
-            <span class="text-fog">$ cat ~/identity/ascii-self-portrait.svg</span>
-            <span class="text-terminal" data-i18n="about.asciiTitle">autorretrato ASCII autoral</span>
+            <span class="text-fog mascot-static-only">$ cat ~/identity/ascii-self-portrait.svg</span>
+            <span class="text-fog mascot-live-only">$ ./identity/mascot --interactive</span>
+            <span class="text-terminal mascot-static-only" data-i18n="about.asciiTitle">autorretrato ASCII autoral</span>
+            <span class="text-terminal mascot-live-only" data-i18n="about.mascotTitle">agente 3D · segue o mouse</span>
           </div>
-          <div class="ascii-portrait-media">
-            <img src="assets/brand/ascii-self-portrait.svg" width="3074" height="3208" alt="Autorretrato ASCII autoral de Thales Sgarbi Salata formado por caracteres claros sobre fundo escuro." data-i18n-alt="about.asciiAlt" loading="lazy" decoding="async" class="ascii-portrait-image">
+          <div class="mascot-media" data-mascot-stage>
+            <img src="assets/brand/ascii-self-portrait.svg" width="3074" height="3208" alt="Autorretrato ASCII autoral de Thales Sgarbi Salata formado por caracteres claros sobre fundo escuro." data-i18n-alt="about.asciiAlt" loading="lazy" decoding="async" class="mascot-poster" data-mascot-poster data-ascii-portrait>
           </div>
-          <figcaption class="ascii-portrait-caption font-mono text-[11px] leading-relaxed" data-i18n="about.asciiCaption">Autorretrato construído em caracteres — uma assinatura visual entre identidade, código e segurança.</figcaption>
+          <figcaption class="mascot-caption font-mono text-[11px] leading-relaxed">
+            <span class="mascot-static-only" data-i18n="about.asciiCaption">Autorretrato construído em caracteres — uma assinatura visual entre identidade, código e segurança.</span>
+            <span class="mascot-live-only" data-i18n="about.mascotCaption">Um mascote em 3D que segue o seu cursor. Portfólio de quem trabalha com IA não devia ter enfeite parado.</span>
+          </figcaption>
         </figure>
       </div>
     </div>
@@ -1219,6 +1238,40 @@
       </div>
 
       <div class="max-w-3xl space-y-12 pl-5">
+        <!-- VESPAS -->
+        <article class="tl-item tl-green reveal pl-8" data-org-network="vespas" data-open="false">
+          <div class="org-network-control">
+            <a data-org-primary-logo href="https://linktr.ee/vespas_utfpr" target="_blank" rel="noopener noreferrer" class="org-logo-link" aria-label="Abrir Linktree do VESPAS" data-i18n-aria-label="exp.orgPrimary.vespas">
+              <img src="assets/VESPAS.Logo1.png" alt="VESPAS" class="employer-logo" data-logo-bg="dark">
+            </a>
+            <button type="button" class="org-network-toggle" data-org-toggle aria-expanded="false" aria-controls="org-branches-vespas" aria-label="Mostrar links relacionados ao VESPAS" data-i18n-aria-label="exp.orgLinks.vespas"></button>
+          </div>
+          <p class="font-mono text-xs text-terminal mb-1.5">2025 — <span data-i18n="exp.present3">presente</span> <span class="text-fog/60 ml-2">· c4f7a12</span></p>
+          <h3 class="font-display font-semibold text-xl text-paper"><span data-i18n="exp.vespasRole">Voluntário — Alertas, CTF &amp; Site</span> <span class="text-purple-light font-normal">· <a data-org-primary-name href="https://linktr.ee/vespas_utfpr" target="_blank" rel="noopener noreferrer" class="org-primary-name">VESPAS (UTFPR)</a></span></h3>
+          <nav id="org-branches-vespas" class="org-branches" data-org-branches aria-hidden="true" aria-label="Links relacionados ao VESPAS" data-i18n-aria-label="exp.orgLinks.vespas" inert>
+            <a data-org-link="project" href="https://github.com/vespas-utfpr/ainjection" target="_blank" rel="noopener noreferrer" class="org-branch-link"><span>AInjection 2026</span><span class="org-branch-arrow" aria-hidden="true">↗</span></a>
+            <a data-org-link="resource" href="https://utfpr.curitiba.br/vespas/" target="_blank" rel="noopener noreferrer" class="org-branch-link"><span data-i18n="exp.org.vespas.site">Site VESPAS</span><span class="org-branch-arrow" aria-hidden="true">↗</span></a>
+            <a data-org-link="resource" href="https://github.com/vespas-utfpr" target="_blank" rel="noopener noreferrer" class="org-branch-link"><span data-i18n="exp.org.vespas.github">GitHub VESPAS</span><span class="org-branch-arrow" aria-hidden="true">↗</span></a>
+          </nav>
+          <ul class="mt-3 space-y-2 text-fog font-light text-[15px] list-none">
+            <li class="flex gap-2"><span class="text-purple mt-0.5" aria-hidden="true">▹</span><span data-i18n="exp.ves1">Coordeno o Canal de Alertas de cibersegurança, cobrindo vulnerabilidades críticas (CVSS 10.0) e conscientização em segurança da informação.</span></li>
+            <li class="flex gap-2"><span class="text-purple mt-0.5" aria-hidden="true">▹</span><span data-i18n="exp.ves2">Mentoro integrantes do grupo, principalmente em Blue Team, e colaboro com o time competitivo de CTF e no desenvolvimento de labs e desafios para competições próprias. Foco atual: OWASP Top 10:2025 e LLM Risks.</span></li>
+            <li class="flex gap-2">
+              <span class="text-purple mt-0.5" aria-hidden="true">▹</span>
+              <span>
+                <span data-i18n="exp.ves3">Também sou um dos mantenedores do site do VESPAS.</span>
+                <a data-vespas-site href="https://utfpr.curitiba.br/vespas/" target="_blank" rel="noopener noreferrer" class="ml-1 whitespace-nowrap font-mono text-[11px] text-purple-light transition-colors hover:text-purple focus:outline-none focus-visible:ring-2 focus-visible:ring-purple rounded-sm"><span data-i18n="exp.ves3Cta">Acessar site</span> ↗</a>
+              </span>
+            </li>
+          </ul>
+          <div class="flex flex-wrap gap-2 mt-4">
+            <span class="chip font-mono text-[11px] px-2.5 py-1 rounded text-fog">CTF</span>
+            <span class="chip font-mono text-[11px] px-2.5 py-1 rounded text-fog">MITRE ATT&amp;CK</span>
+            <span class="chip font-mono text-[11px] px-2.5 py-1 rounded text-fog">OWASP LLM</span>
+            <span class="chip font-mono text-[11px] px-2.5 py-1 rounded text-fog">Threat Intel</span>
+          </div>
+        </article>
+
         <!-- UTFPR — progressão entre duas funções no Portal -->
         <article class="tl-item tl-green reveal pl-8" data-employer-group="utfpr" data-org-network="utfpr" data-open="false">
           <div class="org-network-control">
@@ -1237,7 +1290,7 @@
           </nav>
           <div class="experience-role-stack">
             <section class="experience-role" data-experience-role="utfpr-full-stack">
-              <p class="font-mono text-xs text-terminal mb-1.5"><span data-experience-date="utfs" data-i18n="exp.utfsDate">mar 2026</span> — <span data-i18n="exp.present4">presente</span> <span class="text-fog/60 ml-2">· 2e9f4b1</span></p>
+              <p class="font-mono text-xs text-terminal mb-1.5"><span data-experience-date="utfs" data-i18n="exp.utfsDate">mar 2026</span> — <span data-i18n="exp.present4">set 2026</span> <span class="text-fog/60 ml-2">· 2e9f4b1</span></p>
               <h4 class="font-display font-semibold text-xl text-paper" data-role-title data-i18n="exp.utfsRole">Desenvolvedor Full Stack</h4>
               <ul class="mt-3 space-y-2 text-fog font-light text-[15px] list-none">
                 <li class="flex gap-2"><span class="text-purple mt-0.5" aria-hidden="true">▹</span><span data-i18n="exp.utfs1">Desenvolvo e mantenho o Portal da UTFPR com Plone 6 e Volto — integrando o frontend em React/Volto ao backend em Plone, alinhando ao Design System Gov.br v4.0, com refatoração e modernização de código legado.</span></li>
@@ -1297,39 +1350,7 @@
           </div>
         </article>
 
-        <!-- VESPAS -->
-        <article class="tl-item tl-green reveal pl-8" data-org-network="vespas" data-open="false">
-          <div class="org-network-control">
-            <a data-org-primary-logo href="https://linktr.ee/vespas_utfpr" target="_blank" rel="noopener noreferrer" class="org-logo-link" aria-label="Abrir Linktree do VESPAS" data-i18n-aria-label="exp.orgPrimary.vespas">
-              <img src="assets/VESPAS.Logo1.png" alt="VESPAS" class="employer-logo" data-logo-bg="dark">
-            </a>
-            <button type="button" class="org-network-toggle" data-org-toggle aria-expanded="false" aria-controls="org-branches-vespas" aria-label="Mostrar links relacionados ao VESPAS" data-i18n-aria-label="exp.orgLinks.vespas"></button>
-          </div>
-          <p class="font-mono text-xs text-terminal mb-1.5">2025 — <span data-i18n="exp.present3">presente</span> <span class="text-fog/60 ml-2">· c4f7a12</span></p>
-          <h3 class="font-display font-semibold text-xl text-paper"><span data-i18n="exp.vespasRole">Voluntário — Alertas, CTF &amp; Site</span> <span class="text-purple-light font-normal">· <a data-org-primary-name href="https://linktr.ee/vespas_utfpr" target="_blank" rel="noopener noreferrer" class="org-primary-name">VESPAS (UTFPR)</a></span></h3>
-          <nav id="org-branches-vespas" class="org-branches" data-org-branches aria-hidden="true" aria-label="Links relacionados ao VESPAS" data-i18n-aria-label="exp.orgLinks.vespas" inert>
-            <a data-org-link="project" href="https://github.com/vespas-utfpr/ainjection" target="_blank" rel="noopener noreferrer" class="org-branch-link"><span>AInjection 2026</span><span class="org-branch-arrow" aria-hidden="true">↗</span></a>
-            <a data-org-link="resource" href="https://utfpr.curitiba.br/vespas/" target="_blank" rel="noopener noreferrer" class="org-branch-link"><span data-i18n="exp.org.vespas.site">Site VESPAS</span><span class="org-branch-arrow" aria-hidden="true">↗</span></a>
-            <a data-org-link="resource" href="https://github.com/vespas-utfpr" target="_blank" rel="noopener noreferrer" class="org-branch-link"><span data-i18n="exp.org.vespas.github">GitHub VESPAS</span><span class="org-branch-arrow" aria-hidden="true">↗</span></a>
-          </nav>
-          <ul class="mt-3 space-y-2 text-fog font-light text-[15px] list-none">
-            <li class="flex gap-2"><span class="text-purple mt-0.5" aria-hidden="true">▹</span><span data-i18n="exp.ves1">Sou um dos coordenadores do Canal de Alertas de cibersegurança, cobrindo vulnerabilidades críticas (CVSS 10.0) e conscientização em segurança da informação.</span></li>
-            <li class="flex gap-2"><span class="text-purple mt-0.5" aria-hidden="true">▹</span><span data-i18n="exp.ves2">Colaboro com o time competitivo de CTF e no desenvolvimento de labs e desafios para competições próprias. Foco atual: OWASP Top 10:2025 e LLM Risks.</span></li>
-            <li class="flex gap-2">
-              <span class="text-purple mt-0.5" aria-hidden="true">▹</span>
-              <span>
-                <span data-i18n="exp.ves3">Também sou um dos mantenedores do site do VESPAS.</span>
-                <a data-vespas-site href="https://utfpr.curitiba.br/vespas/" target="_blank" rel="noopener noreferrer" class="ml-1 whitespace-nowrap font-mono text-[11px] text-purple-light transition-colors hover:text-purple focus:outline-none focus-visible:ring-2 focus-visible:ring-purple rounded-sm"><span data-i18n="exp.ves3Cta">Acessar site</span> ↗</a>
-              </span>
-            </li>
-          </ul>
-          <div class="flex flex-wrap gap-2 mt-4">
-            <span class="chip font-mono text-[11px] px-2.5 py-1 rounded text-fog">CTF</span>
-            <span class="chip font-mono text-[11px] px-2.5 py-1 rounded text-fog">MITRE ATT&amp;CK</span>
-            <span class="chip font-mono text-[11px] px-2.5 py-1 rounded text-fog">OWASP LLM</span>
-            <span class="chip font-mono text-[11px] px-2.5 py-1 rounded text-fog">Threat Intel</span>
-          </div>
-        </article>
+
 
         <!-- Volkswagen — progressão de TI para Segurança da Informação -->
         <article class="tl-item reveal pl-8" data-employer-group="volkswagen" data-org-network="volkswagen" data-open="false">
@@ -1526,7 +1547,7 @@
         </div>
         <h3 class="font-display font-semibold text-lg text-paper mb-2" data-i18n="proj.vespas.t">VESPAS — Labs de CTF &amp; Alertas</h3>
         <p class="text-fog font-light text-[15px] mb-5" data-i18n="proj.vespas.d">
-          Colaboro nos labs e desafios do VESPAS e sou um dos coordenadores do Canal de Alertas. Para o CTF 2026, desenvolvi o AInjection, projeto-base sobre Prompt Injection, trust boundaries e OWASP GenAI Top 10 em aplicações com LLM.
+          Colaboro nos labs e desafios do VESPAS e coordeno o Canal de Alertas. Para o CTF 2026, desenvolvi o AInjection, projeto-base sobre Prompt Injection, trust boundaries e OWASP GenAI Top 10 em aplicações com LLM.
         </p>
         <div class="flex flex-wrap gap-2">
           <span class="chip font-mono text-[11px] px-2.5 py-1 rounded text-fog">CTF</span>
@@ -1580,6 +1601,8 @@
             <span class="chip font-mono text-xs px-3 py-1.5 rounded-md text-fog" data-skill="burp-suite">Burp Suite</span>
             <span class="chip font-mono text-xs px-3 py-1.5 rounded-md text-fog" data-skill="metasploit">Metasploit</span>
             <span class="chip font-mono text-xs px-3 py-1.5 rounded-md text-fog" data-skill="wireshark">Wireshark</span>
+            <span class="chip font-mono text-xs px-3 py-1.5 rounded-md text-fog" data-skill="shodan">Shodan</span>
+            <span class="chip font-mono text-xs px-3 py-1.5 rounded-md text-fog" data-skill="netcat">Netcat</span>
           </div>
         </div>
         <div class="reveal relative" data-skill-hub="2">
@@ -1597,6 +1620,7 @@
             <span class="chip font-mono text-xs px-3 py-1.5 rounded-md text-fog" data-skill="cvss">CVSS</span>
             <span class="chip font-mono text-xs px-3 py-1.5 rounded-md text-fog" data-skill="active-directory">Active Directory</span>
             <span class="chip font-mono text-xs px-3 py-1.5 rounded-md text-fog" data-skill="iam-ldap">IAM / LDAP</span>
+            <span class="chip font-mono text-xs px-3 py-1.5 rounded-md text-fog" data-skill="trellix">Trellix</span>
           </div>
         </div>
         <div class="reveal relative" data-skill-hub="3">
@@ -1614,6 +1638,12 @@
             <span class="chip font-mono text-xs px-3 py-1.5 rounded-md text-fog" data-skill="docker">Docker</span>
             <span class="chip font-mono text-xs px-3 py-1.5 rounded-md text-fog" data-skill="gitlab-ci-cd">GitLab CI/CD</span>
             <span class="chip font-mono text-xs px-3 py-1.5 rounded-md text-fog" data-skill="git">Git</span>
+            <span class="chip font-mono text-xs px-3 py-1.5 rounded-md text-fog" data-skill="aws-ec2">AWS EC2</span>
+            <span class="chip font-mono text-xs px-3 py-1.5 rounded-md text-fog" data-skill="hashicorp-vault">HashiCorp Vault</span>
+            <span class="chip font-mono text-xs px-3 py-1.5 rounded-md text-fog" data-skill="openvpn">OpenVPN</span>
+            <span class="chip font-mono text-xs px-3 py-1.5 rounded-md text-fog" data-skill="powershell">PowerShell</span>
+            <span class="chip font-mono text-xs px-3 py-1.5 rounded-md text-fog" data-skill="n8n">n8n</span>
+            <span class="chip font-mono text-xs px-3 py-1.5 rounded-md text-fog" data-skill="make">Make</span>
           </div>
         </div>
         <div class="reveal relative" data-skill-hub="4">
@@ -1631,6 +1661,10 @@
             <span class="chip font-mono text-xs px-3 py-1.5 rounded-md text-fog" data-skill="nestjs">NestJS</span>
             <span class="chip font-mono text-xs px-3 py-1.5 rounded-md text-fog" data-skill="prisma-postgresql">Prisma / PostgreSQL</span>
             <span class="chip font-mono text-xs px-3 py-1.5 rounded-md text-fog" data-skill="apis-rest">APIs REST</span>
+            <span class="chip font-mono text-xs px-3 py-1.5 rounded-md text-fog" data-skill="flask">Flask</span>
+            <span class="chip font-mono text-xs px-3 py-1.5 rounded-md text-fog" data-skill="fastapi">FastAPI</span>
+            <span class="chip font-mono text-xs px-3 py-1.5 rounded-md text-fog" data-skill="rabbitmq">RabbitMQ</span>
+            <span class="chip font-mono text-xs px-3 py-1.5 rounded-md text-fog" data-skill="clean-architecture">Clean Architecture</span>
           </div>
         </div>
         <div class="reveal relative md:col-span-2 md:flex md:flex-col md:items-center" data-skill-group="ai" data-skill-hub="5">
@@ -1644,6 +1678,7 @@
             <span class="chip font-mono text-xs px-3 py-1.5 rounded-md text-fog" data-skill="llms">LLMs</span>
             <span class="chip font-mono text-xs px-3 py-1.5 rounded-md text-fog" data-skill="tool-calling">Tool Calling</span>
             <span class="chip font-mono text-xs px-3 py-1.5 rounded-md text-fog" data-skill="multiagent" data-i18n="skills.multiagent">Orquestração Multiagente</span>
+            <span class="chip font-mono text-xs px-3 py-1.5 rounded-md text-fog" data-skill="langchain">LangChain</span>
           </div>
         </div>
       </div>
@@ -1771,7 +1806,7 @@
     <p class="reveal font-mono text-sm text-purple mb-4">05 <span class="text-fog">//</span> <span data-i18n="contact.kicker">o que vem agora?</span></p>
     <h2 class="reveal font-display font-bold text-4xl md:text-5xl tracking-tight mb-6"><span data-i18n="contact.title">Vamos conversar</span><span class="text-terminal">.</span></h2>
     <p class="reveal text-fog font-light max-w-xl mx-auto mb-10 md:mb-16" data-i18n="contact.sub">
-      Aberto a oportunidades em desenvolvimento Full Stack, DevSecOps e Segurança da Informação. Se o seu time precisa integrar produto, operação e segurança, vamos conversar.
+      Aberto a oportunidades em Full Stack, DevSecOps e Segurança da Informação. Se você precisa de alguém que transita entre produto, operação e segurança, me chama.
     </p>
     <div class="contact-actions reveal flex flex-wrap justify-center items-start gap-3">
       <a data-contact="email" href="mailto:thales.salata@gmail.com" class="contact-control btn-primary inline-flex items-center gap-2 font-mono text-sm text-white px-6 py-3.5 rounded-md">
@@ -1869,7 +1904,7 @@
     <div class="max-w-6xl mx-auto px-5 sm:px-8 py-8 flex flex-col sm:flex-row items-center justify-between gap-3 font-mono text-xs text-fog/70">
       <div class="footer-brand-lockup">
         <img data-brand-shield="footer" src="assets/brand/thales-salata-shield.png" width="56" height="56" alt="" aria-hidden="true" loading="lazy" decoding="async" class="brand-shield footer-brand-shield">
-        <p>© <span id="year">2026</span> Thales Sgarbi Salata — <span data-i18n="footer.tag">produto, operação e segurança no mesmo fluxo.</span></p>
+        <p>© <span id="year">2026</span> Thales Sgarbi Salata — <span data-i18n="footer.tag">junto o que costuma ficar em times separados.</span></p>
       </div>
       <p class="text-terminal/80">[ operator_status: <span class="text-terminal">ONLINE</span> ]</p>
     </div>
@@ -1909,7 +1944,7 @@
         'seo.description': 'Conheça os projetos de React e segurança de Thales Salata, incluindo o Portal UTFPR, aplicações full stack web e mobile, DevSecOps, cloud e cibersegurança.',
         'hero.kicker': 'portfólio pessoal — Curitiba, PR · Brasil',
         'hero.role': 'Full Stack · DevSecOps · Segurança da Informação',
-        'hero.pitch': 'Desenvolvo e mantenho aplicações web e mobile, integro serviços e automatizo infraestrutura com segurança incorporada ao ciclo de desenvolvimento.',
+        'hero.pitch': 'Construo e mantenho aplicações web e mobile, integro serviços e automatizo infraestrutura. Segurança entra desde o começo, não como remendo no fim.',
         'hero.cv': 'Baixar CV', 'hero.projects': 'Ver projetos', 'hero.terminalLabel': 'Terminal animado com resumo do perfil',
         'hero.mission1': 'Construir produtos resilientes.', 'hero.mission2': 'Automatizar entregas com segurança.', 'hero.mission3': 'Transformar inteligência ofensiva em defesa.',
         'ambient.playerLabel': 'Player de música ambiente', 'ambient.play': 'Reproduzir música ambiente', 'ambient.pause': 'Pausar música ambiente',
@@ -1917,14 +1952,16 @@
         'ambient.ready': 'Música ambiente pronta', 'ambient.loading': 'Carregando música ambiente', 'ambient.playing': 'Música ambiente em reprodução', 'ambient.paused': 'Música ambiente pausada', 'ambient.error': 'Não foi possível reproduzir a música ambiente',
         'ambient.scene.top': 'signal://início', 'ambient.scene.sobre': 'signal://sobre', 'ambient.scene.experiencia': 'signal://experiência', 'ambient.scene.projetos': 'signal://projetos', 'ambient.scene.skills': 'signal://formação', 'ambient.scene.contato': 'signal://contato',
         'about.title': 'Sobre',
-        'about.p1': 'Sou bacharel em Sistemas de Informação pela UTFPR. Atuo como desenvolvedor Full Stack no portal institucional da universidade e como um dos mantenedores do Nerdz, aplicação mobile e web multiplataforma. Também sou um dos coordenadores voluntários do Canal de Alertas do VESPAS, um dos mantenedores do site da iniciativa e colaboro no desenvolvimento de labs e desafios de CTF.',
-        'about.p2': 'Minha trajetória conecta desenvolvimento, operações e segurança: React/TypeScript e Python no Portal UTFPR; React Native, Expo e NestJS no Nerdz; automação, CI/CD, cloud e investigação de vulnerabilidades em ambientes corporativos.',
-        'about.p3': 'Também utilizo IA generativa e agêntica no desenvolvimento e implementei um orquestrador multiagente com Anthropic API e MCP, mantendo revisão crítica sobre o código produzido.',
-        'about.stat1': 'cursos Cisco Networking Academy', 'about.stat2': 'dispositivos VoIP migrados', 'about.stat3': 'plataformas no Nerdz',
+        'about.p1': 'Sou bacharel em Sistemas de Informação pela UTFPR, universidade pública federal, com o curso avaliado com nota máxima (5 estrelas) pelo Guia do Estudante. Atuei como desenvolvedor Full Stack no portal institucional da universidade (até set/2026) e sou um dos mantenedores do Nerdz, aplicação mobile e web multiplataforma. No VESPAS, sou membro voluntário: coordeno o Canal de Alertas de cibersegurança, mentoro integrantes com foco em Blue Team, ajudo a manter o site da iniciativa e colaboro no desenvolvimento de labs e desafios de CTF.',
+        'about.p2': 'Faço as três coisas no mesmo trabalho: desenvolvimento, operações e segurança. React/TypeScript e Python no Portal da UTFPR; React Native, Expo e NestJS no Nerdz; automação, CI/CD, cloud e investigação de vulnerabilidades em ambiente corporativo.',
+        'about.p3': 'Uso IA generativa e agêntica no desenvolvimento e implementei um orquestrador multiagente com Anthropic API e MCP. Mas não largo na mão da IA: reviso de perto tudo o que ela escreve.',
+        'about.stat1': 'cursos Cisco Networking Academy', 'about.stat2': 'dispositivos VoIP migrados', 'about.stat3': 'plataformas no Nerdz', 'about.stat4': 'nota média no piloto do TCC (de 7,54)',
         'about.asciiTitle': 'autorretrato ASCII autoral',
         'about.asciiCaption': 'Autorretrato construído em caracteres — uma assinatura visual entre identidade, código e segurança.',
         'about.asciiAlt': 'Autorretrato ASCII autoral de Thales Sgarbi Salata formado por caracteres claros sobre fundo escuro.',
-        'exp.title': 'Experiência', 'exp.employer': 'organização', 'exp.present': 'jul 2026', 'exp.present3': 'presente', 'exp.present4': 'presente',
+        'about.mascotTitle': 'agente 3D · segue o mouse',
+        'about.mascotCaption': 'Um mascote em 3D que segue o seu cursor. Portfólio de quem trabalha com IA não devia ter enfeite parado.',
+        'exp.title': 'Experiência', 'exp.employer': 'organização', 'exp.present': 'jul 2026', 'exp.present3': 'presente', 'exp.present4': 'set 2026',
         'exp.utfsRole': 'Desenvolvedor Full Stack',
         'exp.utfsDate': 'mar 2026', 'exp.utfDate': 'set 2025 — jul 2026', 'exp.cmcDate': 'mar 2025', 'exp.vwDate': 'mai 2024 — fev 2025', 'exp.vwtiDate': 'mai 2023 — abr 2024',
         'exp.orgPrimary.utfpr': 'Abrir site da UTFPR', 'exp.orgPrimary.vespas': 'Abrir Linktree do VESPAS', 'exp.orgPrimary.cmc': 'Abrir site da Câmara Municipal de Curitiba', 'exp.orgPrimary.volkswagen': 'Abrir site da Volkswagen do Brasil',
@@ -1943,8 +1980,8 @@
         'exp.utf1': 'Desenvolvi componentes reutilizáveis em React e Volto, implementei layouts responsivos e acessíveis e refatorei componentes e códigos legados do projeto.',
         'exp.utf2': 'Trabalhei na correção de inconsistências visuais e funcionais, documentação dos componentes e colaboração com a equipe de UI/UX para transformar protótipos em interfaces para produção.',
         'exp.vespasRole': 'Voluntário — Alertas, CTF & Site',
-        'exp.ves1': 'Sou um dos coordenadores do Canal de Alertas de cibersegurança, cobrindo vulnerabilidades críticas (CVSS 10.0) e conscientização em segurança da informação.',
-        'exp.ves2': 'Colaboro com o time competitivo de CTF e no desenvolvimento de labs e desafios para competições próprias. Foco atual: OWASP Top 10:2025 e LLM Risks.',
+        'exp.ves1': 'Coordeno o Canal de Alertas de cibersegurança, cobrindo vulnerabilidades críticas (CVSS 10.0) e conscientização em segurança da informação.',
+        'exp.ves2': 'Mentoro integrantes do grupo, principalmente em Blue Team, e colaboro com o time competitivo de CTF e no desenvolvimento de labs e desafios para competições próprias. Foco atual: OWASP Top 10:2025 e LLM Risks.',
         'exp.ves3': 'Também sou um dos mantenedores do site do VESPAS.', 'exp.ves3Cta': 'Acessar site',
         'exp.vwRole': 'Estagiário de Segurança da Informação',
         'exp.vw1': 'Suporte a processos de IAM com Active Directory, além de análise de vulnerabilidades, gestão de riscos e acompanhamento de auditoria ISO 27001.',
@@ -1972,7 +2009,7 @@
         'proj.portal.d': 'Novos componentes Volto / Plone 6 para o portal institucional da universidade, alinhados ao Design System 4.0 do Gov.br — migração de código deprecado, documentação contínua e CI/CD no GitLab.',
         'proj.portal.site': 'Visitar o portal', 'proj.portal.team': 'Conheça a equipe',
         'proj.vespas.t': 'VESPAS — Labs de CTF & Alertas',
-        'proj.vespas.d': 'Colaboro nos labs e desafios do VESPAS e sou um dos coordenadores do Canal de Alertas. Para o CTF 2026, desenvolvi o AInjection, projeto-base sobre Prompt Injection, trust boundaries e OWASP GenAI Top 10 em aplicações com LLM.',
+        'proj.vespas.d': 'Colaboro nos labs e desafios do VESPAS e coordeno o Canal de Alertas. Para o CTF 2026, desenvolvi o AInjection, projeto-base sobre Prompt Injection, trust boundaries e OWASP GenAI Top 10 em aplicações com LLM.',
         'proj.vespas.challenge': 'AInjection 2026',
         'skills.title': 'Formação', 'skills.g1': 'segurança ofensiva', 'skills.g2': 'defesa & detecção', 'skills.g4': 'desenvolvimento', 'skills.g5': 'IA aplicada', 'skills.multiagent': 'Orquestração Multiagente',
         'skills.relation.title': 'correlação', 'skills.relation.direct': 'direta', 'skills.relation.workflow': 'fluxo', 'skills.relation.context': 'contexto', 'skills.relation.ariaLabel': 'Força das relações entre habilidades',
@@ -1980,9 +2017,9 @@
         'credentials.verified': 'verificável', 'credentials.verificationNote': 'links externos de verificação', 'credentials.verify': 'Verificar no Credly', 'credentials.view': 'Ver credencial',
         'credentials.adaTitle': 'Trilha Digital Back-End — Santander Tech+', 'credentials.cyberTitle': 'Fundamentos em Cibersegurança', 'credentials.emotionalTitle': 'Inteligência Emocional 2.0', 'credentials.productivityTitle': 'Produtividade e Gestão do Tempo',
         'contact.kicker': 'o que vem agora?', 'contact.title': 'Vamos conversar',
-        'contact.sub': 'Aberto a oportunidades em desenvolvimento Full Stack, DevSecOps e Segurança da Informação. Se o seu time precisa integrar produto, operação e segurança, vamos conversar.',
+        'contact.sub': 'Aberto a oportunidades em Full Stack, DevSecOps e Segurança da Informação. Se você precisa de alguém que transita entre produto, operação e segurança, me chama.',
         'contact.cta': 'Enviar e-mail', 'contact.linkedinAvailability': 'Open to Work ativo · visível apenas para recrutadores', 'contact.discordGuide': 'Copie o usuário e abra Amigos → Adicionar amigo.', 'contact.discordOpen': 'Abrir Discord',
-        'footer.tag': 'produto, operação e segurança no mesmo fluxo.',
+        'footer.tag': 'junto o que costuma ficar em times separados.',
         'verification.kicker': 'evidência independente', 'verification.title': 'Verificação pública', 'verification.sub': 'Veja como o site se sai em verificações públicas e consulte os detalhes de cada análise.', 'verification.viewReport': 'ver evidência completa ↗', 'verification.submitDomain': 'adicionar domínio ao índice ↗', 'verification.agent': 'agent readiness', 'verification.agentPending': 'ainda não medido', 'verification.agentDescription': 'CrawlIndex · medição pública com evidências e atualização periódica.', 'verification.performance': 'performance', 'verification.performanceDescription': 'Google PageSpeed Insights · laboratório Lighthouse e dados reais do Chrome quando disponíveis.', 'verification.performanceAction': 'ver relatório PageSpeed ↗', 'verification.quality': 'qualidade web', 'verification.qualityDescription': 'WebAnalyzer · SEO, performance, acessibilidade, UI/UX, segurança e AI-readiness.', 'verification.accessibility': 'acessibilidade', 'verification.accessibilityDescription': 'WebAIM WAVE · ferramenta automatizada de avaliação de acessibilidade que aponta possíveis barreiras para revisão manual.', 'verification.runScan': 'ver relatório WAVE ↗', 'verification.w3c': 'validação HTML', 'verification.w3cDescription': 'W3C HTML Checker · validação do markup publicado, sem badge de aprovação automática.', 'verification.w3cStatus': '0 erros · 0 warnings na última verificação', 'verification.w3cAction': 'validar HTML ↗', 'verification.viewScore': 'ver pontuação ↗', 'verification.apiEvidence': 'documentação da API ↗',
       },
       en: {
@@ -1991,22 +2028,24 @@
         'seo.description': "Explore Thales Salata's React and security projects, including the UTFPR Portal, full-stack web and mobile apps, DevSecOps, cloud, and cybersecurity work.",
         'hero.kicker': 'personal portfolio — Curitiba, Brazil',
         'hero.role': 'Full Stack · DevSecOps · Information Security',
-        'hero.pitch': 'I build and maintain web and mobile applications, integrate services and automate infrastructure with security embedded in the development lifecycle.',
+        'hero.pitch': 'I build and maintain web and mobile apps, wire services together and automate infrastructure. Security goes in from the start, not bolted on at the end.',
         'hero.cv': 'Download résumé', 'hero.projects': 'View projects', 'hero.terminalLabel': 'Animated terminal with profile summary',
-        'hero.mission1': 'Build resilient products.', 'hero.mission2': 'Automate the path to production.', 'hero.mission3': 'Turn attack insight into defense.',
+        'hero.mission1': 'Build resilient products.', 'hero.mission2': 'Automate delivery securely.', 'hero.mission3': 'Turn offensive intelligence into defense.',
         'ambient.playerLabel': 'Ambient music player', 'ambient.play': 'Play ambient music', 'ambient.pause': 'Pause ambient music',
         'ambient.progress': 'Ambient music progress', 'ambient.volume': 'Ambient music volume', 'ambient.mute': 'Mute ambient music', 'ambient.unmute': 'Unmute ambient music',
         'ambient.ready': 'Ambient music ready', 'ambient.loading': 'Loading ambient music', 'ambient.playing': 'Ambient music playing', 'ambient.paused': 'Ambient music paused', 'ambient.error': 'Ambient music could not be played',
         'ambient.scene.top': 'signal://home', 'ambient.scene.sobre': 'signal://about', 'ambient.scene.experiencia': 'signal://experience', 'ambient.scene.projetos': 'signal://projects', 'ambient.scene.skills': 'signal://skills', 'ambient.scene.contato': 'signal://contact',
         'about.title': 'About',
-        'about.p1': "I'm an Information Systems graduate from UTFPR. I work as a Full Stack developer on the university's institutional portal and as one of the maintainers of Nerdz, a cross-platform mobile and web application. I also volunteer as one of the coordinators of the VESPAS Alerts Channel, co-maintain the initiative's website, and contribute to its CTF labs and challenges.",
-        'about.p2': 'My experience connects development, operations and security: React/TypeScript and Python on the UTFPR Portal; React Native, Expo and NestJS on Nerdz; automation, CI/CD, cloud and vulnerability investigation in corporate environments.',
-        'about.p3': 'I also use generative and agentic AI in software development and implemented a multi-agent orchestrator with the Anthropic API and MCP, while maintaining critical review of AI-assisted code.',
-        'about.stat1': 'Cisco Networking Academy courses', 'about.stat2': 'VoIP devices migrated', 'about.stat3': 'Nerdz platforms',
+        'about.p1': "I hold a bachelor's degree in Information Systems from UTFPR, a public federal university, with the program rated top marks (5 stars) by the Guia do Estudante. I worked as a Full Stack developer on the university's institutional portal (until Sep 2026) and I am one of the maintainers of Nerdz, a cross-platform mobile and web application. At VESPAS I am a volunteer member: I coordinate the cybersecurity Alerts Channel, mentor members with a focus on Blue Team, help maintain the initiative's website, and contribute to its CTF labs and challenges.",
+        'about.p2': 'I do all three in the same job: development, operations and security. React/TypeScript and Python on the UTFPR Portal; React Native, Expo and NestJS on Nerdz; automation, CI/CD, cloud and vulnerability investigation in corporate environments.',
+        'about.p3': "I use generative and agentic AI in my work and built a multi-agent orchestrator with the Anthropic API and MCP. But I don't just trust it: I read every line it writes.",
+        'about.stat1': 'Cisco Networking Academy courses', 'about.stat2': 'VoIP devices migrated', 'about.stat3': 'Nerdz platforms', 'about.stat4': 'mean pilot score (up from 7.54)',
         'about.asciiTitle': 'authorial ASCII self-portrait',
         'about.asciiCaption': 'A self-portrait built from characters — a visual signature connecting identity, code and security.',
         'about.asciiAlt': 'Authorial ASCII self-portrait of Thales Sgarbi Salata formed by light characters on a dark background.',
-        'exp.title': 'Experience', 'exp.employer': 'organization', 'exp.present': 'Jul 2026', 'exp.present3': 'present', 'exp.present4': 'present',
+        'about.mascotTitle': '3D agent · follows your mouse',
+        'about.mascotCaption': 'A 3D mascot that follows your cursor. A portfolio from someone who works with AI has no business sitting still.',
+        'exp.title': 'Experience', 'exp.employer': 'organization', 'exp.present': 'Jul 2026', 'exp.present3': 'present', 'exp.present4': 'Sep 2026',
         'exp.utfsRole': 'Full Stack Developer',
         'exp.utfsDate': 'Mar 2026', 'exp.utfDate': 'Sep 2025 — Jul 2026', 'exp.cmcDate': 'Mar 2025', 'exp.vwDate': 'May 2024 — Feb 2025', 'exp.vwtiDate': 'May 2023 — Apr 2024',
         'exp.orgPrimary.utfpr': 'Open the UTFPR website', 'exp.orgPrimary.vespas': 'Open the VESPAS Linktree', 'exp.orgPrimary.cmc': 'Open the Curitiba City Council website', 'exp.orgPrimary.volkswagen': 'Open the Volkswagen Brazil website',
@@ -2025,8 +2064,8 @@
         'exp.utf1': 'Built reusable components in React and Volto, implemented responsive and accessible layouts, and refactored legacy components and code.',
         'exp.utf2': 'Worked on fixing visual and functional inconsistencies, documenting components and collaborating with the UI/UX team to turn prototypes into production interfaces.',
         'exp.vespasRole': 'Volunteer — Alerts, CTF & Website',
-        'exp.ves1': 'I am one of the coordinators of the cybersecurity Alerts Channel, covering critical vulnerabilities (CVSS 10.0) and information-security awareness.',
-        'exp.ves2': 'I contribute to the competitive CTF team and to developing labs and challenges for our own competitions. Current focus: OWASP Top 10:2025 and LLM Risks.',
+        'exp.ves1': 'I coordinate the cybersecurity Alerts Channel, covering critical vulnerabilities (CVSS 10.0) and information-security awareness.',
+        'exp.ves2': 'I mentor group members, mainly in Blue Team, and contribute to the competitive CTF team and to developing labs and challenges for our own competitions. Current focus: OWASP Top 10:2025 and LLM Risks.',
         'exp.ves3': 'I am also one of the maintainers of the VESPAS website.', 'exp.ves3Cta': 'Visit website',
         'exp.vwRole': 'Information Security Intern',
         'exp.vw1': 'Supported IAM processes with Active Directory, alongside vulnerability analysis, risk management and ISO 27001 audit follow-up.',
@@ -2054,7 +2093,7 @@
         'proj.portal.d': "New Volto / Plone 6 components for the university's institutional portal, aligned with the Gov.br Design System 4.0 — deprecated-code migration, continuous documentation and GitLab CI/CD.",
         'proj.portal.site': 'Visit the portal', 'proj.portal.team': 'Meet the team',
         'proj.vespas.t': 'VESPAS — CTF Labs & Alerts',
-        'proj.vespas.d': 'I contribute to VESPAS labs and challenges and am one of the Alerts Channel coordinators. For the 2026 CTF, I developed AInjection, a base project covering Prompt Injection, trust boundaries and the OWASP GenAI Top 10 in LLM applications.',
+        'proj.vespas.d': 'I contribute to VESPAS labs and challenges and coordinate the Alerts Channel. For the 2026 CTF, I developed AInjection, a base project covering Prompt Injection, trust boundaries and the OWASP GenAI Top 10 in LLM applications.',
         'proj.vespas.challenge': 'AInjection 2026',
         'skills.title': 'Credentials', 'skills.g1': 'offensive security', 'skills.g2': 'defense & detection', 'skills.g4': 'development', 'skills.g5': 'Applied AI', 'skills.multiagent': 'Multi-agent Orchestration',
         'skills.relation.title': 'correlation', 'skills.relation.direct': 'direct', 'skills.relation.workflow': 'workflow', 'skills.relation.context': 'context', 'skills.relation.ariaLabel': 'Strength of skill relationships',
@@ -2062,9 +2101,9 @@
         'credentials.verified': 'verified', 'credentials.verificationNote': 'external verification links', 'credentials.verify': 'Verify on Credly', 'credentials.view': 'View credential',
         'credentials.adaTitle': 'Digital Back-End Track — Santander Tech+', 'credentials.cyberTitle': 'Cybersecurity Fundamentals', 'credentials.emotionalTitle': 'Emotional Intelligence 2.0', 'credentials.productivityTitle': 'Productivity and Time Management',
         'contact.kicker': "what's next?", 'contact.title': "Let's talk",
-        'contact.sub': 'Open to Full Stack, DevSecOps and Information Security opportunities. If your team needs to connect product, operations and security, let’s talk.',
+        'contact.sub': 'Open to Full Stack, DevSecOps and Information Security roles. If you need someone who moves between product, operations and security, get in touch.',
         'contact.cta': 'Send e-mail', 'contact.linkedinAvailability': 'Open to Work active · visible to recruiters only', 'contact.discordGuide': 'Copy the username, then open Friends → Add Friend.', 'contact.discordOpen': 'Open Discord',
-        'footer.tag': 'product, operations and security in one workflow.',
+        'footer.tag': 'I join up what usually lives in separate teams.',
         'verification.kicker': 'independent evidence', 'verification.title': 'Public verification', 'verification.sub': 'See how the site performs in public checks and explore the details behind each result.', 'verification.viewReport': 'view full evidence ↗', 'verification.submitDomain': 'add domain to the index ↗', 'verification.agent': 'agent readiness', 'verification.agentPending': 'not measured yet', 'verification.agentDescription': 'CrawlIndex · public measurement with evidence and periodic updates.', 'verification.performance': 'performance', 'verification.performanceDescription': 'Google PageSpeed Insights · Lighthouse lab data and real Chrome data when available.', 'verification.performanceAction': 'view PageSpeed report ↗', 'verification.quality': 'web quality', 'verification.qualityDescription': 'WebAnalyzer · SEO, performance, accessibility, UI/UX, security and AI readiness.', 'verification.accessibility': 'accessibility', 'verification.accessibilityDescription': 'WebAIM WAVE · automated accessibility evaluation tool that flags possible barriers for manual review.', 'verification.runScan': 'view WAVE report ↗', 'verification.w3c': 'HTML validation', 'verification.w3cDescription': 'W3C HTML Checker · validates the published markup without implying automatic approval.', 'verification.w3cStatus': '0 errors · 0 warnings in the latest check', 'verification.w3cAction': 'validate HTML ↗', 'verification.viewScore': 'view score ↗', 'verification.apiEvidence': 'API documentation ↗',
       }
     };
@@ -2815,6 +2854,20 @@
       'Tool Calling': 'https://docs.anthropic.com/en/docs/agents-and-tools/tool-use/overview',
       'Orquestração Multiagente': 'https://en.wikipedia.org/wiki/Multi-agent_system',
       'Multi-agent Orchestration': 'https://en.wikipedia.org/wiki/Multi-agent_system',
+      'Shodan': 'https://help.shodan.io/',
+      'Netcat': 'https://en.wikipedia.org/wiki/Netcat',
+      'Trellix': 'https://docs.trellix.com/',
+      'AWS EC2': 'https://docs.aws.amazon.com/ec2/',
+      'HashiCorp Vault': 'https://developer.hashicorp.com/vault/docs',
+      'OpenVPN': 'https://openvpn.net/community-resources/',
+      'PowerShell': 'https://learn.microsoft.com/en-us/powershell/',
+      'n8n': 'https://docs.n8n.io/',
+      'Make': 'https://www.make.com/en/help/home',
+      'Flask': 'https://flask.palletsprojects.com/',
+      'FastAPI': 'https://fastapi.tiangolo.com/',
+      'RabbitMQ': 'https://www.rabbitmq.com/docs',
+      'Clean Architecture': 'https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html',
+      'LangChain': 'https://python.langchain.com/docs/introduction/',
     };
 
     document.querySelectorAll('.chip').forEach(chip => {
@@ -3472,6 +3525,236 @@
         ],
       });
     }
+  </script>
+
+  <!-- ═══════════ Interactive 3D mascot (About) ═══════════ -->
+  <script>
+  (() => {
+    const media = document.querySelector('[data-mascot-stage]');
+    if (!media) return;
+    const figure = media.closest('[data-mascot]');
+    const poster = media.querySelector('[data-mascot-poster]');
+    // The ASCII poster is the content until the 3D model takes over.
+    function setLive(live) {
+      media.setAttribute('data-mascot-live', String(live));
+      figure.setAttribute('data-mascot-live', String(live));
+      if (live) poster?.setAttribute('aria-hidden', 'true'); else poster?.removeAttribute('aria-hidden');
+    }
+
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const finePointer = window.matchMedia('(pointer: fine)');
+    const wideEnough = window.matchMedia('(min-width: 768px)');
+    function webglOK() {
+      try {
+        const c = document.createElement('canvas');
+        return !!(window.WebGLRenderingContext && (c.getContext('webgl') || c.getContext('experimental-webgl')));
+      } catch (e) { return false; }
+    }
+    // Keep the static poster for reduced-motion, touch/coarse pointers or small screens.
+    // WebGL is probed only in start(): creating a context during parse delays page load.
+    if (reduceMotion.matches || !finePointer.matches || !wideEnough.matches) return;
+
+    function loadScript(src) {
+      return new Promise((resolve, reject) => {
+        const s = document.createElement('script');
+        s.src = src; s.onload = resolve; s.onerror = reject;
+        document.head.appendChild(s);
+      });
+    }
+
+    let started = false;
+    async function start() {
+      if (started) return; started = true;
+      if (!webglOK()) return;
+      try {
+        await loadScript('/assets/vendor/three/three.min.js');
+        await loadScript('/assets/vendor/three/GLTFLoader.js');
+      } catch (e) { return; }
+      const THREE = window.THREE;
+      if (!THREE || !THREE.GLTFLoader) return;
+      try { await loadScript('/assets/js/mascot-effects.js'); } catch (e) { /* Mascot remains usable without effects. */ }
+      try { init(THREE); } catch (e) { media.querySelector('canvas')?.remove(); }
+    }
+
+    function init(THREE) {
+      const w = media.clientWidth, h = media.clientHeight;
+      const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+      renderer.setSize(w, h);
+      if ('outputEncoding' in renderer) renderer.outputEncoding = THREE.sRGBEncoding;
+      media.appendChild(renderer.domElement);
+
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(32, w / h, 0.1, 100);
+
+      scene.add(new THREE.AmbientLight(0x2b3240, 0.55));
+      const key = new THREE.DirectionalLight(0xdfe7ff, 1.05); key.position.set(2.5, 3.5, 3); scene.add(key);
+      const fill = new THREE.DirectionalLight(0x8b5cf6, 0.5); fill.position.set(-3, 1.5, 1.5); scene.add(fill);
+      const rim = new THREE.DirectionalLight(0xbcd0ff, 0.85); rim.position.set(-1.5, 2, -3); scene.add(rim);
+
+      const CHARCOAL = 0x17151c, PURPLE = 0x8b5cf6;
+      let headBone = null, neckBone = null, baseHead = null, baseNeck = null, mixer = null, idleAction = null, waveAction = null;
+      let modelRoot = null, effects = null, lockedAim = null, pointer = null, contextLost = false;
+      const eyeAnchors = [];
+      const projectedEyes = [new THREE.Vector3(), new THREE.Vector3()];
+      const eligible = () => !reduceMotion.matches && finePointer.matches && wideEnough.matches && !contextLost;
+      const clock = new THREE.Clock();
+      const targetRot = { yaw: 0, pitch: 0 };
+      let curYaw = 0, curPitch = 0;
+
+      new THREE.GLTFLoader().load('/assets/brand/mascot-robot.glb', (gltf) => {
+        const model = gltf.scene;
+        modelRoot = model;
+        model.traverse((o) => {
+          if (o.isBone) { if (o.name === 'Head') headBone = o; if (o.name === 'Neck') neckBone = o; }
+          if (o.isMesh && o.material) {
+            (Array.isArray(o.material) ? o.material : [o.material]).forEach((m) => {
+              const n = (m.name || '').toLowerCase();
+              if (n.indexOf('main') !== -1) {                 // body (~69%) — neutral graphite
+                m.color = new THREE.Color(CHARCOAL);
+                if ('emissive' in m) { m.emissive = new THREE.Color(0x000000); m.emissiveIntensity = 0; }
+                if ('metalness' in m) m.metalness = 0.4;
+                if ('roughness' in m) m.roughness = 0.6;
+              } else if (n.indexOf('black') !== -1) {         // eyes / visor — neutral charcoal, lit only by the scene
+                m.color = new THREE.Color(CHARCOAL);
+                if ('emissive' in m) { m.emissive = new THREE.Color(0x000000); m.emissiveIntensity = 0; }
+                if (!eyeAnchors.length) {
+                  // GLB Head/Black: bounding-box centers of its two 45-vertex lens components,
+                  // in this mesh's local model units. Project centers to stay on the lenses.
+                  for (const x of [-0.00709985, 0.00709985]) {
+                    const anchor = new THREE.Object3D();
+                    anchor.position.set(x, -0.00909125, -0.00058765);
+                    o.add(anchor);
+                    eyeAnchors.push(anchor);
+                  }
+                }
+              } else {                                         // grey trim / limbs — purple details
+                m.color = new THREE.Color(PURPLE);
+                if ('emissive' in m) { m.emissive = new THREE.Color(PURPLE); m.emissiveIntensity = 0.18; }
+                if ('metalness' in m) m.metalness = 0.3;
+                if ('roughness' in m) m.roughness = 0.5;
+              }
+            });
+          }
+        });
+        if (headBone) baseHead = headBone.rotation.clone();
+        if (neckBone) baseNeck = neckBone.rotation.clone();
+
+        const box = new THREE.Box3().setFromObject(model);
+        const size = box.getSize(new THREE.Vector3());
+        model.position.y -= box.min.y;                 // feet to ground
+        const focusY = size.y * 0.5;
+        camera.position.set(0, size.y * 0.55, size.y * 2.15);
+        camera.lookAt(0, focusY, 0);
+        scene.add(model);
+
+        if (gltf.animations && gltf.animations.length) {
+          mixer = new THREE.AnimationMixer(model);
+          const find = (frag) => gltf.animations.find((a) => a.name.toLowerCase().indexOf(frag) !== -1);
+          const idle = find('idle'), wave = find('wave');
+          if (idle) { idleAction = mixer.clipAction(idle); idleAction.play(); }
+          if (wave) { waveAction = mixer.clipAction(wave); waveAction.loop = THREE.LoopOnce; waveAction.clampWhenFinished = true; }
+        }
+        model.updateMatrixWorld(true);
+        camera.updateMatrixWorld(true);
+        setLive(eligible());
+        if (window.createMascotEffects && eyeAnchors.length === 2) {
+          effects = window.createMascotEffects({
+            targets: [...document.querySelectorAll('[data-mascot-stat]')], figure,
+            getEyes, aimAt: point => { lockedAim = point; },
+            releaseAim: () => { lockedAim = null; }, canAnimate: eligible,
+          });
+        }
+        ensureLoop();
+      }, undefined, () => { renderer.domElement.remove(); contextLost = true; });
+
+      function getEyes() {
+        if (eyeAnchors.length !== 2 || !modelRoot) return null;
+        const rect = media.getBoundingClientRect();
+        if (!rect.width || !rect.height) return null;
+        const points = eyeAnchors.map((anchor, index) => {
+          const vector = projectedEyes[index];
+          anchor.getWorldPosition(vector);
+          vector.project(camera);
+          return { x: rect.left + (vector.x + 1) * rect.width / 2, y: rect.top + (1 - vector.y) * rect.height / 2, z: vector.z };
+        });
+        return points.every(p => Number.isFinite(p.x) && Number.isFinite(p.y) && p.z >= -1 && p.z <= 1 &&
+          p.x >= Math.max(0, rect.left) && p.x <= Math.min(innerWidth, rect.right) &&
+          p.y >= Math.max(0, rect.top) && p.y <= Math.min(innerHeight, rect.bottom)) ? points : null;
+      }
+
+      function onMove(e) {
+        if (e.pointerType === 'mouse') pointer = { x: e.clientX, y: e.clientY };
+      }
+      function onLeave() { pointer = null; effects?.cancel(); }
+      window.addEventListener('pointermove', onMove, { passive: true });
+      document.documentElement.addEventListener('pointerleave', onLeave);
+      window.addEventListener('blur', onLeave);
+      figure.addEventListener('click', () => {
+        if (!waveAction || !eligible() || (figure.dataset.mascotEffectState && figure.dataset.mascotEffectState !== 'idle')) return;
+        waveAction.reset(); waveAction.play();
+        setTimeout(() => { if (idleAction) idleAction.reset().play(); }, 1600);
+      });
+
+      let visible = true, raf = 0;
+      function loop() {
+        if (!visible || document.hidden || !eligible()) {
+          effects?.cancel();
+          cancelAnimationFrame(raf);
+          raf = 0;
+          if (!eligible()) onEligibilityChange();
+          return;
+        }
+        raf = requestAnimationFrame(loop);
+        const dt = Math.min(clock.getDelta(), 0.05);
+        if (mixer) mixer.update(dt);
+        const aim = lockedAim || pointer;
+        const rect = media.getBoundingClientRect();
+        targetRot.yaw = aim ? Math.max(-0.7, Math.min(0.7, (aim.x - rect.left - rect.width / 2) / (innerWidth / 2) * 0.7)) : 0;
+        targetRot.pitch = aim ? Math.max(-0.4, Math.min(0.5, (aim.y - rect.top - rect.height / 2) / (innerHeight / 2) * 0.5)) : 0;
+        const alpha = 1 - Math.exp(-5 * dt);
+        curYaw += (targetRot.yaw - curYaw) * alpha;
+        curPitch += (targetRot.pitch - curPitch) * alpha;
+        if (neckBone && baseNeck) neckBone.rotation.set(baseNeck.x + curPitch * 0.18, baseNeck.y + curYaw * 0.22, baseNeck.z);
+        if (headBone && baseHead) headBone.rotation.set(baseHead.x + curPitch * 0.35, baseHead.y + curYaw * 0.5, baseHead.z);
+        modelRoot?.updateMatrixWorld(true);
+        effects?.update(performance.now());
+        renderer.render(scene, camera);
+      }
+      function ensureLoop() { if (!raf && visible && !document.hidden && eligible()) { clock.getDelta(); loop(); } }
+
+      new IntersectionObserver((ents) => { visible = ents[0].isIntersecting; if (!visible) effects?.cancel(); effects?.refresh(); ensureLoop(); }, { threshold: 0.05 }).observe(media);
+      document.addEventListener('visibilitychange', () => { if (document.hidden) effects?.cancel(); ensureLoop(); });
+      function onEligibilityChange() {
+        effects?.cancel();
+        renderer.domElement.hidden = !eligible();
+        setLive(eligible() && Boolean(modelRoot));
+        effects?.refresh();
+        ensureLoop();
+      }
+      for (const query of [reduceMotion, finePointer, wideEnough]) query.addEventListener('change', onEligibilityChange);
+      renderer.domElement.addEventListener('webglcontextlost', () => { contextLost = true; onEligibilityChange(); });
+      renderer.domElement.addEventListener('webglcontextrestored', () => { contextLost = false; onEligibilityChange(); });
+      window.addEventListener('resize', () => {
+        const nw = media.clientWidth, nh = media.clientHeight;
+        if (!nw || !nh) return;
+        renderer.setSize(nw, nh); camera.aspect = nw / nh; camera.updateProjectionMatrix();
+      });
+    }
+
+    // Lazy-init only when the About block approaches the viewport.
+    const startIO = new IntersectionObserver((ents) => {
+      if (ents[0].isIntersecting) { startIO.disconnect(); start(); }
+    }, { rootMargin: '200px' });
+    // Boot the 3D only after the recon-scan intro leaves the DOM, so it never competes with it.
+    const intro = document.getElementById('scan-intro');
+    if (!intro || !intro.isConnected) startIO.observe(media);
+    else new MutationObserver((_, observer) => {
+      if (intro.isConnected) return;
+      observer.disconnect();
+      startIO.observe(media);
+    }).observe(intro.parentNode, { childList: true });
+  })();
   </script>
 </body>
 </html>
