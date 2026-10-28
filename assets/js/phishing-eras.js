@@ -138,7 +138,7 @@
           question: 'Mensagem no BBS. Qual destas é golpe?',
           options: ['"Sou o sysop. Me passe sua senha para manutenção."', 'Aviso no mural: manutenção às 22h, nenhuma ação necessária.'],
           scamIndex: 0,
-          why: 'Nenhum administrador precisa da sua senha.',
+          why: 'O administrador do sistema (sysop) já tem acesso a tudo e nunca precisa pedir a sua senha. Quem pede senha por mensagem está tentando roubá-la.',
         },
         en: {
           title: 'The dawn of cybercrime',
@@ -148,7 +148,7 @@
           question: 'A BBS message. Which one is the scam?',
           options: ['"I\'m the sysop. Send me your password for maintenance."', 'Board notice: maintenance at 10 pm, no action needed.'],
           scamIndex: 0,
-          why: 'No administrator needs your password.',
+          why: 'A system administrator (sysop) already has full access and never needs to ask for your password. Anyone asking for it by message is trying to steal it.',
         },
       },
     },
