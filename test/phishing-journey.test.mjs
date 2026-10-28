@@ -150,3 +150,14 @@ test('every era carries the identity of its course module', () => {
   assert.equal(ERAS[0].theme.accent.toLowerCase(), '#00ff41');
   assert.equal(ERAS[1].theme.accent.toLowerCase(), '#000080');
 });
+
+test('the course is presented as my free hands-on short course on a busy portal', () => {
+  const { DICT } = loadJourney(['phishing-i18n.js']).PhishingI18n;
+  assert.match(DICT.pt['curso.title'], /minicurso/);
+  assert.match(DICT.pt['curso.body'], /minicurso prático e gratuito/);
+  assert.match(DICT.pt['curso.portal'], /47 cursos/);
+  assert.match(DICT.pt['curso.portal'], /6\.848 usuários/);
+  assert.match(DICT.en['curso.portal'], /6,848 users/);
+  const loose = Object.entries(DICT.pt).filter(([key, value]) => key !== 'curso.portal' && /\bcurso\b/i.test(value));
+  assert.deepEqual(loose.map(([key]) => key), [], 'PT copy says minicurso, not curso');
+});

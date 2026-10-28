@@ -1606,7 +1606,7 @@ const assertions = [
   [
     [
       'Education in Cybersecurity', 'For my final paper, I developed and evaluated', 'Portal Sophia-CT',
-      "VESPAS' Con 26", 'poster accepted', 'Generative AI', 'Mixed methods', 'Access course', 'Sophia-CT login',
+      "VESPAS' Con 26", 'poster accepted', 'Generative AI', 'Mixed methods', 'Access short course', 'Sophia-CT login',
     ].every(text => results.en.tcc?.includes(text)),
     'the TCC content, course access and technical labels are translated in the English portfolio',
   ],
