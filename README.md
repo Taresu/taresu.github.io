@@ -13,6 +13,12 @@ I am an Information Systems graduate from UTFPR working across application devel
 
 ## Selected work
 
+### Education against phishing
+
+From research to the public: my final paper (9.5) produced a phishing MOOC told as history, now featured on Portal Sophia, a poster accepted for VESPAS' Con 26, and a phishing challenge I built for the VESPAS booth at Tecnológica 2026.
+
+[Take the time-travel journey](https://thales-salata.dev/phishing/)
+
 ### UTFPR Portal
 
 React and Volto interfaces integrated with Plone 6, aligned with the Gov.br Design System and supported by GitLab CI/CD.

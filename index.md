@@ -51,7 +51,9 @@ Supported IT operations at the FIS Competence Center, handling operational routi
 ### [Education in Cybersecurity](https://thales-salata.dev/assets/TCC_Thales_Sgarbi_Salata_corrigido_revisado-1.pdf) (TCC / Final Course Project — UTFPR, 2026)
 *Tags: Generative AI, Mixed methods, MITRE ATT&CK, Phishing, MOOC*
 
-Mixed-methods applied research that developed and evaluated a cybersecurity education intervention on Portal Sophia-CT, combining a MOOC, historical narrative, practical activities and phishing simulations mapped with MITRE ATT&CK. The research poster was accepted for VESPAS Con 26 (10 Nov 2026).
+Mixed-methods applied research that developed and evaluated a cybersecurity education intervention on Portal Sophia-CT, combining a MOOC, historical narrative, practical activities and phishing simulations mapped with MITRE ATT&CK. The research poster was accepted for VESPAS Con 26 (10 Nov 2026). Final committee grade: 9.5.
+
+**Interactive journey:** https://thales-salata.dev/phishing/ — six stops through 40 years of phishing, with the course (featured on Portal Sophia), the paper, the poster and the playable shark challenge built for the VESPAS booth at Tecnológica 2026.
 
 ### [VeriPkg](https://github.com/Taresu/veripkg) — Honest download verification
 *Stack: Go, Supply Chain Security, OpenPGP, SHA-256*
