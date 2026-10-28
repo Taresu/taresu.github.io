@@ -6,12 +6,157 @@
   <title>Uma viagem pelo tempo do phishing | Thales Sgarbi Salata</title>
   <meta name="description" content="Do TCC ao estande: uma jornada interativa por 40 anos de phishing, com o curso em destaque no Portal Sophia, o pôster da VESPAS' Con 26 e o desafio do tubarão."/>
   <link rel="canonical" href="https://thales-salata.dev/phishing/"/>
+  <meta property="og:type" content="article"/>
+  <meta property="og:title" content="Uma viagem pelo tempo do phishing"/>
+  <meta property="og:description" content="40 anos, a mesma isca. Escolha uma década e tente não cair."/>
+  <meta property="og:url" content="https://thales-salata.dev/phishing/"/>
+  <meta property="og:image" content="https://thales-salata.dev/assets/phishing/covers/1980s.webp"/>
   <link rel="icon" href="/favicon.ico" type="image/x-icon"/>
   <link rel="stylesheet" href="/assets/vendor/fonts.css"/>
   <script src="/assets/vendor/tailwind-3.4.16.min.js"></script>
   <script src="/assets/js/tailwind-config.js"></script>
+  <script src="/assets/js/phishing-iso.js" defer></script>
+  <script src="/assets/js/phishing-eras.js" defer></script>
+  <script src="/assets/js/phishing-i18n.js" defer></script>
+  <script src="/assets/js/phishing-journey.js" defer></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    body { background: #0A0E14; color: #EDF1F7; font-family: 'Inter', sans-serif; line-height: 1.7; overflow-x: hidden; }
+    a:focus-visible, button:focus-visible { outline: 2px solid #00FF87; outline-offset: 3px; border-radius: 6px; }
+
+    .journey-scene { width: 100%; height: auto; display: block; transition: opacity .25s ease; }
+    .journey-scene.is-switching { opacity: 0; }
+    .scene-text { font: 600 6px 'JetBrains Mono', monospace; }
+    .scene-text--green { fill: #00FF87; }
+    .scene-text--light { fill: #F8FAFC; }
+    .scene-text--dark { fill: #0F172A; }
+    .scene-text--red { fill: #DC2626; }
+    .scene-text--amber { fill: #FBBF24; }
+
+    .journey-dial { display: flex; gap: 8px; overflow-x: auto; padding: 4px 2px 10px; scrollbar-width: thin; }
+    .journey-dial-button {
+      flex: 0 0 auto; font: 600 12px 'JetBrains Mono', monospace; color: #8B98AC;
+      background: #111827; border: 1px solid #1E2A3A; border-radius: 999px; padding: 8px 14px; cursor: pointer;
+    }
+    .journey-dial-button[aria-pressed="true"] { color: #0A0E14; background: #00FF87; border-color: #00FF87; }
+    .journey-dial-button:focus { outline: 2px solid #00FF87; outline-offset: 3px; }
+
+    .journey-option {
+      display: block; width: 100%; text-align: left; font: 14px 'Inter', sans-serif; color: #EDF1F7;
+      background: #0E1420; border: 1px solid #1E2A3A; border-radius: 10px; padding: 10px 12px; margin-top: 8px; cursor: pointer;
+    }
+    .journey-option:hover:not([aria-disabled="true"]) { border-color: #7C3AED; }
+    .journey-option:focus { outline: 2px solid #00FF87; outline-offset: 2px; }
+    .journey-option[data-result="scam"] { border-color: #FF4D6D; background: rgba(255,77,109,.08); }
+    .journey-option[data-result="safe"] { border-color: #00FF87; background: rgba(0,255,135,.06); }
+    .journey-option[data-picked="true"] { box-shadow: inset 0 0 0 1px currentColor; }
+    .journey-option[aria-disabled="true"] { cursor: default; }
+
+    html:not([lang="en"]) [data-lang-note] { display: none; }
+    .lang-switch[aria-pressed="true"] { color: #00FF87; }
+
+    @media (prefers-reduced-motion: reduce) {
+      .journey-scene, .journey-scene.is-switching { transition: none; opacity: 1; }
+      html { scroll-behavior: auto; }
+    }
+  </style>
 </head>
-<body class="bg-ink text-paper font-body antialiased">
-  <main id="journey"></main>
+<body class="antialiased">
+  <header class="max-w-5xl mx-auto px-5 sm:px-8 pt-6 flex items-center justify-between gap-4 font-mono text-xs">
+    <a href="/" class="text-fog hover:text-paper transition-colors" data-i18n="nav.back">← Voltar ao portfólio</a>
+    <div class="flex items-center gap-3" role="group" aria-label="Idioma" data-i18n-aria-label="nav.langLabel">
+      <button type="button" class="lang-switch text-fog hover:text-paper" data-lang-switch="pt" aria-pressed="true">PT</button>
+      <button type="button" class="lang-switch text-fog hover:text-paper" data-lang-switch="en" aria-pressed="false">EN</button>
+    </div>
+  </header>
+
+  <main>
+    <section class="max-w-5xl mx-auto px-5 sm:px-8 pt-10 pb-12" data-journey>
+      <p class="font-mono text-[11px] uppercase tracking-[0.14em] text-terminal" data-i18n="journey.kicker">pesquisa → curso → pôster → desafio</p>
+      <h1 class="font-display font-bold text-3xl sm:text-5xl tracking-tight mt-2" data-i18n="journey.title">Uma viagem pelo tempo do phishing</h1>
+      <p class="text-fog text-lg mt-3" data-i18n="journey.lead">40 anos, a mesma isca. Escolha uma década e tente não cair.</p>
+
+      <div class="mt-8 rounded-2xl border border-line bg-panel overflow-hidden">
+        <svg class="journey-scene" data-journey-scene viewBox="-140 -60 320 245" role="img" aria-label="Terminal com monitor de fósforo verde e teclado sobre a mesa, pedindo login."></svg>
+      </div>
+
+      <div class="journey-dial mt-5" data-journey-dial role="group" aria-label="Escolha uma década" data-i18n-aria-label="journey.dialLabel">
+        <button type="button" class="journey-dial-button" aria-pressed="true">1980s</button>
+      </div>
+
+      <div class="grid gap-6 md:grid-cols-[minmax(0,18rem)_1fr] mt-6">
+        <img data-journey-cover src="/assets/phishing/covers/1980s.webp" width="768" height="512" alt="Capa do curso para esta época: O início do cibercrime" class="w-full h-auto rounded-xl border border-line">
+        <div>
+          <h2 class="font-display font-semibold text-2xl" data-journey-title>O início do cibercrime</h2>
+          <p class="text-fog mt-1" data-journey-chapter>A curiosidade vira ameaça: BBS, phreaks e as primeiras senhas roubadas.</p>
+          <p class="font-mono text-[11px] uppercase tracking-[0.14em] text-purple-light mt-5" data-i18n="journey.challengeLabel">Mini-desafio</p>
+          <p class="mt-1" data-journey-question>Mensagem no BBS. Qual destas é golpe?</p>
+          <div data-journey-options>
+            <p class="journey-option">"Sou o sysop. Me passe sua senha para manutenção."</p>
+            <p class="journey-option">Aviso no mural: manutenção às 22h, nenhuma ação necessária.</p>
+          </div>
+          <p class="text-sm text-fog mt-3 min-h-[1.5rem]" data-journey-feedback aria-live="polite"></p>
+          <div data-journey-final hidden class="mt-4 rounded-xl border border-terminal/40 bg-terminal/5 p-4">
+            <a href="/phishing/desafio/" class="inline-flex items-center gap-2 rounded-lg border border-terminal bg-terminal/10 px-4 py-2.5 font-semibold text-terminal hover:bg-terminal/20 transition-colors" data-i18n="challenge.cta">Jogar o desafio completo (5 níveis)</a>
+            <p class="text-sm text-fog mt-3" data-i18n="challenge.credit">Desafio criado para o estande do VESPAS na Tecnológica 2026, feira que recebeu mais de 3 mil visitantes.</p>
+            <p class="text-sm text-amber mt-1" data-lang-note data-i18n="challenge.languageNote">O desafio é em português.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="border-t border-line/60 bg-panel/40">
+      <div class="max-w-5xl mx-auto px-5 sm:px-8 py-14">
+        <h2 class="font-display font-bold text-2xl sm:text-3xl" data-i18n="origin.title">De onde isso veio</h2>
+        <div class="grid gap-6 md:grid-cols-2 mt-8">
+          <article id="curso" class="rounded-xl border border-line bg-card p-6">
+            <p class="font-mono text-[11px] uppercase tracking-[0.14em] text-terminal" data-i18n="curso.kicker">curso · MOOC</p>
+            <h3 class="font-display font-semibold text-xl mt-2" data-i18n="curso.title">Curso no Portal Sophia-CT</h3>
+            <p class="inline-block mt-2 rounded-full border border-terminal/50 px-2.5 py-0.5 font-mono text-[10px] uppercase tracking-wider text-terminal" data-i18n="curso.badge">em destaque no Portal Sophia</p>
+            <p class="text-fog mt-3" data-i18n="curso.body">Curso aberto sobre phishing com narrativa histórica: seis paradas, dos BBS dos anos 80 ao deepfake de voz, com atividades práticas e simulações.</p>
+            <a data-product-link href="https://sophia.ct.utfpr.edu.br/course/view.php?id=118" target="_blank" rel="noopener noreferrer" class="mt-4 inline-flex items-center gap-2 rounded-lg border border-terminal bg-terminal/10 px-4 py-2.5 font-semibold text-terminal hover:bg-terminal/20 transition-colors"><span data-i18n="curso.cta">Fazer o curso</span> <span aria-hidden="true">↗</span></a>
+            <p class="font-mono text-[11px] text-fog mt-2" data-i18n="curso.login">exige login no Sophia-CT</p>
+          </article>
+
+          <article id="tcc" class="rounded-xl border border-line bg-card p-6">
+            <p class="font-mono text-[11px] uppercase tracking-[0.14em] text-purple-light" data-i18n="tcc.kicker">pesquisa · TCC · UTFPR</p>
+            <h3 class="font-display font-semibold text-xl mt-2" data-i18n="tcc.title">A pesquisa por trás do curso</h3>
+            <p class="mt-3 flex items-baseline gap-2"><span class="font-mono text-3xl font-semibold text-terminal" data-i18n="tcc.grade">9,5</span><span class="font-mono text-[11px] uppercase tracking-wider text-fog" data-i18n="tcc.gradeLabel">nota final da banca</span></p>
+            <p class="font-mono text-[11px] text-fog" data-i18n="tcc.approved">aprovado em 14/07/2026</p>
+            <p class="text-fog mt-3" data-i18n="tcc.body">Pesquisa aplicada de métodos mistos que desenvolveu e avaliou uma intervenção educativa em cibersegurança, combinando o MOOC, a narrativa histórica e simulações de phishing mapeadas ao MITRE ATT&amp;CK.</p>
+            <div class="mt-4 flex flex-wrap items-center gap-4">
+              <a data-product-link href="/assets/TCC_Thales_Sgarbi_Salata_corrigido_revisado-1.pdf" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 rounded-lg border border-purple bg-purple/10 px-4 py-2.5 font-semibold text-purple-light hover:bg-purple/20 transition-colors"><span data-i18n="tcc.cta">Ler o TCC (PDF)</span> <span aria-hidden="true">↗</span></a>
+              <a href="https://www.linkedin.com/posts/thales-sgarbi-salata_ciberseguranaexa-phishing-educaaexaeto-activity-7488010229113217024-7BcI" target="_blank" rel="noopener noreferrer" class="font-mono text-[12px] text-purple-light hover:text-purple"><span data-i18n="tcc.post">Post no LinkedIn</span> ↗</a>
+            </div>
+          </article>
+
+          <article id="poster" class="rounded-xl border border-line bg-card p-6 grid gap-5 sm:grid-cols-[9rem_1fr]">
+            <img src="/assets/phishing/poster.webp" width="662" height="936" loading="lazy" alt="Pôster &quot;Uma viagem pelo tempo do phishing&quot;, feito para a VESPAS' Con 26." data-i18n-alt="poster.alt" class="w-full h-auto rounded-lg border border-line">
+            <div>
+              <p class="font-mono text-[11px] uppercase tracking-[0.14em] text-amber" data-i18n="poster.kicker">pôster · VESPAS' Con 26</p>
+              <h3 class="font-display font-semibold text-xl mt-2" data-i18n="poster.title">Uma viagem pelo tempo do phishing, no papel</h3>
+              <p class="text-sm text-paper mt-2" data-i18n="poster.status">Aceito para apresentação na VESPAS' Con 26 (10/11/2026).</p>
+              <p class="text-fog mt-2" data-i18n="poster.body">O pôster resume o curso em seis paradas e a evolução do phishing em palavras-chave, com coautoria do orientador Daniel Fernando Pigatto.</p>
+              <a data-product-link href="/assets/phishing/poster-vespascon26.pdf" target="_blank" rel="noopener noreferrer" class="mt-4 inline-flex items-center gap-2 rounded-lg border border-amber bg-amber/10 px-4 py-2.5 font-semibold text-amber hover:bg-amber/20 transition-colors"><span data-i18n="poster.cta">Baixar o pôster (PDF)</span> <span aria-hidden="true">↗</span></a>
+            </div>
+          </article>
+
+          <article id="desafio" class="rounded-xl border border-line bg-card p-6">
+            <p class="font-mono text-[11px] uppercase tracking-[0.14em] text-terminal" data-i18n="desafio.kicker">desafio · Tecnológica 2026</p>
+            <h3 class="font-display font-semibold text-xl mt-2" data-i18n="desafio.title">Cuidado que o tubarão phishing vai te pegar</h3>
+            <p class="text-fog mt-3" data-i18n="desafio.body">Cinco pares de links, do typosquatting ao link mascarado. Criei o desafio e representei o VESPAS no estande, onde o público jogava pelo QR code.</p>
+            <p class="text-sm text-fog mt-2" data-i18n="challenge.credit">Desafio criado para o estande do VESPAS na Tecnológica 2026, feira que recebeu mais de 3 mil visitantes.</p>
+            <a data-product-link href="/phishing/desafio/" class="mt-4 inline-flex items-center gap-2 rounded-lg border border-terminal bg-terminal/10 px-4 py-2.5 font-semibold text-terminal hover:bg-terminal/20 transition-colors"><span data-i18n="desafio.cta">Jogar o desafio</span> <span aria-hidden="true">→</span></a>
+            <p class="text-sm text-amber mt-2" data-lang-note data-i18n="challenge.languageNote">O desafio é em português.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="max-w-5xl mx-auto px-5 sm:px-8 py-10 font-mono text-xs text-fog flex flex-wrap justify-between gap-3">
+    <span data-i18n="footer.text">Thales Sgarbi Salata · educação em cibersegurança</span>
+    <a href="/" class="hover:text-paper" data-i18n="nav.back">← Voltar ao portfólio</a>
+  </footer>
 </body>
 </html>

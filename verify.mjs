@@ -1,6 +1,7 @@
 // Verificação end-to-end: screenshots desktop/mobile, toggle PT/EN, link do CV.
 // Usa a versão de Puppeteer declarada neste projeto.
 import { createRequire } from 'module';
+import { verifyPhishing } from './test/phishing-browser.mjs';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -1104,11 +1105,16 @@ results.reducedMotionAmbientPlayer = await reducedMotion.evaluate(() => {
   };
 });
 
+// The phishing journey reports its first failing scenario instead of aborting the whole run.
+try { results.phishing = await verifyPhishing(browser, BASE); }
+catch (error) { results.phishing = { passed: false, error: error.message }; }
+
 await browser.close();
 
 const expectedSkillIcons = ['crosshair', 'shield-check', 'cloud-cog', 'code-xml', 'brain-circuit'];
 
 const assertions = [
+  [results.phishing.passed, `the phishing journey passes its browser scenarios${results.phishing.error ? `: ${results.phishing.error}` : ''}`],
   [results.profile.title.includes('Thales Sgarbi Salata'), 'title identifies the portfolio owner'],
   [
     results.slowScanIntro.visibleAfterInitialRead && results.slowScanIntro.sweepDurationSeconds >= 3.9,

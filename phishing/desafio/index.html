@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#082d42">
+  <meta name="description" content="Reconheça as iscas: um desafio VESPAS com cinco pares de links para aprender a identificar imitações.">
+  <title>Cuidado com o phishing! • VESPAS</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <div id="page-loader" class="page-loader" role="status" aria-live="polite">
+    <img src="VESPAS_Logos/VESPAS.Logo2.svg" alt="VESPAS" class="loader-logo">
+    <p>Preparando o desafio</p>
+    <div class="loader-track" aria-hidden="true"><span></span></div>
+    <span class="loader-hint"># Tecnológica 2026 – Feira de Cursos</span>
+  </div>
+  <header class="masthead">
+    <a class="brand" href="./" aria-label="VESPAS, início"><img class="brand-logo" src="VESPAS_Logos/VESPAS.Logo2.svg" alt=""></a>
+    <span class="header-note"># Tecnológica 2026 – Feira de Cursos</span>
+    <span class="edition">Desafio anti-phishing</span>
+    <a class="edition" href="/phishing/" style="margin-left:0;text-decoration:none">← voltar à viagem</a>
+    <button id="sound-toggle" class="sound-toggle" type="button" aria-pressed="true" aria-label="Som das respostas">Som ligado</button>
+  </header>
+
+  <main id="main">
+    <section id="intro" class="intro" aria-labelledby="intro-title">
+      <div class="intro-copy">
+        <span class="eyebrow"><span class="signal-dot"></span> Você reconhece um link falso?</span>
+        <h1 id="intro-title">Cuidado que o<br><span class="crossed">tubarão</span><br><span class="phishing-word">phishing</span><br>vai te pegar!</h1>
+        <p class="lead">Um dos links é falso.<br>Será que você sabe qual?</p>
+        <button id="start" class="button primary" type="button">Começar desafio <span aria-hidden="true">↗</span></button>
+        <p class="intro-meta"><span>5 níveis</span><span>No seu ritmo</span><span>Sem cadastro</span></p>
+      </div>
+      <div class="ocean-art" aria-hidden="true">
+        <div class="orbit orbit-one"></div><div class="orbit orbit-two"></div>
+        <span class="art-label label-top">Não morda a isca.</span>
+        <svg class="shark" viewBox="0 0 600 560" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="skin" x1="0" y1="0" x2="0.35" y2="1"><stop stop-color="#163c50"/><stop offset=".52" stop-color="#467887"/><stop offset="1" stop-color="#83aaa9"/></linearGradient>
+            <linearGradient id="belly" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#adc9c5"/><stop offset="1" stop-color="#547d87"/></linearGradient>
+          </defs>
+          <path d="M448-10v99q0 20-20 20h-27" fill="none" stroke="#b4e8e0" stroke-width="3" stroke-dasharray="8 9"/>
+          <path d="M402 84v63c0 28 40 28 40 0v-13l-13 15" fill="none" stroke="#ffd562" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>
+          <g transform="rotate(-8 300 320)" stroke-linejoin="miter">
+            <!-- Long, angular silhouette and swept fins. -->
+            <path d="M192 298 63 194 88 294 34 407 197 348Z" fill="#285569" stroke="#062537" stroke-width="5"/>
+            <path d="M249 263 292 123 316 166 333 254Z" fill="#365e70" stroke="#062537" stroke-width="5"/>
+            <path d="m292 123 10 114 31 17-17-88Z" fill="#183d50"/>
+            <path d="M153 301C235 247 298 229 371 249 448 257 509 285 565 325L510 355 528 408C459 452 360 435 282 390L157 342Z" fill="url(#skin)" stroke="#062537" stroke-width="5"/>
+            <path d="M184 330C259 336 302 342 360 327L513 334 491 384 528 408C454 448 361 428 282 390Z" fill="url(#belly)"/>
+            <!-- Open jaw, with upper and lower rows of long teeth. -->
+            <path d="M362 326 537 337 488 359 516 402 453 412 400 384Z" fill="#031722" stroke="#163747" stroke-width="5"/>
+            <g fill="#e6ece1">
+              <path d="m372 330 26 3-7 37Z"/><path d="m400 333 28 2-11 42Z"/>
+              <path d="m430 335 28 2-16 40Z"/><path d="m460 337 27 1-17 30Z"/>
+              <path d="m490 339 24 0-20 18Z"/>
+              <path d="m407 385 15-18 9 32Z"/><path d="m435 403 18-26 11 34Z"/>
+              <path d="m468 410 13-35 20 31Z"/>
+            </g>
+            <path d="M358 317 410 323 479 326" fill="none" stroke="#1b4355" stroke-width="5"/>
+            <!-- Narrow eye under a heavy brow, without a cartoon highlight. -->
+            <path d="m434 288 39 13-35 9-10-12Z" fill="#041b28"/>
+            <path d="m438 297 23 6-21 2Z" fill="#d6c38a"/>
+            <path d="m448 299 4 1-1 5-4-1Z" fill="#061d29"/>
+            <path d="m423 281 52 17" fill="none" stroke="#203f50" stroke-width="8"/>
+            <path d="m527 317 10 4" stroke="#133343" stroke-width="4"/>
+            <path d="M331 291q-12 25-9 47m-6-51q-15 26-12 47m-5-49q-16 24-14 45m-4-44q-14 19-14 37" fill="none" stroke="#173c4d" stroke-width="5"/>
+            <path d="m316 364-41 135 111-90" fill="#294f64" stroke="#062537" stroke-width="5"/>
+            <path d="m316 364-41 135 66-111Z" fill="#3e7180"/>
+            <path d="m209 350-55 38 91-10" fill="#315f70"/>
+            <path d="M179 299q93-51 167-45" fill="none" stroke="#86b7ba" stroke-width="2" opacity=".55"/>
+          </g>
+          <g transform="translate(462 439) rotate(-18)"><path d="M0 0v64l17-17 14 28 15-8-14-26 23-3Z" fill="#ffd562" stroke="#082d42" stroke-width="5" stroke-linejoin="round"/></g>
+          <g fill="none" stroke="#72d8d1" stroke-width="3"><circle cx="147" cy="180" r="13"/><circle cx="99" cy="426" r="8"/><circle cx="516" cy="226" r="7"/><path d="M190 115v20m-10-10h20M393 478v20m-10-10h20"/></g>
+        </svg>
+        <span class="bait-sticker"><svg viewBox="0 0 32 32"><path d="M7 14a9 9 0 0 1 18 0v7l-5 2v5h-8v-5l-5-2Z" fill="currentColor"/><circle cx="12" cy="15" r="3" fill="#ffd562"/><circle cx="21" cy="15" r="3" fill="#ffd562"/></svg> Parece real.<br>Mas será?</span>
+        <span class="art-label label-bottom">Confira o endereço antes de clicar.</span>
+      </div>
+      <div class="intro-explainer"><span class="small-hook" aria-hidden="true">?</span><p><strong>O que é phishing?</strong> É um golpe que usa mensagens ou sites falsos para roubar senhas, dados ou dinheiro. Neste jogo, você vai comparar links e descobrir onde está o truque.</p></div>
+    </section>
+
+    <section id="game" class="game" aria-labelledby="question-title" hidden>
+      <div class="game-top"><span id="progress-label"></span><span id="difficulty" class="difficulty"></span></div>
+      <div id="progress" class="progress" aria-hidden="true"></div>
+      <h1 id="question-title" tabindex="-1">Qual link pertence<br>ao site oficial?</h1>
+      <p id="scenario" class="scenario"></p><blockquote id="message" class="message"></blockquote>
+      <div id="inspect-panel" class="inspect-panel" hidden>
+        <strong>Copie aqui e confira em outra aba</strong>
+        <ol><li>Pressione e segure o endereço do link A, selecione e toque em “Copiar”.</li><li>Abra outra aba e cole na barra, <strong>sem pressionar Enter nem acessar o site</strong>.</li><li>Volte, copie o link B do mesmo jeito e confira o destino também.</li></ol>
+        <p>No computador, selecione o endereço e use Ctrl+C. Cole em outra aba sem abrir o site.</p>
+        <p id="copy-progress" role="status" aria-live="polite"></p>
+      </div>
+      <form id="answer-form">
+        <fieldset id="choices"><legend>Escolha um dos dois endereços:</legend><div id="options"></div></fieldset>
+        <p class="simulation">Situações inventadas para este desafio. Os botões não abrem sites.</p>
+        <button id="confirm" class="button primary full" type="submit" disabled>Confirmar resposta</button>
+      </form>
+      <section id="feedback" class="feedback" aria-labelledby="feedback-title" hidden>
+        <h2 id="feedback-title" tabindex="-1"></h2>
+        <p id="technique" class="technique"></p><p id="explanation"></p><p id="takeaway" class="takeaway"></p>
+        <button id="next" class="button primary full" type="button">Próxima pergunta <span aria-hidden="true">↗</span></button>
+      </section>
+    </section>
+
+    <section id="result" class="result" aria-labelledby="result-title" hidden>
+      <span class="eyebrow">Fim do desafio</span>
+      <div class="score-medal"><span id="score"></span><span>acertos</span></div>
+      <h1 id="result-title" tabindex="-1"></h1><p id="result-copy" class="lead"></p>
+      <div class="tips"><h2>O que conferir antes de clicar</h2><ol><li><strong>Leia o nome com calma.</strong><span>Uma letra a mais já muda o endereço.</span></li><li><strong>Confira as palavras extras.</strong><span>“entregaja.com.br” e “entregaja-taxas.com.br” são sites diferentes.</span></li><li><strong>Leia até o fim do nome do site.</strong><span>O nome da empresa pode aparecer no começo de um endereço que não é dela.</span></li><li><strong>Repare onde está a barra.</strong><span>Depois dela, o nome de uma marca pode ser só parte do nome da página.</span></li><li><strong>Confira para onde o link leva.</strong><span>O endereço que aparece na mensagem pode ser diferente do que o link abre.</span></li></ol><p>Sites falsos também podem usar HTTPS. Se ficar na dúvida, abra o aplicativo ou digite o endereço oficial que você já conhece.</p></div>
+      <button id="restart" class="button primary full" type="button">Jogar novamente <span aria-hidden="true">↻</span></button>
+      <p class="stand-note">Ficou com alguma dúvida? Fale com a gente no estande do VESPAS.</p>
+    </section>
+    <noscript>Ative o JavaScript no navegador para participar do quiz.</noscript>
+  </main>
+  <footer><span>VESPAS <span class="footer-divider">/</span> Desafio de links falsos</span><span>Na dúvida, confira antes de clicar.</span></footer>
+</body>
+</html>
