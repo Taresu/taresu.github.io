@@ -167,27 +167,17 @@
       filter: drop-shadow(0 14px 28px rgba(124,58,237,.2));
     }
     .about-authorial-stack { display: grid; gap: 18px; align-self: start; }
-    .mascot-stat-trigger { font: inherit; color: inherit; background: transparent; border: 0; padding: 0; cursor: crosshair; }
-    .mascot-stat-trigger:disabled { cursor: default; }
-    .mascot-stat-trigger:focus-visible { outline: 2px solid #00ff87; outline-offset: 4px; border-radius: 2px; }
-    .mascot-effects { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 40; }
-    .mascot-media {
-      position: relative;
+    .ascii-portrait-media {
       display: grid;
       place-items: center;
       grid-template-rows: minmax(0,1fr);
       height: clamp(320px,34vw,430px);
       overflow: hidden;
-      background: radial-gradient(120% 120% at 50% 32%, #0a0f18 0%, #020303 72%);
+      background: #020303;
       border-bottom: 1px solid rgba(30,42,58,.85);
     }
-    .mascot-media canvas { position: absolute; inset: 0; width: 100% !important; height: 100% !important; display: block; cursor: crosshair; }
-    .mascot-media canvas[hidden] { display: none !important; }
-    .mascot-poster { width: 100%; height: 100%; min-height: 0; max-height: 100%; object-fit: contain; transition: opacity .6s ease; }
-    .mascot-media[data-mascot-live="true"] .mascot-poster { opacity: 0; }
-    [data-mascot]:not([data-mascot-live="true"]) .mascot-live-only,
-    [data-mascot][data-mascot-live="true"] .mascot-static-only { display: none; }
-    .mascot-caption { padding: 12px 16px 14px; color: rgba(139,152,172,.9); }
+    .ascii-portrait-image { width: 100%; height: 100%; min-height: 0; max-height: 100%; object-fit: contain; }
+    .ascii-portrait-caption { padding: 12px 16px 14px; color: rgba(139,152,172,.9); }
     .footer-brand-lockup { display: flex; align-items: center; gap: 14px; }
     .footer-brand-shield { width: 56px; height: 56px; flex: none; }
 
@@ -1173,20 +1163,20 @@
         </p>
         <div class="flex flex-wrap gap-6 pt-4 font-mono text-[13px]">
           <div>
-            <span data-mascot-stat="cisco" class="text-terminal text-xl font-semibold">4</span>
-            <span id="mascot-stat-cisco-label" class="block text-fog/80 mt-0.5" data-i18n="about.stat1">cursos Cisco Networking Academy</span>
+            <span class="text-terminal text-xl font-semibold">4</span>
+            <span class="block text-fog/80 mt-0.5" data-i18n="about.stat1">cursos Cisco Networking Academy</span>
           </div>
           <div>
-            <span data-mascot-stat="voip" class="text-terminal text-xl font-semibold">370</span>
-            <span id="mascot-stat-voip-label" class="block text-fog/80 mt-0.5" data-i18n="about.stat2">dispositivos VoIP migrados</span>
+            <span class="text-terminal text-xl font-semibold">370</span>
+            <span class="block text-fog/80 mt-0.5" data-i18n="about.stat2">dispositivos VoIP migrados</span>
           </div>
           <div>
-            <span data-mascot-stat="nerdz" class="text-terminal text-xl font-semibold">3</span>
-            <span id="mascot-stat-nerdz-label" class="block text-fog/80 mt-0.5" data-i18n="about.stat3">plataformas no Nerdz</span>
+            <span class="text-terminal text-xl font-semibold">3</span>
+            <span class="block text-fog/80 mt-0.5" data-i18n="about.stat3">plataformas no Nerdz</span>
           </div>
           <div>
-            <span data-mascot-stat="tcc" class="text-terminal text-xl font-semibold">9.85</span>
-            <span id="mascot-stat-tcc-label" class="block text-fog/80 mt-0.5" data-i18n="about.stat4">nota média no piloto do TCC (de 7,54)</span>
+            <span class="text-terminal text-xl font-semibold">9.85</span>
+            <span class="block text-fog/80 mt-0.5" data-i18n="about.stat4">nota média no piloto do TCC (de 7,54)</span>
           </div>
         </div>
       </div>
@@ -1209,20 +1199,15 @@
           </div>
         </div>
 
-        <figure data-mascot class="reveal term rounded-xl overflow-hidden">
+        <figure data-ascii-portrait class="reveal term rounded-xl overflow-hidden">
           <div class="flex flex-wrap items-center justify-between gap-2 px-4 py-2.5 border-b border-line bg-black/30 font-mono text-[11px]">
-            <span class="text-fog mascot-static-only">$ cat ~/identity/ascii-self-portrait.svg</span>
-            <span class="text-fog mascot-live-only">$ ./identity/mascot --interactive</span>
-            <span class="text-terminal mascot-static-only" data-i18n="about.asciiTitle">autorretrato ASCII autoral</span>
-            <span class="text-terminal mascot-live-only" data-i18n="about.mascotTitle">agente 3D · segue o mouse</span>
+            <span class="text-fog">$ cat ~/identity/ascii-self-portrait.svg</span>
+            <span class="text-terminal" data-i18n="about.asciiTitle">autorretrato ASCII autoral</span>
           </div>
-          <div class="mascot-media" data-mascot-stage>
-            <img src="assets/brand/ascii-self-portrait.svg" width="3074" height="3208" alt="Autorretrato ASCII autoral de Thales Sgarbi Salata formado por caracteres claros sobre fundo escuro." data-i18n-alt="about.asciiAlt" loading="lazy" decoding="async" class="mascot-poster" data-mascot-poster data-ascii-portrait>
+          <div class="ascii-portrait-media">
+            <img src="assets/brand/ascii-self-portrait.svg" width="3074" height="3208" alt="Autorretrato ASCII autoral de Thales Sgarbi Salata formado por caracteres claros sobre fundo escuro." data-i18n-alt="about.asciiAlt" loading="lazy" decoding="async" class="ascii-portrait-image">
           </div>
-          <figcaption class="mascot-caption font-mono text-[11px] leading-relaxed">
-            <span class="mascot-static-only" data-i18n="about.asciiCaption">Autorretrato construído em caracteres — uma assinatura visual entre identidade, código e segurança.</span>
-            <span class="mascot-live-only" data-i18n="about.mascotCaption">Um mascote em 3D que segue o seu cursor. Portfólio de quem trabalha com IA não devia ter enfeite parado.</span>
-          </figcaption>
+          <figcaption class="ascii-portrait-caption font-mono text-[11px] leading-relaxed" data-i18n="about.asciiCaption">Autorretrato construído em caracteres — uma assinatura visual entre identidade, código e segurança.</figcaption>
         </figure>
       </div>
     </div>
@@ -1959,8 +1944,6 @@
         'about.asciiTitle': 'autorretrato ASCII autoral',
         'about.asciiCaption': 'Autorretrato construído em caracteres — uma assinatura visual entre identidade, código e segurança.',
         'about.asciiAlt': 'Autorretrato ASCII autoral de Thales Sgarbi Salata formado por caracteres claros sobre fundo escuro.',
-        'about.mascotTitle': 'agente 3D · segue o mouse',
-        'about.mascotCaption': 'Um mascote em 3D que segue o seu cursor. Portfólio de quem trabalha com IA não devia ter enfeite parado.',
         'exp.title': 'Experiência', 'exp.employer': 'organização', 'exp.present': 'jul 2026', 'exp.present3': 'presente', 'exp.present4': 'set 2026',
         'exp.utfsRole': 'Desenvolvedor Full Stack',
         'exp.utfsDate': 'mar 2026', 'exp.utfDate': 'set 2025 — jul 2026', 'exp.cmcDate': 'mar 2025', 'exp.vwDate': 'mai 2024 — fev 2025', 'exp.vwtiDate': 'mai 2023 — abr 2024',
@@ -2043,8 +2026,6 @@
         'about.asciiTitle': 'authorial ASCII self-portrait',
         'about.asciiCaption': 'A self-portrait built from characters — a visual signature connecting identity, code and security.',
         'about.asciiAlt': 'Authorial ASCII self-portrait of Thales Sgarbi Salata formed by light characters on a dark background.',
-        'about.mascotTitle': '3D agent · follows your mouse',
-        'about.mascotCaption': 'A 3D mascot that follows your cursor. A portfolio from someone who works with AI has no business sitting still.',
         'exp.title': 'Experience', 'exp.employer': 'organization', 'exp.present': 'Jul 2026', 'exp.present3': 'present', 'exp.present4': 'Sep 2026',
         'exp.utfsRole': 'Full Stack Developer',
         'exp.utfsDate': 'Mar 2026', 'exp.utfDate': 'Sep 2025 — Jul 2026', 'exp.cmcDate': 'Mar 2025', 'exp.vwDate': 'May 2024 — Feb 2025', 'exp.vwtiDate': 'May 2023 — Apr 2024',
@@ -3525,236 +3506,6 @@
         ],
       });
     }
-  </script>
-
-  <!-- ═══════════ Interactive 3D mascot (About) ═══════════ -->
-  <script>
-  (() => {
-    const media = document.querySelector('[data-mascot-stage]');
-    if (!media) return;
-    const figure = media.closest('[data-mascot]');
-    const poster = media.querySelector('[data-mascot-poster]');
-    // The ASCII poster is the content until the 3D model takes over.
-    function setLive(live) {
-      media.setAttribute('data-mascot-live', String(live));
-      figure.setAttribute('data-mascot-live', String(live));
-      if (live) poster?.setAttribute('aria-hidden', 'true'); else poster?.removeAttribute('aria-hidden');
-    }
-
-    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
-    const finePointer = window.matchMedia('(pointer: fine)');
-    const wideEnough = window.matchMedia('(min-width: 768px)');
-    function webglOK() {
-      try {
-        const c = document.createElement('canvas');
-        return !!(window.WebGLRenderingContext && (c.getContext('webgl') || c.getContext('experimental-webgl')));
-      } catch (e) { return false; }
-    }
-    // Keep the static poster for reduced-motion, touch/coarse pointers or small screens.
-    // WebGL is probed only in start(): creating a context during parse delays page load.
-    if (reduceMotion.matches || !finePointer.matches || !wideEnough.matches) return;
-
-    function loadScript(src) {
-      return new Promise((resolve, reject) => {
-        const s = document.createElement('script');
-        s.src = src; s.onload = resolve; s.onerror = reject;
-        document.head.appendChild(s);
-      });
-    }
-
-    let started = false;
-    async function start() {
-      if (started) return; started = true;
-      if (!webglOK()) return;
-      try {
-        await loadScript('/assets/vendor/three/three.min.js');
-        await loadScript('/assets/vendor/three/GLTFLoader.js');
-      } catch (e) { return; }
-      const THREE = window.THREE;
-      if (!THREE || !THREE.GLTFLoader) return;
-      try { await loadScript('/assets/js/mascot-effects.js'); } catch (e) { /* Mascot remains usable without effects. */ }
-      try { init(THREE); } catch (e) { media.querySelector('canvas')?.remove(); }
-    }
-
-    function init(THREE) {
-      const w = media.clientWidth, h = media.clientHeight;
-      const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
-      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
-      renderer.setSize(w, h);
-      if ('outputEncoding' in renderer) renderer.outputEncoding = THREE.sRGBEncoding;
-      media.appendChild(renderer.domElement);
-
-      const scene = new THREE.Scene();
-      const camera = new THREE.PerspectiveCamera(32, w / h, 0.1, 100);
-
-      scene.add(new THREE.AmbientLight(0x2b3240, 0.55));
-      const key = new THREE.DirectionalLight(0xdfe7ff, 1.05); key.position.set(2.5, 3.5, 3); scene.add(key);
-      const fill = new THREE.DirectionalLight(0x8b5cf6, 0.5); fill.position.set(-3, 1.5, 1.5); scene.add(fill);
-      const rim = new THREE.DirectionalLight(0xbcd0ff, 0.85); rim.position.set(-1.5, 2, -3); scene.add(rim);
-
-      const CHARCOAL = 0x17151c, PURPLE = 0x8b5cf6;
-      let headBone = null, neckBone = null, baseHead = null, baseNeck = null, mixer = null, idleAction = null, waveAction = null;
-      let modelRoot = null, effects = null, lockedAim = null, pointer = null, contextLost = false;
-      const eyeAnchors = [];
-      const projectedEyes = [new THREE.Vector3(), new THREE.Vector3()];
-      const eligible = () => !reduceMotion.matches && finePointer.matches && wideEnough.matches && !contextLost;
-      const clock = new THREE.Clock();
-      const targetRot = { yaw: 0, pitch: 0 };
-      let curYaw = 0, curPitch = 0;
-
-      new THREE.GLTFLoader().load('/assets/brand/mascot-robot.glb', (gltf) => {
-        const model = gltf.scene;
-        modelRoot = model;
-        model.traverse((o) => {
-          if (o.isBone) { if (o.name === 'Head') headBone = o; if (o.name === 'Neck') neckBone = o; }
-          if (o.isMesh && o.material) {
-            (Array.isArray(o.material) ? o.material : [o.material]).forEach((m) => {
-              const n = (m.name || '').toLowerCase();
-              if (n.indexOf('main') !== -1) {                 // body (~69%) — neutral graphite
-                m.color = new THREE.Color(CHARCOAL);
-                if ('emissive' in m) { m.emissive = new THREE.Color(0x000000); m.emissiveIntensity = 0; }
-                if ('metalness' in m) m.metalness = 0.4;
-                if ('roughness' in m) m.roughness = 0.6;
-              } else if (n.indexOf('black') !== -1) {         // eyes / visor — neutral charcoal, lit only by the scene
-                m.color = new THREE.Color(CHARCOAL);
-                if ('emissive' in m) { m.emissive = new THREE.Color(0x000000); m.emissiveIntensity = 0; }
-                if (!eyeAnchors.length) {
-                  // GLB Head/Black: bounding-box centers of its two 45-vertex lens components,
-                  // in this mesh's local model units. Project centers to stay on the lenses.
-                  for (const x of [-0.00709985, 0.00709985]) {
-                    const anchor = new THREE.Object3D();
-                    anchor.position.set(x, -0.00909125, -0.00058765);
-                    o.add(anchor);
-                    eyeAnchors.push(anchor);
-                  }
-                }
-              } else {                                         // grey trim / limbs — purple details
-                m.color = new THREE.Color(PURPLE);
-                if ('emissive' in m) { m.emissive = new THREE.Color(PURPLE); m.emissiveIntensity = 0.18; }
-                if ('metalness' in m) m.metalness = 0.3;
-                if ('roughness' in m) m.roughness = 0.5;
-              }
-            });
-          }
-        });
-        if (headBone) baseHead = headBone.rotation.clone();
-        if (neckBone) baseNeck = neckBone.rotation.clone();
-
-        const box = new THREE.Box3().setFromObject(model);
-        const size = box.getSize(new THREE.Vector3());
-        model.position.y -= box.min.y;                 // feet to ground
-        const focusY = size.y * 0.5;
-        camera.position.set(0, size.y * 0.55, size.y * 2.15);
-        camera.lookAt(0, focusY, 0);
-        scene.add(model);
-
-        if (gltf.animations && gltf.animations.length) {
-          mixer = new THREE.AnimationMixer(model);
-          const find = (frag) => gltf.animations.find((a) => a.name.toLowerCase().indexOf(frag) !== -1);
-          const idle = find('idle'), wave = find('wave');
-          if (idle) { idleAction = mixer.clipAction(idle); idleAction.play(); }
-          if (wave) { waveAction = mixer.clipAction(wave); waveAction.loop = THREE.LoopOnce; waveAction.clampWhenFinished = true; }
-        }
-        model.updateMatrixWorld(true);
-        camera.updateMatrixWorld(true);
-        setLive(eligible());
-        if (window.createMascotEffects && eyeAnchors.length === 2) {
-          effects = window.createMascotEffects({
-            targets: [...document.querySelectorAll('[data-mascot-stat]')], figure,
-            getEyes, aimAt: point => { lockedAim = point; },
-            releaseAim: () => { lockedAim = null; }, canAnimate: eligible,
-          });
-        }
-        ensureLoop();
-      }, undefined, () => { renderer.domElement.remove(); contextLost = true; });
-
-      function getEyes() {
-        if (eyeAnchors.length !== 2 || !modelRoot) return null;
-        const rect = media.getBoundingClientRect();
-        if (!rect.width || !rect.height) return null;
-        const points = eyeAnchors.map((anchor, index) => {
-          const vector = projectedEyes[index];
-          anchor.getWorldPosition(vector);
-          vector.project(camera);
-          return { x: rect.left + (vector.x + 1) * rect.width / 2, y: rect.top + (1 - vector.y) * rect.height / 2, z: vector.z };
-        });
-        return points.every(p => Number.isFinite(p.x) && Number.isFinite(p.y) && p.z >= -1 && p.z <= 1 &&
-          p.x >= Math.max(0, rect.left) && p.x <= Math.min(innerWidth, rect.right) &&
-          p.y >= Math.max(0, rect.top) && p.y <= Math.min(innerHeight, rect.bottom)) ? points : null;
-      }
-
-      function onMove(e) {
-        if (e.pointerType === 'mouse') pointer = { x: e.clientX, y: e.clientY };
-      }
-      function onLeave() { pointer = null; effects?.cancel(); }
-      window.addEventListener('pointermove', onMove, { passive: true });
-      document.documentElement.addEventListener('pointerleave', onLeave);
-      window.addEventListener('blur', onLeave);
-      figure.addEventListener('click', () => {
-        if (!waveAction || !eligible() || (figure.dataset.mascotEffectState && figure.dataset.mascotEffectState !== 'idle')) return;
-        waveAction.reset(); waveAction.play();
-        setTimeout(() => { if (idleAction) idleAction.reset().play(); }, 1600);
-      });
-
-      let visible = true, raf = 0;
-      function loop() {
-        if (!visible || document.hidden || !eligible()) {
-          effects?.cancel();
-          cancelAnimationFrame(raf);
-          raf = 0;
-          if (!eligible()) onEligibilityChange();
-          return;
-        }
-        raf = requestAnimationFrame(loop);
-        const dt = Math.min(clock.getDelta(), 0.05);
-        if (mixer) mixer.update(dt);
-        const aim = lockedAim || pointer;
-        const rect = media.getBoundingClientRect();
-        targetRot.yaw = aim ? Math.max(-0.7, Math.min(0.7, (aim.x - rect.left - rect.width / 2) / (innerWidth / 2) * 0.7)) : 0;
-        targetRot.pitch = aim ? Math.max(-0.4, Math.min(0.5, (aim.y - rect.top - rect.height / 2) / (innerHeight / 2) * 0.5)) : 0;
-        const alpha = 1 - Math.exp(-5 * dt);
-        curYaw += (targetRot.yaw - curYaw) * alpha;
-        curPitch += (targetRot.pitch - curPitch) * alpha;
-        if (neckBone && baseNeck) neckBone.rotation.set(baseNeck.x + curPitch * 0.18, baseNeck.y + curYaw * 0.22, baseNeck.z);
-        if (headBone && baseHead) headBone.rotation.set(baseHead.x + curPitch * 0.35, baseHead.y + curYaw * 0.5, baseHead.z);
-        modelRoot?.updateMatrixWorld(true);
-        effects?.update(performance.now());
-        renderer.render(scene, camera);
-      }
-      function ensureLoop() { if (!raf && visible && !document.hidden && eligible()) { clock.getDelta(); loop(); } }
-
-      new IntersectionObserver((ents) => { visible = ents[0].isIntersecting; if (!visible) effects?.cancel(); effects?.refresh(); ensureLoop(); }, { threshold: 0.05 }).observe(media);
-      document.addEventListener('visibilitychange', () => { if (document.hidden) effects?.cancel(); ensureLoop(); });
-      function onEligibilityChange() {
-        effects?.cancel();
-        renderer.domElement.hidden = !eligible();
-        setLive(eligible() && Boolean(modelRoot));
-        effects?.refresh();
-        ensureLoop();
-      }
-      for (const query of [reduceMotion, finePointer, wideEnough]) query.addEventListener('change', onEligibilityChange);
-      renderer.domElement.addEventListener('webglcontextlost', () => { contextLost = true; onEligibilityChange(); });
-      renderer.domElement.addEventListener('webglcontextrestored', () => { contextLost = false; onEligibilityChange(); });
-      window.addEventListener('resize', () => {
-        const nw = media.clientWidth, nh = media.clientHeight;
-        if (!nw || !nh) return;
-        renderer.setSize(nw, nh); camera.aspect = nw / nh; camera.updateProjectionMatrix();
-      });
-    }
-
-    // Lazy-init only when the About block approaches the viewport.
-    const startIO = new IntersectionObserver((ents) => {
-      if (ents[0].isIntersecting) { startIO.disconnect(); start(); }
-    }, { rootMargin: '200px' });
-    // Boot the 3D only after the recon-scan intro leaves the DOM, so it never competes with it.
-    const intro = document.getElementById('scan-intro');
-    if (!intro || !intro.isConnected) startIO.observe(media);
-    else new MutationObserver((_, observer) => {
-      if (intro.isConnected) return;
-      observer.disconnect();
-      startIO.observe(media);
-    }).observe(intro.parentNode, { childList: true });
-  })();
   </script>
 </body>
 </html>
