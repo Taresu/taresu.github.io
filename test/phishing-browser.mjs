@@ -66,6 +66,14 @@ export async function verifyPhishing(browser, base) {
       assert.match(links.curso.rel, /noopener/);
       assert.equal(links.tcc.href, '/assets/TCC_Thales_Sgarbi_Salata_corrigido_revisado-1.pdf');
       assert.equal(links.poster.href, '/assets/phishing/poster-vespascon26.pdf');
+      const posterActions = await page.evaluate(() => ({
+        thumbnail: document.querySelector('#poster a:has(> img)')?.getAttribute('href'),
+        download: document.querySelector('#poster [data-poster-download]')?.getAttribute('href'),
+        downloadName: document.querySelector('#poster [data-poster-download]')?.getAttribute('download'),
+      }));
+      assert.equal(posterActions.thumbnail, '/assets/phishing/poster-vespascon26.pdf', 'the poster thumbnail opens the poster');
+      assert.equal(posterActions.download, '/assets/phishing/poster-vespascon26.pdf');
+      assert.ok(posterActions.downloadName, 'the poster can be downloaded directly');
       assert.equal(links.desafio.href, '/phishing/desafio/');
       const body = await page.evaluate(() => document.body.textContent);
       assert.ok(body.includes('9,5') && body.includes('10/11/2026'), 'grade and poster date are shown');
