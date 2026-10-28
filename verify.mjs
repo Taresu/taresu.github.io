@@ -189,7 +189,7 @@ results.profile = await page.evaluate(() => ({
       rel: document.querySelector('[data-project="tcc"] [data-course-link]')?.rel,
     },
   },
-  experienceGroups: Object.fromEntries(['possamai', 'utfpr', 'cmc', 'volkswagen'].map(employer => {
+  experienceGroups: Object.fromEntries(['possamai', 'vespas', 'utfpr', 'cmc', 'volkswagen'].map(employer => {
     const group = document.querySelector(`[data-employer-group="${employer}"]`);
     return [employer, {
       present: Boolean(group),
@@ -1386,6 +1386,13 @@ const assertions = [
   [
     results.profile.yearsStat.value === '3+' && results.profile.yearsStat.label === 'anos em TI',
     'the About stats lead with verifiable experience instead of the pilot score',
+  ],
+  [
+    results.profile.experienceGroups.vespas.present &&
+      results.profile.experienceGroups.vespas.employer === 'VESPAS (UTFPR)' &&
+      results.profile.experienceGroups.vespas.logoCount === 1 &&
+      JSON.stringify(results.profile.experienceGroups.vespas.roles) === JSON.stringify(['Voluntário — Alertas, CTF & Site']),
+    'the VESPAS volunteer role sits inside its own organization group like the other entries',
   ],
   [results.profile.assistantWebmasterCount === 0, 'the unrelated legacy Webmaster entry remains absent'],
   [results.profile.cmcRole === 'Estagiário DevOps', 'the CMC role is written naturally in Portuguese'],
