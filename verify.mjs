@@ -179,6 +179,9 @@ results.profile = await page.evaluate(() => ({
     firstProject: document.querySelector('#projetos article')?.dataset.project,
     title: document.querySelector('[data-project="tcc"] h3')?.textContent.trim(),
     text: document.querySelector('[data-project="tcc"]')?.textContent,
+    journeyLink: document.querySelector('[data-project="tcc"] [data-journey-link]')?.href,
+    journeyLabel: document.querySelector('[data-project="tcc"] [data-journey-link]')?.textContent.trim(),
+    aside: document.querySelector('[data-project="tcc"] aside')?.textContent,
     summary: document.querySelector('[data-project="tcc"] [data-i18n="proj.tcc.d"]')?.textContent.trim(),
     link: document.querySelector('[data-project="tcc"] [data-tcc-link]')?.href,
     course: {
@@ -1413,6 +1416,20 @@ const assertions = [
       results.profile.tcc.post.target === '_blank' && results.profile.tcc.post.rel.includes('noopener') &&
       results.profile.tcc.post.label === 'Post no LinkedIn',
     'the TCC card links safely to the LinkedIn post without tracking parameters',
+  ],
+  [
+    results.profile.tcc.journeyLink === `${BASE}/phishing/` &&
+      results.profile.tcc.journeyLabel?.startsWith('Viajar no tempo do phishing'),
+    'the research card leads into the phishing journey with a prominent action',
+  ],
+  [
+    results.profile.tcc.aside?.includes('9,5') && results.profile.tcc.aside.includes('nota final da banca') &&
+      !results.profile.tcc.aside.includes('85 p.'),
+    'the research card highlights the 9.5 committee grade instead of the page count',
+  ],
+  [
+    ['final committee grade', 'Travel through phishing time'].every(text => results.en.tcc?.includes(text)),
+    'the research card grade and journey action are translated in English',
   ],
   [results.profile.assistantWebmasterCount === 0, 'the unrelated legacy Webmaster entry remains absent'],
   [results.profile.cmcRole === 'Estagiário DevOps', 'the CMC role is written naturally in Portuguese'],
