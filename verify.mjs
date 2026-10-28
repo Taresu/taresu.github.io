@@ -201,6 +201,7 @@ results.profile = await page.evaluate(() => ({
     return [employer, {
       present: Boolean(group),
       employer: group?.querySelector('[data-employer-name]')?.textContent.trim(),
+      text: group?.textContent,
       roles: [...(group?.querySelectorAll('[data-experience-role]') || [])]
         .map(role => role.querySelector('[data-role-title]')?.textContent.trim()),
       logoCount: group?.querySelectorAll('.employer-logo').length || 0,
@@ -1397,7 +1398,8 @@ const assertions = [
     results.profile.firstExperience === 'possamai' &&
       results.profile.experienceGroups.possamai.present &&
       results.profile.experienceGroups.possamai.employer === 'Possamai Software Studio' &&
-      JSON.stringify(results.profile.experienceGroups.possamai.roles) === JSON.stringify(['Sócio-fundador']) &&
+      JSON.stringify(results.profile.experienceGroups.possamai.roles) === JSON.stringify(['Cofundador · estúdio independente']) &&
+      !/sócio/i.test(results.profile.experienceGroups.possamai.text || '') &&
       results.profile.possamaiLink === 'https://possamai-studio.com/?utm_source=portfolio',
     'the Possamai Software Studio partnership opens the experience timeline and links to the studio',
   ],

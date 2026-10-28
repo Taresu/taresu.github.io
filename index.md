@@ -14,7 +14,7 @@ I build and maintain web and mobile applications, integrate services and automat
 
 ## About
 
-I'm an Information Systems graduate from UTFPR, a public federal university whose program is rated top marks (5 stars) by the Guia do Estudante. I worked as a Full Stack developer on the university's institutional portal (until Sep 2026) and I co-founded Possamai Software Studio, where I built Preço Afiado. At VESPAS I volunteer: I coordinate the cybersecurity Alerts Channel, mentor members with a focus on Blue Team, co-maintain the initiative's website, and contribute to its CTF labs and challenges.
+I'm an Information Systems graduate from UTFPR, a public federal university whose program is rated top marks (5 stars) by the Guia do Estudante. I worked as a Full Stack developer on the university's institutional portal (until Sep 2026) and I co-founded Possamai Software Studio, an independent studio where I built Preço Afiado. At VESPAS I volunteer: I coordinate the cybersecurity Alerts Channel, mentor members with a focus on Blue Team, co-maintain the initiative's website, and contribute to its CTF labs and challenges.
 
 My experience connects development, operations and security: React/TypeScript and Python on the UTFPR Portal; Python, Astro and Cloudflare on Preço Afiado; automation, CI/CD, cloud and vulnerability investigation in corporate environments.
 
