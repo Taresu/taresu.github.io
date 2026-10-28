@@ -79,12 +79,16 @@
     [data-journey-cover] { border: 2px solid var(--era-accent) !important; box-shadow: 0 0 0 4px rgba(255,255,255,.04); }
     [data-journey-title], [data-journey-question] { font-family: var(--era-font); }
 
+    /* One frame size for every product thumbnail, whatever the image's own proportions. */
+    .thumb-frame { display: block; width: 7.5rem; aspect-ratio: 3 / 4; overflow: hidden; border-radius: 12px; border: 1px solid #1E2A3A; transition: transform .2s ease; }
+    .thumb-frame:hover { transform: translateY(-2px); }
+
     html:not([lang="en"]) [data-lang-note] { display: none; }
     .lang-switch[aria-pressed="true"] { color: #00FF87; }
 
     @media (prefers-reduced-motion: reduce) {
       .journey-scene, .journey-scene.is-switching { transition: none; opacity: 1; }
-      .journey-dial-dot { transition: none; }
+      .journey-dial-dot, .thumb-frame { transition: none; }
       html { scroll-behavior: auto; }
     }
   </style>
@@ -114,25 +118,26 @@
         </figure>
       </div>
 
-      <div class="mt-8 grid grid-cols-[minmax(0,1fr)] gap-8 lg:grid-cols-2 lg:items-start">
-        <div class="mx-auto w-full min-w-0 max-w-xl lg:max-w-none">
-          <div class="rounded-2xl border border-line bg-panel overflow-hidden">
-            <svg class="journey-scene" data-journey-scene viewBox="-140 -60 320 245" role="img" aria-label="Terminal com monitor de fósforo verde e teclado sobre a mesa, pedindo login."></svg>
-          </div>
-
-          <div class="journey-dial mt-5" data-journey-dial role="group" aria-label="Escolha uma década" data-i18n-aria-label="journey.dialLabel">
-            <button type="button" class="journey-dial-button" aria-pressed="true"><span class="journey-dial-dot"></span><span class="journey-dial-year" data-year>1980s</span><span class="journey-dial-milestone" data-milestone>BBS</span></button>
-          </div>
-          <div class="flex justify-between gap-3 mt-2 font-mono text-xs">
-            <button type="button" class="journey-step" data-journey-prev data-i18n="journey.prev">← década anterior</button>
-            <button type="button" class="journey-step" data-journey-next data-i18n="journey.next">próxima década →</button>
-          </div>
+      <div class="mt-10 rounded-2xl border border-line bg-panel/60 p-4 sm:p-6" data-journey-stage>
+        <div class="journey-dial" data-journey-dial role="group" aria-label="Escolha uma década" data-i18n-aria-label="journey.dialLabel">
+          <button type="button" class="journey-dial-button" aria-pressed="true"><span class="journey-dial-dot"></span><span class="journey-dial-year" data-year>1980s</span><span class="journey-dial-milestone" data-milestone>BBS</span></button>
         </div>
-        <div class="min-w-0">
-          <img data-journey-cover src="/assets/phishing/covers/1980s.webp" width="768" height="512" alt="Capa do curso para esta época: O início do cibercrime" class="w-full max-w-sm h-auto rounded-xl border border-line">
-          <div class="mt-5">
-            <h2 class="font-display font-semibold text-2xl" data-journey-title>O início do cibercrime</h2>
-            <p class="text-fog mt-1" data-journey-chapter>A curiosidade vira ameaça: BBS, phreaks e as primeiras senhas roubadas.</p>
+        <div class="flex justify-between gap-3 mt-2 font-mono text-xs">
+          <button type="button" class="journey-step" data-journey-prev data-i18n="journey.prev">← década anterior</button>
+          <button type="button" class="journey-step" data-journey-next data-i18n="journey.next">próxima década →</button>
+        </div>
+        <div class="mt-6 grid grid-cols-[minmax(0,1fr)] gap-6 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,1fr)] lg:items-start">
+          <div class="min-w-0 overflow-hidden rounded-xl border border-line/60 bg-ink/70">
+            <svg class="journey-scene" data-journey-scene viewBox="-105 -52 243 213" role="img" aria-label="Terminal com monitor de fósforo verde e teclado sobre a mesa, pedindo login."></svg>
+          </div>
+          <div class="min-w-0">
+            <div class="flex items-start gap-4">
+              <img data-journey-cover src="/assets/phishing/covers/1980s.webp" width="768" height="512" alt="Capa do curso para esta época: O início do cibercrime" class="w-28 sm:w-40 shrink-0 h-auto rounded-lg">
+              <div class="min-w-0">
+                <h2 class="font-display font-semibold text-2xl" data-journey-title>O início do cibercrime</h2>
+                <p class="text-fog mt-1" data-journey-chapter>A curiosidade vira ameaça: BBS, phreaks e as primeiras senhas roubadas.</p>
+              </div>
+            </div>
             <p class="font-mono text-[11px] uppercase tracking-[0.14em] text-purple-light mt-5" data-i18n="journey.challengeLabel">Mini-desafio</p>
             <p class="mt-1" data-journey-question>Mensagem no BBS. Qual destas é golpe?</p>
             <div data-journey-options>
@@ -152,8 +157,8 @@
 
     <section id="insights" class="border-t border-line/60">
       <div class="max-w-5xl mx-auto px-5 sm:px-8 py-14">
-        <h2 class="font-display font-bold text-2xl sm:text-3xl" data-i18n="insights.title">Insights rápidos</h2>
-        <p class="text-fog mt-2" data-i18n="insights.lead">Em poucos segundos, o que eu aprendi pesquisando e ensinando sobre phishing.</p>
+        <h2 class="font-display font-bold text-2xl sm:text-3xl text-center" data-i18n="insights.title">Insights rápidos</h2>
+        <p class="text-fog mt-2 text-center" data-i18n="insights.lead">Em poucos segundos, o que eu aprendi pesquisando e ensinando sobre phishing.</p>
         <div class="grid gap-4 sm:grid-cols-2 mt-8">
           <div data-insight-stat class="rounded-xl border border-line bg-card p-5">
             <p class="font-mono text-4xl font-semibold text-terminal" data-i18n="insights.stat1Value">553 mi</p>
@@ -203,9 +208,13 @@
 
     <section class="border-t border-line/60 bg-panel/40">
       <div class="max-w-5xl mx-auto px-5 sm:px-8 py-14">
-        <h2 class="font-display font-bold text-2xl sm:text-3xl" data-i18n="origin.title">O que eu construí pelo caminho</h2>
+        <h2 class="font-display font-bold text-2xl sm:text-3xl text-center"><span data-i18n="origin.title">O que eu construí pelo caminho</span> <span class="font-mono text-terminal" aria-hidden="true">^^</span></h2>
         <div class="grid gap-6 md:grid-cols-2 mt-8">
-          <article id="curso" class="rounded-xl border border-line bg-card p-6">
+          <article id="curso" class="rounded-xl border border-line bg-card p-6 grid gap-5 sm:grid-cols-[7.5rem_1fr]">
+            <a data-thumb href="https://sophia.ct.utfpr.edu.br/course/view.php?id=118" target="_blank" rel="noopener noreferrer" class="thumb-frame bg-[#1b2a3a]">
+              <img src="/assets/phishing/course-cover.webp" width="1100" height="614" loading="lazy" alt="" class="w-full h-full object-cover object-center">
+            </a>
+            <div class="min-w-0">
             <p class="font-mono text-[11px] uppercase tracking-[0.14em] text-terminal" data-i18n="curso.kicker">minicurso · MOOC</p>
             <h3 class="font-display font-semibold text-xl mt-2" data-i18n="curso.title">O minicurso que eu criei</h3>
             <p class="inline-block mt-2 rounded-full border border-terminal/50 px-2.5 py-0.5 font-mono text-[10px] uppercase tracking-wider text-terminal" data-i18n="curso.badge">em destaque no Portal Sophia</p>
@@ -213,11 +222,12 @@
             <p class="text-sm text-paper mt-2" data-i18n="curso.portal">Hoje ele está em destaque no Portal Sophia, que reúne 47 cursos e 6.848 usuários (out/2026).</p>
             <a data-product-link href="https://sophia.ct.utfpr.edu.br/course/view.php?id=118" target="_blank" rel="noopener noreferrer" class="mt-4 inline-flex items-center gap-2 rounded-lg border border-terminal bg-terminal/10 px-4 py-2.5 font-semibold text-terminal hover:bg-terminal/20 transition-colors"><span data-i18n="curso.cta">Fazer o minicurso</span> <span aria-hidden="true">↗</span></a>
             <p class="font-mono text-[11px] text-fog mt-2" data-i18n="curso.login">exige login no Sophia-CT</p>
+            </div>
           </article>
 
-          <article id="tcc" class="rounded-xl border border-line bg-card p-6 grid gap-5 sm:grid-cols-[7rem_1fr]">
-            <a href="/assets/TCC_Thales_Sgarbi_Salata_corrigido_revisado-1.pdf" target="_blank" rel="noopener noreferrer" class="block self-start rounded-md bg-white shadow-lg transition-transform hover:-translate-y-0.5">
-              <img src="/assets/phishing/tcc-folha-rosto.webp" width="596" height="842" loading="lazy" alt="Folha de rosto do TCC &quot;Educação em cibersegurança&quot;." data-i18n-alt="tcc.thumbAlt" class="w-full h-auto rounded-md">
+          <article id="tcc" class="rounded-xl border border-line bg-card p-6 grid gap-5 sm:grid-cols-[7.5rem_1fr]">
+            <a href="/assets/TCC_Thales_Sgarbi_Salata_corrigido_revisado-1.pdf" target="_blank" rel="noopener noreferrer" data-thumb class="thumb-frame bg-white">
+              <img src="/assets/phishing/tcc-folha-rosto.webp" width="596" height="842" loading="lazy" alt="Folha de rosto do TCC &quot;Educação em cibersegurança&quot;." data-i18n-alt="tcc.thumbAlt" class="w-full h-full object-contain">
             </a>
             <div class="min-w-0">
             <p class="font-mono text-[11px] uppercase tracking-[0.14em] text-purple-light" data-i18n="tcc.kicker">pesquisa · TCC · UTFPR</p>
@@ -232,9 +242,9 @@
             </div>
           </article>
 
-          <article id="poster" class="rounded-xl border border-line bg-card p-6 grid gap-5 sm:grid-cols-[9rem_1fr]">
-            <a href="/assets/phishing/poster-vespascon26.pdf" target="_blank" rel="noopener noreferrer" class="block rounded-lg transition-transform hover:-translate-y-0.5">
-              <img src="/assets/phishing/poster.webp" width="662" height="936" loading="lazy" alt="Pôster &quot;Uma viagem pelo tempo do phishing&quot;, feito para a VESPAS' Con 26." data-i18n-alt="poster.alt" class="w-full h-auto rounded-lg border border-line">
+          <article id="poster" class="rounded-xl border border-line bg-card p-6 grid gap-5 sm:grid-cols-[7.5rem_1fr]">
+            <a data-thumb href="/assets/phishing/poster-vespascon26.pdf" target="_blank" rel="noopener noreferrer" class="thumb-frame bg-[#0f2a44]">
+              <img src="/assets/phishing/poster.webp" width="662" height="936" loading="lazy" alt="Pôster &quot;Uma viagem pelo tempo do phishing&quot;, feito para a VESPAS' Con 26." data-i18n-alt="poster.alt" class="w-full h-full object-contain">
             </a>
             <div>
               <p class="font-mono text-[11px] uppercase tracking-[0.14em] text-amber" data-i18n="poster.kicker">pôster · VESPAS' Con 26</p>
@@ -248,9 +258,9 @@
             </div>
           </article>
 
-          <article id="desafio" class="rounded-xl border border-line bg-card p-6 grid gap-5 sm:grid-cols-[9rem_1fr]">
-            <a href="/phishing/desafio/" class="block self-start rounded-lg bg-[#082d42] p-2 transition-transform hover:-translate-y-0.5">
-              <img src="/assets/phishing/shark.svg" width="600" height="560" loading="lazy" alt="Tubarão do desafio anti-phishing do VESPAS" data-i18n-alt="desafio.sharkAlt" class="w-full h-auto">
+          <article id="desafio" class="rounded-xl border border-line bg-card p-6 grid gap-5 sm:grid-cols-[7.5rem_1fr]">
+            <a href="/phishing/desafio/" data-thumb class="thumb-frame bg-[#082d42] p-2">
+              <img src="/assets/phishing/shark.svg" width="600" height="560" loading="lazy" alt="Tubarão do desafio anti-phishing do VESPAS" data-i18n-alt="desafio.sharkAlt" class="w-full h-full object-contain">
             </a>
             <div>
             <p class="font-mono text-[11px] uppercase tracking-[0.14em] text-terminal" data-i18n="desafio.kicker">desafio · Tecnológica 2026</p>

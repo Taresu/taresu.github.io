@@ -189,6 +189,21 @@ export async function verifyPhishing(browser, base) {
         return { height: scene.height, right: scene.right, titleLeft: title.left, titleTop: title.top, sceneTop: scene.top };
       });
       assert.ok(layout.height <= 420, `scene stays compact on desktop (${Math.round(layout.height)}px)`);
+      const sizes = await page.evaluate(() => ({
+        cover: document.querySelector('[data-journey-cover]').getBoundingClientRect().width,
+        thumbs: [...document.querySelectorAll('[data-thumb]')].map(el => {
+          const r = el.getBoundingClientRect();
+          return [Math.round(r.width), Math.round(r.height)];
+        }),
+        stage: Boolean(document.querySelector('[data-journey-stage] [data-journey-dial]') &&
+          document.querySelector('[data-journey-stage] [data-journey-scene]') &&
+          document.querySelector('[data-journey-stage] [data-journey-question]')),
+      }));
+      assert.ok(sizes.cover <= 200, `the era cover is a thumbnail beside the title (${Math.round(sizes.cover)}px)`);
+      assert.equal(sizes.thumbs.length, 4, 'every product card has a thumbnail');
+      assert.ok(sizes.thumbs.every(([w, h]) => w === sizes.thumbs[0][0] && h === sizes.thumbs[0][1]),
+        `product thumbnails share one size ${JSON.stringify(sizes.thumbs)}`);
+      assert.ok(sizes.stage, 'timeline, scene and stop live in one stage');
       assert.ok(layout.right <= layout.titleLeft && layout.titleTop < layout.sceneTop + layout.height,
         'scene sits beside the stop on desktop');
       scenarios.push('desktop scene is compact and beside the stop');

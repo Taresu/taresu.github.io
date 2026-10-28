@@ -3,8 +3,8 @@
 (function () {
   // Every scene shares the same desk, grid and framing so switching eras reads as one desk through time.
   function desk(iso, g) {
-    iso.polygon(g, [[-0.9, -0.9, -0.5], [9, -0.9, -0.5], [9, 7, -0.5], [-0.9, 7, -0.5]], 'rgba(0,0,0,.28)');
-    iso.box(g, -0.4, -0.4, -0.5, 8.8, 6.8, 0.5, '#2b3345');
+    iso.polygon(g, [[0.55, 0.45, -0.5], [7.25, 0.45, -0.5], [7.25, 5.65, -0.5], [0.55, 5.65, -0.5]], 'rgba(0,0,0,.28)');
+    iso.box(g, 0.8, 0.7, -0.5, 6.2, 4.7, 0.5, '#2b3345');
   }
 
   function keyboard(iso, g, x, y, width, color) {
@@ -57,9 +57,9 @@
     '1990s': (iso, g) => {
       const font = THEMES['1990s'].font;
       desk(iso, g);
-      iso.box(g, 0.6, 1.0, 0, 1.1, 2.6, 3.0, '#d8cfb6');
-      iso.screen(g, 0.8, 3.601, 2.2, 0.7, 0.12, '#1b1b1b');
-      iso.screen(g, 1.45, 3.601, 0.4, 0.12, 0.12, '#00ff87');
+      iso.box(g, 1.0, 1.0, 0, 1.1, 2.6, 3.0, '#d8cfb6');
+      iso.screen(g, 1.2, 3.601, 2.2, 0.7, 0.12, '#1b1b1b');
+      iso.screen(g, 1.85, 3.601, 0.4, 0.12, 0.12, '#00ff87');
       iso.box(g, 2.2, 1.2, 0, 2.6, 2.2, 2.3, '#e2d9c0');
       iso.screen(g, 2.45, 3.401, 0.5, 2.1, 1.5, '#008080');
       iso.screen(g, 2.65, 3.402, 0.62, 1.7, 1.05, '#c0c0c0', true);
