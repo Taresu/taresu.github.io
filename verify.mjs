@@ -211,6 +211,15 @@ results.profile = await page.evaluate(() => ({
   ).length,
   cmcRole: document.querySelector('[data-i18n="exp.cmcRole"]')?.textContent.trim(),
   possamaiLink: document.querySelector('[data-employer-group="possamai"] [data-org-primary-name]')?.href,
+  heroActions: [...(document.querySelector('[data-hero-journey]')?.parentElement.children || [])]
+    .map(el => el.matches('[data-hero-journey]') ? 'journey' : el.matches('#cv-link') ? 'cv' : el.getAttribute('href') === '#projetos' ? 'projects' : null)
+    .filter(Boolean),
+  heroPrimary: document.querySelector('[data-hero-journey].btn-primary') ? 'journey' : document.querySelector('#cv-link.btn-primary') ? 'cv' : null,
+  heroJourneyOutlined: Boolean(document.querySelector('[data-hero-journey].btn-ghost.border-terminal\\/60')),
+  heroJourney: {
+    href: document.querySelector('[data-hero-journey]')?.href,
+    label: document.querySelector('[data-hero-journey] [data-i18n="hero.journey"]')?.textContent.trim(),
+  },
   firstExperience: document.querySelector('#experiencia article')?.dataset.employerGroup,
   precoAfiado: {
     secondProject: document.querySelectorAll('#projetos article')[1]?.dataset.project,
@@ -1431,6 +1440,15 @@ const assertions = [
   [
     ['final committee grade', 'Travel through phishing time'].every(text => results.en.tcc?.includes(text)),
     'the research card grade and journey action are translated in English',
+  ],
+  [
+    results.profile.heroJourney.href === `${BASE}/phishing/` && results.profile.heroJourney.label === 'Viajar no tempo do phishing',
+    'the hero invites visitors into the interactive phishing journey',
+  ],
+  [
+    JSON.stringify(results.profile.heroActions) === JSON.stringify(['journey', 'projects', 'cv']) &&
+      results.profile.heroJourneyOutlined && results.profile.heroPrimary === null,
+    'the outlined journey button leads the hero actions and the CV download moves to the end',
   ],
   [results.profile.assistantWebmasterCount === 0, 'the unrelated legacy Webmaster entry remains absent'],
   [results.profile.cmcRole === 'Estagiário DevOps', 'the CMC role is written naturally in Portuguese'],
