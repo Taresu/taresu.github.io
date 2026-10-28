@@ -1754,9 +1754,12 @@ const assertions = [
     results.reducedMotionAmbientPlayer.transforms.every(v => v === '' || v === 'none'),
     'equalizer bars stay static under prefers-reduced-motion',
   ],
-  [results.profile.employerLogos.length === 4, 'each employer group has one logo'],
+  [results.profile.employerLogos.length === 5, 'each employer group has one logo'],
   [results.profile.employerLogos.every(l => l.alt && l.alt.length > 0), 'all employer logos have alt text'],
-  [results.profile.employerLogos.every(l => l.bg === 'dark'), 'all employer logos use the dark pill'],
+  [
+    results.profile.employerLogos.every(l => l.bg === (l.alt === 'Possamai Software Studio' ? 'light' : 'dark')),
+    'employer logos use the dark pill, except the Possamai mark, which keeps its light background until a dark version exists',
+  ],
   [
     results.profile.reconGraph.canvasPresent && results.profile.reconGraph.canvasAriaHidden === 'true',
     'the recon-graph canvas exists and is decorative (aria-hidden)',
