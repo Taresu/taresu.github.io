@@ -16,7 +16,7 @@ const PUBLIC_ROOT_FILES = new Set([
   'servicos.html',
   'sitemap.xml',
 ]);
-const PUBLIC_DIRECTORIES = new Set(['assets', '.well-known']);
+const PUBLIC_DIRECTORIES = new Set(['assets', '.well-known', 'phishing']);
 
 const MIME = {
   '.html': 'text/html',
@@ -63,6 +63,7 @@ function resolvePublicFile(requestUrl) {
   if (urlPath.includes('\\')) return null;
   if (urlPath === '/' || urlPath.endsWith('/')) urlPath += 'index.html';
   if (urlPath === '/servicos') urlPath = '/servicos.html';
+  if (urlPath === '/phishing') urlPath = '/phishing/index.html';
 
   const segments = urlPath.split('/').filter(Boolean);
   const isRootFile = segments.length === 1 && PUBLIC_ROOT_FILES.has(segments[0]);

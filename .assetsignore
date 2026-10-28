@@ -10,3 +10,5 @@
 !assets/**
 !.well-known/
 !.well-known/**
+!phishing/
+!phishing/**

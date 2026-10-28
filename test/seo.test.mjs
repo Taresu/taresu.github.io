@@ -137,6 +137,24 @@ test('the services page is available at its canonical URL', async t => {
   assert.ok(html.includes(`<link rel="canonical" href="${canonicalOrigin}/servicos"/>`));
 });
 
+test('the phishing journey is available at its canonical URL', async t => {
+  const port = await reservePort();
+  const server = await startServer(port);
+  t.after(() => server.kill());
+
+  for (const route of ['/phishing/', '/phishing']) {
+    const response = await fetch(`http://127.0.0.1:${port}${route}`);
+    const html = await response.text();
+    assert.equal(response.status, 200, `${route} must be served`);
+    assert.ok(html.includes(`<link rel="canonical" href="${canonicalOrigin}/phishing/"/>`));
+  }
+});
+
+test('the sitemap advertises the phishing journey', () => {
+  const sitemap = readFileSync(path.join(projectRoot, 'sitemap.xml'), 'utf8');
+  assert.match(sitemap, new RegExp(`<loc>${canonicalOrigin}/phishing/</loc>`));
+});
+
 test('the sitemap advertises the canonical services page', () => {
   const sitemap = readFileSync(path.join(projectRoot, 'sitemap.xml'), 'utf8');
   assert.match(sitemap, new RegExp(`<loc>${canonicalOrigin}/servicos</loc>`));
@@ -185,6 +203,8 @@ test('Cloudflare default deploy works from a clean checkout with an asset allowl
     '_headers',
     path.join('assets', 'vendor', 'bundle.js'),
     path.join('.well-known', 'mcp', 'server-card.json'),
+    path.join('phishing', 'index.html'),
+    path.join('phishing', 'desafio', 'app.js'),
   ];
   const forbidden = [
     'worker.js',
@@ -240,6 +260,7 @@ test('the Pages build contains only published site artifacts', () => {
   assert.ok(deployedFiles.includes('robots.txt'));
   assert.ok(deployedFiles.includes('servicos.html'));
   assert.ok(deployedFiles.includes('sitemap.xml'));
+  assert.ok(deployedFiles.includes(path.join('phishing', 'index.html')));
   assert.ok(deployedFiles.includes(path.join('assets', 'brand', 'portfolio-social.png')));
   assert.ok(deployedFiles.includes(path.join('assets', 'brand', 'services-social.png')));
   assert.ok(deployedFiles.includes(path.join('assets', 'brand', 'thales-salata-shield.png')));

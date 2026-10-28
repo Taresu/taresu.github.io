@@ -5,7 +5,7 @@ const CONTENT_SECURITY_POLICY = [
   "frame-ancestors 'none'",
   "frame-src 'none'",
   "form-action 'self'",
-  "script-src 'self' 'sha256-ViNC/VHt4jfqj/aHF8mCa+8F5HpHglzjY7e121V280w=' 'sha256-G/EE+6aNofHmyivuMxUc8ZrW3/AKFd9OiocvHvqM7gY=' 'sha256-i1fepjD+8wjzShChLhL2biTis7Nh1g+ii/JR37slmnM=' 'sha256-CSdbmJTeel3LRzD195c/fkNvVHZCsumzr5WS/FZ1DXo='",
+  "script-src 'self' 'sha256-G/EE+6aNofHmyivuMxUc8ZrW3/AKFd9OiocvHvqM7gY=' 'sha256-i1fepjD+8wjzShChLhL2biTis7Nh1g+ii/JR37slmnM=' 'sha256-CSdbmJTeel3LRzD195c/fkNvVHZCsumzr5WS/FZ1DXo='",
   "script-src-attr 'none'",
   "style-src 'self' 'unsafe-inline'",
   "font-src 'self'",
