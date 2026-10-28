@@ -132,6 +132,7 @@
       text: {
         pt: {
           title: 'O início do cibercrime',
+          milestone: 'BBS',
           chapter: 'A curiosidade vira ameaça: BBS, phreaks e as primeiras senhas roubadas.',
           sceneLabel: 'Terminal com monitor de fósforo verde e teclado sobre a mesa, pedindo login.',
           question: 'Mensagem no BBS. Qual destas é golpe?',
@@ -141,6 +142,7 @@
         },
         en: {
           title: 'The dawn of cybercrime',
+          milestone: 'BBS',
           chapter: 'Curiosity turns into threat: BBSs, phreaks and the first stolen passwords.',
           sceneLabel: 'Green-phosphor terminal and keyboard on the desk, asking for a login.',
           question: 'A BBS message. Which one is the scam?',
@@ -158,6 +160,7 @@
       text: {
         pt: {
           title: 'A origem do phishing',
+          milestone: 'AOL',
           chapter: 'Contas AOL, AOHell e falsos funcionários pedindo senha.',
           sceneLabel: 'PC bege com monitor de tubo e disquetes, com uma janela pedindo a senha da conta.',
           question: 'Janela de mensagem da AOL. Qual destas é golpe?',
@@ -167,6 +170,7 @@
         },
         en: {
           title: 'The origin of phishing',
+          milestone: 'AOL',
           chapter: 'AOL accounts, AOHell and fake staff asking for passwords.',
           sceneLabel: 'Beige PC with a CRT monitor and floppy disks, showing a window that asks for the account password.',
           question: 'An AOL message window. Which one is the scam?',
@@ -184,6 +188,7 @@
       text: {
         pt: {
           title: 'A ascensão do phishing',
+          milestone: 'PayPal',
           chapter: 'Bancos on-line, PayPal e eBay falsos: o golpe vira negócio.',
           sceneLabel: 'Notebook prata aberto com um e-mail de banco pedindo atualização de dados.',
           question: 'E-mail do "PayPal". Qual destes é golpe?',
@@ -193,6 +198,7 @@
         },
         en: {
           title: 'The rise of phishing',
+          milestone: 'PayPal',
           chapter: 'Online banking, fake PayPal and eBay: the scam becomes a business.',
           sceneLabel: 'Open silver laptop with a bank e-mail asking you to update your details.',
           question: 'A "PayPal" e-mail. Which one is the scam?',
@@ -210,6 +216,7 @@
       text: {
         pt: {
           title: 'O ataque direcionado',
+          milestone: 'RSA',
           chapter: 'Spear phishing, OSINT e ransomware: o ataque fica direcionado.',
           sceneLabel: 'Notebook e celular sobre a mesa, com um anexo de fatura suspeito na tela.',
           question: 'Mensagem do "diretor". Qual destas é golpe?',
@@ -219,6 +226,7 @@
         },
         en: {
           title: 'The targeted attack',
+          milestone: 'RSA',
           chapter: 'Spear phishing, OSINT and ransomware: attacks get targeted.',
           sceneLabel: 'Laptop and phone on the desk, with a suspicious invoice attachment on screen.',
           question: 'A message from the "director". Which one is the scam?',
@@ -236,6 +244,7 @@
       text: {
         pt: {
           title: 'Fazendas de phishing e IA',
+          milestone: 'IA',
           chapter: 'Kits de phishing, páginas realistas, IA generativa e deepfake de voz.',
           sceneLabel: 'Smartphone sobre a mesa recebendo um áudio que pede um PIX urgente.',
           question: 'Dois áudios no WhatsApp. Qual destes é golpe?',
@@ -245,6 +254,7 @@
         },
         en: {
           title: 'Phishing farms and AI',
+          milestone: 'AI',
           chapter: 'Phishing kits, realistic pages, generative AI and voice deepfakes.',
           sceneLabel: 'Smartphone on the desk receiving a voice message asking for an urgent transfer.',
           question: 'Two WhatsApp voice notes. Which one is the scam?',
@@ -262,6 +272,7 @@
       text: {
         pt: {
           title: 'Como se proteger',
+          milestone: 'você',
           chapter: '40 anos, a mesma isca: urgência, autoridade e confiança. Confirme por outro canal.',
           sceneLabel: 'Smartphone com o tubarão do desafio e dois links lado a lado para escolher.',
           question: 'Promoção da Loja Bela (site oficial: lojabela.com.br). Qual link é golpe?',
@@ -271,6 +282,7 @@
         },
         en: {
           title: 'How to protect yourself',
+          milestone: 'you',
           chapter: '40 years, the same bait: urgency, authority and trust. Confirm through another channel.',
           sceneLabel: 'Smartphone with the challenge shark and two links side by side to choose from.',
           question: 'A Loja Bela promotion (official site: lojabela.com.br). Which link is the scam?',

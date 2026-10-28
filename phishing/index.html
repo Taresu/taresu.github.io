@@ -33,13 +33,35 @@
     .scene-text--red { fill: #DC2626; }
     .scene-text--amber { fill: #FBBF24; }
 
-    .journey-dial { display: flex; gap: 8px; overflow-x: auto; padding: 4px 2px 10px; scrollbar-width: thin; }
+    /* Interactive timeline: one node per era, the track fills up to the selected era. */
+    .journey-dial { display: grid; grid-template-columns: repeat(6, minmax(4.25rem, 1fr)); overflow-x: auto; padding: 4px 2px 6px; scrollbar-width: thin; }
     .journey-dial-button {
-      flex: 0 0 auto; font: 600 12px 'JetBrains Mono', monospace; color: #8B98AC;
-      background: #111827; border: 1px solid #1E2A3A; border-radius: 999px; padding: 8px 14px; cursor: pointer;
+      position: relative; display: flex; flex-direction: column; align-items: center; gap: 2px;
+      background: none; border: 0; padding: 0 4px 6px; cursor: pointer; color: #8B98AC; font: 600 12px 'JetBrains Mono', monospace;
     }
-    .journey-dial-button[aria-pressed="true"] { color: #0A0E14; background: #00FF87; border-color: #00FF87; }
-    .journey-dial-button:focus { outline: 2px solid #00FF87; outline-offset: 3px; }
+    .journey-dial-button::before {
+      content: ''; position: absolute; top: 12px; left: 0; right: 0; height: 2px; background: #1E2A3A;
+    }
+    .journey-dial-button:first-child::before { left: 50%; }
+    .journey-dial-button:last-child::before { right: 50%; }
+    .journey-dial-button[data-passed="true"]::before { background: var(--era-accent); }
+    .journey-dial-button[aria-pressed="true"]::before { background: linear-gradient(90deg, var(--era-accent) 50%, #1E2A3A 50%); }
+    .journey-dial-button:last-child[aria-pressed="true"]::before { background: var(--era-accent); }
+    .journey-dial-dot {
+      position: relative; z-index: 1; width: 12px; height: 12px; margin: 7px 0 4px; border-radius: 50%;
+      background: #0E1420; border: 2px solid #3B4A63; transition: transform .2s ease, background .2s ease;
+    }
+    .journey-dial-button[data-passed="true"] .journey-dial-dot { background: var(--era-accent); border-color: var(--era-accent); }
+    .journey-dial-button[aria-pressed="true"] .journey-dial-dot {
+      background: var(--era-accent); border-color: #EDF1F7; transform: scale(1.45); box-shadow: 0 0 0 4px rgba(237,241,247,.08);
+    }
+    .journey-dial-button[aria-pressed="true"] .journey-dial-year { color: #EDF1F7; }
+    .journey-dial-button:hover .journey-dial-year { color: #EDF1F7; }
+    .journey-dial-milestone { font-size: 10px; font-weight: 400; color: #8B98AC; }
+    .journey-dial-button:focus { outline: 2px solid #00FF87; outline-offset: 3px; border-radius: 8px; }
+    .journey-step { color: #8B98AC; background: none; border: 1px solid #1E2A3A; border-radius: 999px; padding: 6px 12px; cursor: pointer; }
+    .journey-step:hover:not(:disabled) { color: #EDF1F7; border-color: #3B4A63; }
+    .journey-step:disabled { opacity: .35; cursor: default; }
 
     .journey-option {
       display: block; width: 100%; text-align: left; font: 14px 'Inter', sans-serif; color: #EDF1F7;
@@ -62,6 +84,7 @@
 
     @media (prefers-reduced-motion: reduce) {
       .journey-scene, .journey-scene.is-switching { transition: none; opacity: 1; }
+      .journey-dial-dot { transition: none; }
       html { scroll-behavior: auto; }
     }
   </style>
@@ -98,7 +121,11 @@
           </div>
 
           <div class="journey-dial mt-5" data-journey-dial role="group" aria-label="Escolha uma década" data-i18n-aria-label="journey.dialLabel">
-            <button type="button" class="journey-dial-button" aria-pressed="true">1980s</button>
+            <button type="button" class="journey-dial-button" aria-pressed="true"><span class="journey-dial-dot"></span><span class="journey-dial-year" data-year>1980s</span><span class="journey-dial-milestone" data-milestone>BBS</span></button>
+          </div>
+          <div class="flex justify-between gap-3 mt-2 font-mono text-xs">
+            <button type="button" class="journey-step" data-journey-prev data-i18n="journey.prev">← década anterior</button>
+            <button type="button" class="journey-step" data-journey-next data-i18n="journey.next">próxima década →</button>
           </div>
         </div>
         <div class="min-w-0">
@@ -156,7 +183,7 @@
             <p class="text-fog text-[15px] mt-2" data-i18n="insights.r4Body">Um minicurso muda conhecimento, confiança e intenção, não um hábito duradouro. Resiliência é sistêmica e cultural.</p>
           </article>
         </div>
-        <h3 class="font-display font-semibold text-xl mt-12" data-i18n="insights.figuresTitle">Dois mapas que desenhei no TCC</h3>
+        <h3 class="font-display font-semibold text-xl mt-12" data-i18n="insights.figuresTitle">Dois mapas que elaborei para o TCC</h3>
         <div class="grid gap-6 md:grid-cols-2 mt-5">
           <figure class="min-w-0">
             <a href="/assets/phishing/figures/mapa-mental-evolucao.webp" target="_blank" rel="noopener noreferrer" class="block overflow-hidden rounded-xl border border-line bg-white p-2 transition-transform hover:-translate-y-0.5" aria-label="Abrir em tamanho real" data-i18n-aria-label="insights.open">

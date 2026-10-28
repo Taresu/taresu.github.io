@@ -28,6 +28,8 @@
     const optionsBox = q('[data-journey-options]');
     const feedback = q('[data-journey-feedback]');
     const final = q('[data-journey-final]');
+    const prev = q('[data-journey-prev]');
+    const next = q('[data-journey-next]');
     let state = createState();
     let current = lang;
 
@@ -50,10 +52,15 @@
     function renderDial() {
       [...dial.children].forEach((button, i) => {
         const selected = i === state.index;
-        button.textContent = eraLabel(ERAS[i]);
+        button.querySelector('[data-year]').textContent = eraLabel(ERAS[i]);
+        button.querySelector('[data-milestone]').textContent = ERAS[i].text[current].milestone;
         button.setAttribute('aria-pressed', String(selected));
+        button.dataset.passed = String(i < state.index);
         button.tabIndex = selected ? 0 : -1;
       });
+      dial.style.setProperty('--progress', `${Math.round((state.index / (COUNT - 1)) * 100)}%`);
+      if (prev) prev.disabled = state.index === 0;
+      if (next) next.disabled = state.index === COUNT - 1;
     }
 
     function renderStop() {
@@ -109,9 +116,17 @@
       const button = document.createElement('button');
       button.type = 'button';
       button.className = 'journey-dial-button';
+      for (const part of ['dot', 'year', 'milestone']) {
+        const span = document.createElement('span');
+        span.className = `journey-dial-${part}`;
+        if (part !== 'dot') span.setAttribute(`data-${part}`, '');
+        button.appendChild(span);
+      }
       button.addEventListener('click', () => go(i, false));
       return button;
     }));
+    prev?.addEventListener('click', () => go(state.index - 1, false));
+    next?.addEventListener('click', () => go(state.index + 1, false));
     dial.addEventListener('keydown', event => {
       const moves = { ArrowRight: state.index + 1, ArrowLeft: state.index - 1, Home: 0, End: COUNT - 1 };
       if (!(event.key in moves)) return;

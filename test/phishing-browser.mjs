@@ -45,7 +45,23 @@ export async function verifyPhishing(browser, base) {
       const pickedAfter = await page.evaluate(() =>
         [...document.querySelectorAll('[data-journey-options] button')].findIndex(b => b.dataset.picked === 'true'));
       assert.equal(pickedAfter, first.picked, 'a second click does not change the answer');
+      const timeline = await page.evaluate(() => {
+        const dial = document.querySelector('[data-journey-dial]');
+        return {
+          progress: dial.style.getPropertyValue('--progress').trim(),
+          milestones: [...dial.querySelectorAll('button')].map(b => b.querySelector('[data-milestone]')?.textContent.trim()),
+        };
+      });
+      assert.equal(timeline.progress, '40%', 'the timeline fills up to the selected era');
+      assert.deepEqual(timeline.milestones, ['BBS', 'AOL', 'PayPal', 'RSA', 'IA', 'você']);
+      await page.click('[data-journey-next]');
+      assert.equal(await page.$eval('[data-journey-dial] button:nth-child(4)', b => b.getAttribute('aria-pressed')), 'true', 'next moves forward');
+      await page.click('[data-journey-prev]');
+      await page.click('[data-journey-prev]');
+      assert.equal(await page.$eval('[data-journey-dial] button:nth-child(2)', b => b.getAttribute('aria-pressed')), 'true', 'previous moves back');
+      await (await dialButtons(page))[2].click();
       scenarios.push('six eras and a working challenge');
+      scenarios.push('interactive timeline with progress and milestones');
 
       for (let i = 0; i < 6; i++) {
         await (await dialButtons(page))[i].click();

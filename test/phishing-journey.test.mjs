@@ -31,7 +31,7 @@ test('every era is fully written in both languages', () => {
     assert.equal(typeof era.scene, 'function');
     for (const lang of ['pt', 'en']) {
       const text = era.text[lang];
-      for (const field of ['title', 'chapter', 'sceneLabel', 'question', 'why']) {
+      for (const field of ['title', 'chapter', 'sceneLabel', 'question', 'why', 'milestone']) {
         assert.ok(typeof text[field] === 'string' && text[field].trim(), `${era.key}.${lang}.${field}`);
       }
       assert.equal(text.options.length, 2, `${era.key}.${lang}.options`);
