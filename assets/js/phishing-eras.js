@@ -1,13 +1,105 @@
 // Six stops of the phishing time-travel journey: the same eras as the MOOC and the VESPAS' Con 26 poster.
 // Mini-challenge domains are fictitious and rendered as text only.
 (function () {
-  const scene = () => {};
+  // Every scene shares the same desk, grid and framing so switching eras reads as one desk through time.
+  function desk(iso, g) {
+    iso.polygon(g, [[-0.9, -0.9, -0.5], [9, -0.9, -0.5], [9, 7, -0.5], [-0.9, 7, -0.5]], 'rgba(0,0,0,.28)');
+    iso.box(g, -0.4, -0.4, -0.5, 8.8, 6.8, 0.5, '#2b3345');
+  }
+
+  function keyboard(iso, g, x, y, width, color) {
+    iso.box(g, x, y, 0, width, 1.0, 0.16, color);
+    const keyColor = color === '#c9bfa3' ? '#e6dfcc' : '#cbd2db';
+    for (let row = 0; row < 3; row++) {
+      for (let col = 0; col < Math.floor((width - 0.2) / 0.32); col++) {
+        iso.box(g, x + 0.12 + col * 0.32, y + 0.12 + row * 0.27, 0.16, 0.24, 0.2, 0.06, keyColor);
+      }
+    }
+  }
+
+  function laptop(iso, g, body, lid, glass) {
+    iso.box(g, 2.0, 2.6, 0.16, 3.4, 0.14, 2.2, lid);
+    iso.screen(g, 2.15, 2.741, 0.35, 3.1, 1.85, glass);
+    iso.box(g, 2.0, 2.74, 0, 3.4, 2.4, 0.16, body);
+    iso.box(g, 2.25, 3.0, 0.16, 2.9, 1.3, 0.02, '#6b7280');
+    iso.box(g, 3.2, 4.5, 0.16, 1.0, 0.5, 0.02, '#9aa3af');
+  }
+
+  function phoneOnStand(iso, g, glass) {
+    iso.box(g, 3.0, 3.2, 0, 1.6, 1.0, 0.2, '#374151');
+    iso.box(g, 3.2, 3.0, 0.2, 1.2, 0.2, 1.2, '#4b5563');
+    iso.box(g, 3.0, 3.2, 0.2, 1.6, 0.16, 3.0, '#0b1220');
+    iso.screen(g, 3.1, 3.361, 0.35, 1.4, 2.7, glass);
+  }
+
+  const scenes = {
+    '1980s': (iso, g) => {
+      desk(iso, g);
+      iso.box(g, 2.4, 1.0, 0, 2.6, 2.4, 2.5, '#cfc6ad');
+      iso.screen(g, 2.65, 3.401, 0.5, 2.1, 1.6, '#0a1a10');
+      iso.screen(g, 2.8, 3.402, 0.62, 1.8, 1.36, '#073d1d');
+      iso.label(g, 2.95, 3.403, 1.6, 'LOGIN: _', 'scene-text scene-text--green');
+      iso.label(g, 2.95, 3.403, 1.25, 'PASSWORD:', 'scene-text scene-text--green');
+      keyboard(iso, g, 2.3, 4.0, 2.9, '#c9bfa3');
+    },
+    '1990s': (iso, g) => {
+      desk(iso, g);
+      iso.box(g, 0.6, 1.0, 0, 1.1, 2.6, 3.0, '#d8cfb6');
+      iso.screen(g, 0.8, 3.601, 2.2, 0.7, 0.12, '#1b1b1b');
+      iso.screen(g, 1.45, 3.601, 0.4, 0.12, 0.12, '#00ff87');
+      iso.box(g, 2.2, 1.2, 0, 2.6, 2.2, 2.3, '#e2d9c0');
+      iso.screen(g, 2.45, 3.401, 0.5, 2.1, 1.5, '#1e3a8a');
+      iso.screen(g, 2.7, 3.402, 0.75, 1.6, 1.0, '#cbd5e1');
+      iso.screen(g, 2.7, 3.403, 1.6, 1.6, 0.15, '#1d4ed8');
+      iso.label(g, 2.78, 3.404, 1.63, 'AOL', 'scene-text scene-text--light');
+      iso.label(g, 2.85, 3.404, 1.05, '****', 'scene-text scene-text--dark');
+      keyboard(iso, g, 2.1, 4.0, 3.0, '#c9bfa3');
+      iso.box(g, 5.8, 3.6, 0, 0.9, 0.9, 0.05, '#222831');
+      iso.box(g, 5.6, 4.2, 0, 0.9, 0.9, 0.05, '#e3803a');
+    },
+    '2000s': (iso, g) => {
+      desk(iso, g);
+      laptop(iso, g, '#b4bcc7', '#8b95a3', '#f1f5f9');
+      iso.screen(g, 2.15, 2.742, 1.95, 3.1, 0.25, '#1e40af');
+      iso.label(g, 2.3, 2.743, 1.4, 'paypa1-seguro.com', 'scene-text scene-text--red');
+      iso.screen(g, 2.3, 2.743, 0.9, 2.2, 0.08, '#cbd5e1');
+      iso.screen(g, 2.3, 2.743, 0.7, 1.6, 0.08, '#cbd5e1');
+      iso.box(g, 6.2, 4.4, 0, 0.4, 0.6, 0.15, '#d1d5db');
+    },
+    '2010s': (iso, g) => {
+      desk(iso, g);
+      laptop(iso, g, '#4b5563', '#374151', '#0f172a');
+      iso.label(g, 2.3, 2.743, 1.55, 'NF-2016.zip', 'scene-text scene-text--amber');
+      iso.label(g, 2.3, 2.743, 1.15, 'URGENTE', 'scene-text scene-text--red');
+      iso.box(g, 6.0, 3.6, 0, 0.75, 1.4, 0.1, '#111827');
+      iso.polygon(g, [[6.07, 3.67, 0.101], [6.68, 3.67, 0.101], [6.68, 4.93, 0.101], [6.07, 4.93, 0.101]], '#1e293b');
+      iso.polygon(g, [[6.12, 3.75, 0.102], [6.63, 3.75, 0.102], [6.63, 4.0, 0.102], [6.12, 4.0, 0.102]], '#f5b041');
+    },
+    '2020s': (iso, g) => {
+      desk(iso, g);
+      phoneOnStand(iso, g, '#0f2a1f');
+      iso.screen(g, 3.2, 3.362, 1.7, 1.1, 0.55, '#14532d');
+      [0.12, 0.3, 0.2, 0.42, 0.26, 0.36, 0.16].forEach((height, i) => {
+        iso.screen(g, 3.28 + i * 0.13, 3.363, 1.98 - height / 2, 0.06, height, '#00ff87');
+      });
+      iso.label(g, 3.22, 3.363, 1.25, 'PIX ▸ 0:12', 'scene-text scene-text--green');
+    },
+    agora: (iso, g) => {
+      desk(iso, g);
+      phoneOnStand(iso, g, '#0b2a3a');
+      iso.polygon(g, [[3.45, 3.362, 1.9], [4.25, 3.362, 1.9], [4.0, 3.362, 2.75]], '#7dd3fc');
+      iso.screen(g, 3.15, 3.362, 1.2, 1.3, 0.3, '#1e293b');
+      iso.screen(g, 3.15, 3.362, 0.7, 1.3, 0.3, '#1e293b');
+      iso.label(g, 3.2, 3.363, 1.28, 'lojabela', 'scene-text scene-text--light');
+      iso.label(g, 3.2, 3.363, 0.78, 'lojabbela', 'scene-text scene-text--light');
+    },
+  };
 
   const ERAS = [
     {
       key: '1980s',
       cover: 'assets/phishing/covers/1980s.webp',
-      scene,
+      scene: scenes['1980s'],
       text: {
         pt: {
           title: 'O início do cibercrime',
@@ -32,7 +124,7 @@
     {
       key: '1990s',
       cover: 'assets/phishing/covers/1990s.webp',
-      scene,
+      scene: scenes['1990s'],
       text: {
         pt: {
           title: 'A origem do phishing',
@@ -57,7 +149,7 @@
     {
       key: '2000s',
       cover: 'assets/phishing/covers/2000s.webp',
-      scene,
+      scene: scenes['2000s'],
       text: {
         pt: {
           title: 'A ascensão do phishing',
@@ -82,7 +174,7 @@
     {
       key: '2010s',
       cover: 'assets/phishing/covers/2010s.webp',
-      scene,
+      scene: scenes['2010s'],
       text: {
         pt: {
           title: 'O ataque direcionado',
@@ -107,7 +199,7 @@
     {
       key: '2020s',
       cover: 'assets/phishing/covers/2020s.webp',
-      scene,
+      scene: scenes['2020s'],
       text: {
         pt: {
           title: 'Fazendas de phishing e IA',
@@ -132,7 +224,7 @@
     {
       key: 'agora',
       cover: 'assets/phishing/covers/agora.webp',
-      scene,
+      scene: scenes['agora'],
       text: {
         pt: {
           title: 'Como se proteger',

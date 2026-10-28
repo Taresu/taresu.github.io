@@ -84,3 +84,41 @@ test('resolveLang honours the saved preference', () => {
   assert.equal(resolveLang(null, 'pt-BR'), 'pt');
   assert.equal(resolveLang('xx', 'pt-BR'), 'pt');
 });
+
+const near = (actual, expected) => assert.ok(Math.abs(actual - expected) < 0.01, `${actual} ≈ ${expected}`);
+
+test('project follows the 30-degree isometric axes', () => {
+  const { project } = loadJourney(['phishing-iso.js']).PhishingIso;
+  const [ax, ay] = project(1, 0, 0);
+  near(ax, 19.05); near(ay, 11);
+  const [bx, by] = project(0, 1, 0);
+  near(bx, -19.05); near(by, 11);
+  const [cx, cy] = project(0, 0, 1);
+  near(cx, 0); near(cy, -22);
+});
+
+test('shade keeps one light source', () => {
+  const { shade } = loadJourney(['phishing-iso.js']).PhishingIso;
+  const red = color => Number(/rgb\((\d+)/.exec(color)[1]);
+  const top = red(shade('#808080', 'top'));
+  const right = red(shade('#808080', 'right'));
+  const left = red(shade('#808080', 'left'));
+  assert.ok(top > right && right > left, `${top} > ${right} > ${left}`);
+});
+
+test('answering twice keeps the first answer', () => {
+  const { createState, answer } = loadJourney().PhishingJourney;
+  assert.equal(answer(answer(createState(), 1), 0).picked, 1);
+});
+
+test('changing era clears the previous answer', () => {
+  const { createState, answer, select } = loadJourney().PhishingJourney;
+  const state = select(answer(createState(), 0), 3);
+  assert.deepEqual({ ...state }, { index: 3, answered: false, picked: null });
+});
+
+test('select clamps to the six eras', () => {
+  const { createState, select } = loadJourney().PhishingJourney;
+  assert.equal(select(createState(), 9).index, 5);
+  assert.equal(select(createState(), -1).index, 0);
+});
