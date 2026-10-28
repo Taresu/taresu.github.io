@@ -180,6 +180,7 @@ results.profile = await page.evaluate(() => ({
     card: Boolean(document.querySelector('[data-project="tcc"]')),
     firstProject: document.querySelector('#projetos article')?.dataset.project,
     title: document.querySelector('[data-project="tcc"] h3')?.textContent.trim(),
+    text: document.querySelector('[data-project="tcc"]')?.textContent,
     summary: document.querySelector('[data-project="tcc"] [data-i18n="proj.tcc.d"]')?.textContent.trim(),
     link: document.querySelector('[data-project="tcc"] [data-tcc-link]')?.href,
     course: {
@@ -188,7 +189,7 @@ results.profile = await page.evaluate(() => ({
       rel: document.querySelector('[data-project="tcc"] [data-course-link]')?.rel,
     },
   },
-  experienceGroups: Object.fromEntries(['utfpr', 'cmc', 'volkswagen'].map(employer => {
+  experienceGroups: Object.fromEntries(['possamai', 'utfpr', 'cmc', 'volkswagen'].map(employer => {
     const group = document.querySelector(`[data-employer-group="${employer}"]`);
     return [employer, {
       present: Boolean(group),
@@ -202,6 +203,19 @@ results.profile = await page.evaluate(() => ({
     /Assistant Webmaster/i.test(role.textContent)
   ).length,
   cmcRole: document.querySelector('[data-i18n="exp.cmcRole"]')?.textContent.trim(),
+  possamaiLink: document.querySelector('[data-employer-group="possamai"] [data-org-primary-name]')?.href,
+  firstExperience: document.querySelector('#experiencia article')?.dataset.employerGroup,
+  precoAfiado: {
+    secondProject: document.querySelectorAll('#projetos article')[1]?.dataset.project,
+    link: document.querySelector('[data-project="precoafiado"] [data-project-link]')?.href,
+    target: document.querySelector('[data-project="precoafiado"] [data-project-link]')?.target,
+    rel: document.querySelector('[data-project="precoafiado"] [data-project-link]')?.rel,
+    role: document.querySelector('[data-project="precoafiado"] [data-i18n="proj.preco.role"]')?.textContent.trim(),
+  },
+  yearsStat: {
+    value: document.querySelector('[data-i18n="about.stat4"]')?.previousElementSibling?.textContent.trim(),
+    label: document.querySelector('[data-i18n="about.stat4"]')?.textContent.trim(),
+  },
   skills: document.querySelector('#skills')?.textContent,
   lineIcons: [...document.querySelectorAll('svg.line-icon')].map(icon => ({
     name: icon.dataset.icon,
@@ -1306,18 +1320,18 @@ const assertions = [
     'the Portuguese VESPAS copy states volunteer role, Alerts Channel coordination and Blue Team mentoring',
   ],
   [
-    results.profile.chipLinks.total === 108 && results.profile.chipLinks.linked === 108 &&
+    results.profile.chipLinks.total === 117 && results.profile.chipLinks.linked === 117 &&
       results.profile.chipLinks.allSafeExternal && results.profile.chipLinks.nestedInteractive.length === 0 &&
       results.profile.chipLinks.emptyLabels === 0,
-    'all 108 experience, project and skill chips are safe external documentation links without nested interactions',
+    'all 117 experience, project and skill chips are safe external documentation links without nested interactions',
   ],
   [
     results.profile.tcc.title?.includes('Educação em Cibersegurança') &&
       results.profile.tcc.summary?.startsWith('No meu TCC, desenvolvi e avaliei') &&
       results.profile.tcc.summary?.includes('Portal Sophia-CT') &&
-      results.profile.tcc.summary?.includes('7,54') &&
-      results.profile.tcc.summary?.includes('9,85'),
-    'the TCC card communicates the research subject, intervention and pilot result',
+      results.profile.tcc.summary?.includes("VESPAS' Con 26") &&
+      !/7,54|9,85/.test(results.profile.tcc.text || ''),
+    'the TCC card communicates the research subject, intervention and accepted poster',
   ],
   [
     results.profile.tcc.link === `${BASE}/assets/TCC_Thales_Sgarbi_Salata_corrigido_revisado-1.pdf`,
@@ -1353,6 +1367,25 @@ const assertions = [
       results.profile.experienceGroups.cmc.logoCount === 1 &&
       JSON.stringify(results.profile.experienceGroups.cmc.roles) === JSON.stringify(['Estagiário DevOps']),
     'the CMC internship sits inside its own employer group like the other organizations',
+  ],
+  [
+    results.profile.firstExperience === 'possamai' &&
+      results.profile.experienceGroups.possamai.present &&
+      results.profile.experienceGroups.possamai.employer === 'Possamai Software Studio' &&
+      JSON.stringify(results.profile.experienceGroups.possamai.roles) === JSON.stringify(['Sócio-fundador']) &&
+      results.profile.possamaiLink === 'https://possamai-studio.com/?utm_source=portfolio',
+    'the Possamai Software Studio partnership opens the experience timeline and links to the studio',
+  ],
+  [
+    results.profile.precoAfiado.secondProject === 'precoafiado' &&
+      results.profile.precoAfiado.link === 'https://precoafiado.com.br/?utm_source=portfolio' &&
+      results.profile.precoAfiado.target === '_blank' && results.profile.precoAfiado.rel.includes('noopener') &&
+      results.profile.precoAfiado.role?.startsWith('Meu papel: concepção'),
+    'Preço Afiado follows the research as the live product, with a safe tracked link and the owner role',
+  ],
+  [
+    results.profile.yearsStat.value === '3+' && results.profile.yearsStat.label === 'anos em TI',
+    'the About stats lead with verifiable experience instead of the pilot score',
   ],
   [results.profile.assistantWebmasterCount === 0, 'the unrelated legacy Webmaster entry remains absent'],
   [results.profile.cmcRole === 'Estagiário DevOps', 'the CMC role is written naturally in Portuguese'],
@@ -1403,6 +1436,7 @@ const assertions = [
   [
     [
       ['tcc', 'graduation-cap'],
+      ['precoafiado', 'trending-down'],
       ['veripkg', 'shield-check'],
       ['nerdz', 'smartphone'],
       ['voip', 'phone-call'],
@@ -1529,7 +1563,7 @@ const assertions = [
   [
     [
       'Education in Cybersecurity', 'For my final paper, I developed and evaluated', 'Portal Sophia-CT',
-      '7.54 → 9.85', 'Generative AI', 'Mixed methods', 'Access course', 'Sophia-CT login',
+      "VESPAS' Con 26", 'poster accepted', 'Generative AI', 'Mixed methods', 'Access course', 'Sophia-CT login',
     ].every(text => results.en.tcc?.includes(text)),
     'the TCC content, course access and technical labels are translated in the English portfolio',
   ],
@@ -1549,6 +1583,7 @@ const assertions = [
   [results.en.nerdzCta === 'View product', 'the Nerdz project action is translated in English'],
   [
     JSON.stringify(results.en.experienceDates) === JSON.stringify({
+      possamai: 'Mar 2026',
       utfs: 'Mar 2026',
       utf: 'Sep 2025 — Jul 2026',
       cmc: 'Mar 2025',
@@ -1635,7 +1670,7 @@ const assertions = [
     'the consolidated credential-verification note is translated in English',
   ],
   [
-    results.englishReloadChipLinks.total === 108 && results.englishReloadChipLinks.linked === 108,
+    results.englishReloadChipLinks.total === 117 && results.englishReloadChipLinks.linked === 117,
     'all documentation chips remain linked when English is the saved language at page load',
   ],
   [results.tccPdf.status === 200 && results.tccPdf.type === 'application/pdf', 'TCC PDF is readable from the portfolio'],
@@ -1685,8 +1720,8 @@ const assertions = [
   ],
   [results.mobileAiSkillGroup.graphHidden, 'the dense relationship graph remains hidden on mobile'],
   [
-    results.profile.lineIcons.length === 19 && results.profile.spriteSymbols.length === 16,
-    'the page renders 19 semantic instances from 16 unique local symbols',
+    results.profile.lineIcons.length === 20 && results.profile.spriteSymbols.length === 17,
+    'the page renders 20 semantic instances from 17 unique local symbols',
   ],
   [
     results.profile.lineIcons.every(icon => icon.href?.startsWith('#icon-')),
