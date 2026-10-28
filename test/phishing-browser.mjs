@@ -45,6 +45,17 @@ export async function verifyPhishing(browser, base) {
       const pickedAfter = await page.evaluate(() =>
         [...document.querySelectorAll('[data-journey-options] button')].findIndex(b => b.dataset.picked === 'true'));
       assert.equal(pickedAfter, first.picked, 'a second click does not change the answer');
+
+      // Picking the legitimate option must say so plainly, not read as if it were the scam.
+      await (await dialButtons(page))[1].click();
+      await (await page.$$('[data-journey-options] button'))[0].click();
+      const safePick = await page.evaluate(() => ({
+        feedback: document.querySelector('[data-journey-feedback]').textContent.trim(),
+        labels: [...document.querySelectorAll('[data-journey-options] button')].map(b => b.dataset.label),
+      }));
+      assert.match(safePick.feedback, /^Essa é legítima\. O golpe era a outra opção\./, 'a safe pick is called legitimate');
+      assert.deepEqual(safePick.labels, ['legítima', 'golpe'], 'each option is tagged after answering');
+      await (await dialButtons(page))[2].click();
       const timeline = await page.evaluate(() => {
         const dial = document.querySelector('[data-journey-dial]');
         return {

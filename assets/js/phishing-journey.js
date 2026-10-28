@@ -86,6 +86,7 @@
         button.textContent = option;
         if (state.answered) {
           button.dataset.result = i === text.scamIndex ? 'scam' : 'safe';
+          button.dataset.label = t(i === text.scamIndex ? 'journey.tagScam' : 'journey.tagSafe');
           if (i === state.picked) button.dataset.picked = 'true';
           button.setAttribute('aria-disabled', 'true');
         }
