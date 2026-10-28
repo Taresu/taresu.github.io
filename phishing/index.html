@@ -89,6 +89,15 @@
     .thumb-frame { display: block; width: 7.5rem; aspect-ratio: 3 / 4; overflow: hidden; border-radius: 12px; border: 1px solid #1E2A3A; transition: transform .2s ease; }
     .thumb-frame:hover { transform: translateY(-2px); }
 
+    /* Diagram viewer: the image always fits the screen; the original stays one click away. */
+    .lightbox { width: min(96vw, 1200px); max-height: 94vh; padding: 12px; border: 0; border-radius: 16px; background: #fff; }
+    .lightbox::backdrop { background: rgba(5,8,14,.82); }
+    .lightbox img { display: block; width: 100%; height: auto; max-height: calc(94vh - 80px); object-fit: contain; }
+    .lightbox-bar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 16px; padding: 10px 4px 2px; }
+    .cite { font: 600 10px 'JetBrains Mono', monospace; color: #C4B5FD; vertical-align: super; text-decoration: none; margin-left: 1px; }
+    .cite:hover { text-decoration: underline; }
+    #fontes li { scroll-margin-top: 24px; }
+
     html:not([lang="en"]) [data-lang-note] { display: none; }
     .lang-switch[aria-pressed="true"] { color: #00FF87; }
 
@@ -142,6 +151,7 @@
               <div class="min-w-0">
                 <h2 class="font-display font-semibold text-2xl" data-journey-title>O início do cibercrime</h2>
                 <p class="text-fog mt-1" data-journey-chapter>A curiosidade vira ameaça: BBS, phreaks e as primeiras senhas roubadas.</p>
+                <p class="font-mono text-[10px] text-fog mt-2"><span data-i18n="journey.sourceNote">Linha do tempo baseada em</span> <a href="#fonte-6" class="cite" aria-label="Fonte 6">[6]</a> <a href="#fonte-3" class="cite" aria-label="Fonte 3">[3]</a></p>
               </div>
             </div>
             <p class="font-mono text-[11px] uppercase tracking-[0.14em] text-purple-light mt-5" data-i18n="journey.challengeLabel">Mini-desafio</p>
@@ -153,7 +163,7 @@
             <p class="text-sm text-fog mt-3 min-h-[1.5rem]" data-journey-feedback aria-live="polite"></p>
             <div data-journey-final hidden class="mt-4 rounded-xl border border-terminal/40 bg-terminal/5 p-4">
               <a href="/phishing/desafio/" class="inline-flex items-center gap-2 rounded-lg border border-terminal bg-terminal/10 px-4 py-2.5 font-semibold text-terminal hover:bg-terminal/20 transition-colors" data-i18n="challenge.cta">Jogar o desafio completo (5 níveis)</a>
-              <p class="text-sm text-fog mt-3" data-i18n="challenge.credit">Criei este desafio para o estande do VESPAS na Tecnológica 2026, feira que recebeu mais de 3 mil visitantes.</p>
+              <p class="text-sm text-fog mt-3"><span data-i18n="challenge.credit">Criei este desafio para o estande do VESPAS na Tecnológica 2026, feira que recebeu mais de 3 mil visitantes.</span> <a href="#fonte-9" class="cite" aria-label="Fonte 9">[9]</a></p>
               <p class="text-sm text-amber mt-1" data-lang-note data-i18n="challenge.languageNote">O desafio é em português.</p>
             </div>
           </div>
@@ -168,45 +178,45 @@
         <div class="grid gap-4 sm:grid-cols-2 mt-8">
           <div data-insight-stat class="rounded-xl border border-line bg-card p-5">
             <p class="font-mono text-4xl font-semibold text-terminal" data-i18n="insights.stat1Value">553 mi</p>
-            <p class="text-fog text-sm mt-1" data-i18n="insights.stat1Label">ataques de phishing bloqueados no Brasil entre jul/2024 e jul/2025</p>
+            <p class="text-fog text-sm mt-1"><span data-i18n="insights.stat1Label">ataques de phishing bloqueados no Brasil entre jul/2024 e jul/2025</span> <a href="#fonte-1" class="cite" aria-label="Fonte 1">[1]</a></p>
           </div>
           <div data-insight-stat class="rounded-xl border border-line bg-card p-5">
             <p class="font-mono text-4xl font-semibold text-amber" data-i18n="insights.stat2Value">68–95%</p>
-            <p class="text-fog text-sm mt-1" data-i18n="insights.stat2Label">das violações de segurança envolvem erro humano</p>
+            <p class="text-fog text-sm mt-1"><span data-i18n="insights.stat2Label">das violações de segurança envolvem erro humano</span> <a href="#fonte-2" class="cite" aria-label="Fonte 2">[2]</a></p>
           </div>
         </div>
         <p class="font-mono text-[11px] text-fog mt-3" data-i18n="insights.statNote">Números citados no meu pôster e no TCC. Tecnologia sozinha não basta: é preciso educar.</p>
         <div class="grid gap-4 sm:grid-cols-2 mt-8">
           <article data-insight class="rounded-xl border border-line bg-card p-5">
             <h3 class="font-display font-semibold text-lg text-paper" data-i18n="insights.r1Title">40 anos, a mesma isca.</h3>
-            <p class="text-fog text-[15px] mt-2" data-i18n="insights.r1Body">Muda o canal, não o golpe: urgência, autoridade e confiança. Reconhecer o padrão vale mais que decorar golpes.</p>
+            <p class="text-fog text-[15px] mt-2"><span data-i18n="insights.r1Body">Muda o canal, não o golpe: urgência, autoridade e confiança. Reconhecer o padrão vale mais que decorar golpes.</span> <a href="#fonte-7" class="cite" aria-label="Fonte 7">[7]</a></p>
           </article>
           <article data-insight class="rounded-xl border border-line bg-card p-5">
             <h3 class="font-display font-semibold text-lg text-paper" data-i18n="insights.r2Title">Comportamento antes de técnica.</h3>
-            <p class="text-fog text-[15px] mt-2" data-i18n="insights.r2Body">Se o erro é humano, a defesa de quem não é da área é reconhecer sinais, e a prática com simulações foi o que mais ficou.</p>
+            <p class="text-fog text-[15px] mt-2"><span data-i18n="insights.r2Body">Se o erro é humano, a defesa de quem não é da área é reconhecer sinais, e a prática com simulações foi o que mais ficou.</span> <a href="#fonte-7" class="cite" aria-label="Fonte 7">[7]</a></p>
           </article>
           <article data-insight class="rounded-xl border border-line bg-card p-5">
             <h3 class="font-display font-semibold text-lg text-paper" data-i18n="insights.r3Title">A IA apagou os sinais clássicos.</h3>
-            <p class="text-fog text-[15px] mt-2" data-i18n="insights.r3Body">Sem erros de escrita, resta a regra de ouro: confirmar por outro canal.</p>
+            <p class="text-fog text-[15px] mt-2"><span data-i18n="insights.r3Body">Sem erros de escrita, resta a regra de ouro: confirmar por outro canal.</span> <a href="#fonte-5" class="cite" aria-label="Fonte 5">[5]</a> <a href="#fonte-7" class="cite" aria-label="Fonte 7">[7]</a></p>
           </article>
           <article data-insight class="rounded-xl border border-line bg-card p-5">
             <h3 class="font-display font-semibold text-lg text-paper" data-i18n="insights.r4Title">Educar não é ser resiliente.</h3>
-            <p class="text-fog text-[15px] mt-2" data-i18n="insights.r4Body">Um minicurso muda conhecimento, confiança e intenção, não um hábito duradouro. Resiliência é sistêmica e cultural.</p>
+            <p class="text-fog text-[15px] mt-2"><span data-i18n="insights.r4Body">Um minicurso muda conhecimento, confiança e intenção, não um hábito duradouro. Resiliência é sistêmica e cultural.</span> <a href="#fonte-7" class="cite" aria-label="Fonte 7">[7]</a></p>
           </article>
         </div>
         <h3 class="font-display font-semibold text-xl mt-12" data-i18n="insights.figuresTitle">Dois mapas que elaborei para o TCC</h3>
         <div class="grid gap-6 md:grid-cols-2 mt-5">
           <figure class="min-w-0">
-            <a href="/assets/phishing/figures/mapa-mental-evolucao.webp" target="_blank" rel="noopener noreferrer" class="block overflow-hidden rounded-xl border border-line bg-white p-2 transition-transform hover:-translate-y-0.5" aria-label="Abrir em tamanho real" data-i18n-aria-label="insights.open">
+            <a href="/assets/phishing/figures/mapa-mental-evolucao.webp" target="_blank" rel="noopener noreferrer" data-lightbox-trigger class="block overflow-hidden rounded-xl border border-line bg-white p-2 transition-transform hover:-translate-y-0.5" aria-label="Abrir em tamanho real" data-i18n-aria-label="insights.open">
               <img src="/assets/phishing/figures/mapa-mental-evolucao.webp" width="1515" height="865" loading="lazy" alt="Mapa mental da evolução do phishing de 1980 a 2020, com uma caixa por década." data-i18n-alt="insights.fig1Alt" class="w-full h-auto">
             </a>
-            <figcaption class="text-sm text-fog mt-2" data-i18n="insights.fig1Caption">Mapa mental: como o phishing evoluiu dos anos 80 aos anos 2020.</figcaption>
+            <figcaption class="text-sm text-fog mt-2"><span data-i18n="insights.fig1Caption">Mapa mental: como o phishing evoluiu dos anos 80 aos anos 2020.</span> <a href="#fonte-6" class="cite" aria-label="Fonte 6">[6]</a></figcaption>
           </figure>
           <figure class="min-w-0">
-            <a href="/assets/phishing/figures/taxonomia-phishing.svg" target="_blank" rel="noopener noreferrer" class="block overflow-hidden rounded-xl border border-line bg-white p-2 transition-transform hover:-translate-y-0.5" aria-label="Abrir em tamanho real" data-i18n-aria-label="insights.open">
+            <a href="/assets/phishing/figures/taxonomia-phishing.svg" target="_blank" rel="noopener noreferrer" data-lightbox-trigger class="block overflow-hidden rounded-xl border border-line bg-white p-2 transition-transform hover:-translate-y-0.5" aria-label="Abrir em tamanho real" data-i18n-aria-label="insights.open">
               <img src="/assets/phishing/figures/taxonomia-phishing.svg" width="1600" height="980" loading="lazy" alt="Diagrama da taxonomia do phishing em três grupos: por canal, por alvo e por técnica ou objetivo." data-i18n-alt="insights.fig2Alt" class="w-full h-auto">
             </a>
-            <figcaption class="text-sm text-fog mt-2" data-i18n="insights.fig2Caption">Taxonomia: o phishing por canal, por alvo e por técnica.</figcaption>
+            <figcaption class="text-sm text-fog mt-2"><span data-i18n="insights.fig2Caption">Taxonomia: o phishing por canal, por alvo e por técnica.</span> <a href="#fonte-6" class="cite" aria-label="Fonte 6">[6]</a></figcaption>
           </figure>
         </div>
       </div>
@@ -214,7 +224,7 @@
 
     <section class="border-t border-line/60 bg-panel/40">
       <div class="max-w-5xl mx-auto px-5 sm:px-8 py-14">
-        <h2 class="font-display font-bold text-2xl sm:text-3xl text-center"><span data-i18n="origin.title">O que eu construí pelo caminho</span> <span class="font-mono text-terminal" aria-hidden="true">^^</span></h2>
+        <h2 class="font-display font-bold text-2xl sm:text-3xl text-center"><span data-i18n="origin.title">O que eu pesquisei, elaborei e desenvolvi pelo caminho</span> <span class="font-mono text-terminal" aria-hidden="true">^^</span></h2>
         <div class="grid gap-6 md:grid-cols-2 mt-8">
           <article id="tcc" class="rounded-xl border border-line bg-card p-6 grid gap-5 sm:grid-cols-[7.5rem_1fr]">
             <a href="/assets/TCC_Thales_Sgarbi_Salata_corrigido_revisado-1.pdf" target="_blank" rel="noopener noreferrer" data-thumb class="thumb-frame bg-white">
@@ -223,9 +233,9 @@
             <div class="min-w-0">
             <p class="font-mono text-[11px] uppercase tracking-[0.14em] text-purple-light" data-i18n="tcc.kicker">01 · pesquisa · TCC · UTFPR</p>
             <h3 class="font-display font-semibold text-xl mt-2" data-i18n="tcc.title">Pesquisei como ensinar a reconhecer phishing</h3>
-            <p class="mt-3 flex items-baseline gap-2"><span class="font-mono text-3xl font-semibold text-terminal" data-i18n="tcc.grade">9,5</span><span class="font-mono text-[11px] uppercase tracking-wider text-fog" data-i18n="tcc.gradeLabel">nota final da banca</span></p>
+            <p class="mt-3 flex items-baseline gap-2"><span class="font-mono text-3xl font-semibold text-terminal" data-i18n="tcc.grade">9,5</span><span class="font-mono text-[11px] uppercase tracking-wider text-fog"><span data-i18n="tcc.gradeLabel">nota final da banca</span> <a href="#fonte-10" class="cite" aria-label="Fonte 10">[10]</a></span></p>
             <p class="font-mono text-[11px] text-fog" data-i18n="tcc.approved">aprovado em 14/07/2026</p>
-            <p class="text-fog mt-3" data-i18n="tcc.body">No meu TCC, desenvolvi e avaliei essa intervenção educativa com métodos mistos, unindo o minicurso, a narrativa histórica e simulações de phishing mapeadas ao MITRE ATT&amp;CK.</p>
+            <p class="text-fog mt-3"><span data-i18n="tcc.body">No meu TCC, desenvolvi e avaliei essa intervenção educativa com métodos mistos, unindo o minicurso, a narrativa histórica e simulações de phishing mapeadas ao MITRE ATT&amp;CK.</span> <a href="#fonte-4" class="cite" aria-label="Fonte 4">[4]</a> <a href="#fonte-6" class="cite" aria-label="Fonte 6">[6]</a></p>
             <div class="mt-4 flex flex-wrap items-center gap-4">
               <a data-product-link href="/assets/TCC_Thales_Sgarbi_Salata_corrigido_revisado-1.pdf" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 rounded-lg border border-purple bg-purple/10 px-4 py-2.5 font-semibold text-purple-light hover:bg-purple/20 transition-colors"><span data-i18n="tcc.cta">Ler o TCC (PDF)</span> <span aria-hidden="true">↗</span></a>
               <a href="https://www.linkedin.com/posts/thales-sgarbi-salata_ciberseguranaexa-phishing-educaaexaeto-activity-7488010229113217024-7BcI" target="_blank" rel="noopener noreferrer" class="font-mono text-[12px] text-purple-light hover:text-purple"><span data-i18n="tcc.post">Post no LinkedIn</span> ↗</a>
@@ -241,8 +251,8 @@
             <p class="font-mono text-[11px] uppercase tracking-[0.14em] text-terminal" data-i18n="curso.kicker">02 · minicurso · MOOC</p>
             <h3 class="font-display font-semibold text-xl mt-2" data-i18n="curso.title">Criei um minicurso "open-source"</h3>
             <p class="inline-block mt-2 rounded-full border border-terminal/50 px-2.5 py-0.5 font-mono text-[10px] uppercase tracking-wider text-terminal" data-i18n="curso.badge">em destaque no Portal Sophia</p>
-            <p class="text-fog mt-3" data-i18n="curso.body">Transformei 40 anos de phishing num minicurso prático e gratuito, contado como história: seis paradas, dos BBS dos anos 80 ao deepfake de voz, com atividades práticas e simulações.</p>
-            <p class="text-sm text-paper mt-2" data-i18n="curso.portal">Hoje ele está em destaque no Portal Sophia, que reúne 47 cursos e 6.848 usuários (out/2026).</p>
+            <p class="text-fog mt-3"><span data-i18n="curso.body">Transformei 40 anos de phishing num minicurso prático e gratuito, contado como história: seis paradas, dos BBS dos anos 80 ao deepfake de voz, com atividades práticas e simulações.</span> <a href="#fonte-6" class="cite" aria-label="Fonte 6">[6]</a></p>
+            <p class="text-sm text-paper mt-2"><span data-i18n="curso.portal">Hoje ele está em destaque no Portal Sophia, que reúne 47 cursos e 6.848 usuários (out/2026).</span> <a href="#fonte-8" class="cite" aria-label="Fonte 8">[8]</a></p>
             <a data-product-link href="https://sophia.ct.utfpr.edu.br/course/view.php?id=118" target="_blank" rel="noopener noreferrer" class="mt-4 inline-flex items-center gap-2 rounded-lg border border-terminal bg-terminal/10 px-4 py-2.5 font-semibold text-terminal hover:bg-terminal/20 transition-colors"><span data-i18n="curso.cta">Fazer o minicurso</span> <span aria-hidden="true">↗</span></a>
             <p class="font-mono text-[11px] text-fog mt-2" data-i18n="curso.login">exige login no Sophia-CT</p>
             </div>
@@ -255,7 +265,7 @@
             <div>
               <p class="font-mono text-[11px] uppercase tracking-[0.14em] text-amber" data-i18n="poster.kicker">03 · pôster · VESPAS' Con 26</p>
               <h3 class="font-display font-semibold text-xl mt-2" data-i18n="poster.title">Levei a viagem para o papel</h3>
-              <p class="text-sm text-paper mt-2" data-i18n="poster.status">Fui aceito para apresentá-lo na VESPAS' Con 26 (10/11/2026).</p>
+              <p class="text-sm text-paper mt-2"><span data-i18n="poster.status">Fui aceito para apresentá-lo na VESPAS' Con 26 (10/11/2026).</span> <a href="#fonte-7" class="cite" aria-label="Fonte 7">[7]</a></p>
               <p class="text-fog mt-2" data-i18n="poster.body">Resumi o minicurso em seis paradas e a evolução do phishing em palavras-chave, com coautoria do meu orientador, Daniel Fernando Pigatto.</p>
               <div class="mt-4 flex flex-wrap items-center gap-4">
                 <a data-product-link href="/assets/phishing/poster-vespascon26.pdf" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 rounded-lg border border-amber bg-amber/10 px-4 py-2.5 font-semibold text-amber hover:bg-amber/20 transition-colors"><span data-i18n="poster.cta">Ver o pôster</span> <span aria-hidden="true">↗</span></a>
@@ -273,12 +283,30 @@
             <h3 class="font-display font-semibold text-xl mt-2" data-i18n="desafio.title">Coloquei o público para jogar</h3>
             <p class="font-mono text-sm text-terminal mt-1"><span data-i18n="desafio.titleBefore">Cuidado que o</span> <s data-i18n="desafio.titleStrike">tubarão</s> <span data-i18n="desafio.titleAfter">phishing vai te pegar</span></p>
             <p class="text-fog mt-3" data-i18n="desafio.body">Cinco pares de links, do typosquatting ao link mascarado. Representei o VESPAS no estande, e o público jogava pelo QR code no celular.</p>
-            <p class="text-sm text-fog mt-2" data-i18n="challenge.credit">Criei este desafio para o estande do VESPAS na Tecnológica 2026, feira que recebeu mais de 3 mil visitantes.</p>
+            <p class="text-sm text-fog mt-2"><span data-i18n="challenge.credit">Criei este desafio para o estande do VESPAS na Tecnológica 2026, feira que recebeu mais de 3 mil visitantes.</span> <a href="#fonte-9" class="cite" aria-label="Fonte 9">[9]</a></p>
             <a data-product-link href="/phishing/desafio/" class="mt-4 inline-flex items-center gap-2 rounded-lg border border-terminal bg-terminal/10 px-4 py-2.5 font-semibold text-terminal hover:bg-terminal/20 transition-colors"><span data-i18n="desafio.cta">Jogar o desafio</span> <span aria-hidden="true">→</span></a>
             <p class="text-sm text-amber mt-2" data-lang-note data-i18n="challenge.languageNote">O desafio é em português.</p>
             </div>
           </article>
         </div>
+      </div>
+    </section>
+    <section id="fontes" class="border-t border-line/60">
+      <div class="max-w-5xl mx-auto px-5 sm:px-8 py-12">
+        <h2 class="font-display font-bold text-xl" data-i18n="sources.title">Fontes</h2>
+        <p class="text-fog text-sm mt-1" data-i18n="sources.lead">De onde vêm os dados e as afirmações desta página.</p>
+        <ol class="mt-5 space-y-2 text-sm text-fog list-none">
+          <li id="fonte-1"><span class="font-mono text-purple-light">[1]</span> Kaspersky (2025). <a href="https://www.kaspersky.com.br/blog/panorama-ameacas-2025/" target="_blank" rel="noopener noreferrer" class="text-paper underline decoration-line hover:decoration-paper">Panorama de Ameaças 2025: o crescimento do phishing impulsionado pela IA no Brasil</a>.</li>
+          <li id="fonte-2"><span class="font-mono text-purple-light">[2]</span> Yeo, L. H.; Banfield, J. (2022). <em>Human Factors in Electronic Health Records Cybersecurity Breach: An Exploratory Analysis</em>. Perspectives in Health Information Management, v. 19.</li>
+          <li id="fonte-3"><span class="font-mono text-purple-light">[3]</span> KnowBe4 (2025). <a href="https://www.knowbe4.com/resource-center/phishing" target="_blank" rel="noopener noreferrer" class="text-paper underline decoration-line hover:decoration-paper">History of Phishing</a>.</li>
+          <li id="fonte-4"><span class="font-mono text-purple-light">[4]</span> MITRE ATT&amp;CK. <a href="https://attack.mitre.org/techniques/T1566/" target="_blank" rel="noopener noreferrer" class="text-paper underline decoration-line hover:decoration-paper">T1566 – Phishing</a>.</li>
+          <li id="fonte-5"><span class="font-mono text-purple-light">[5]</span> Ferrag, M. A. et al. (2025). <em>Generative AI in cybersecurity: A comprehensive review of LLM applications and vulnerabilities</em>. Internet of Things and Cyber-Physical Systems, v. 5, p. 1–46.</li>
+          <li id="fonte-6"><span class="font-mono text-purple-light">[6]</span> Salata, T. S. (2026). <a href="/assets/TCC_Thales_Sgarbi_Salata_corrigido_revisado-1.pdf" target="_blank" rel="noopener noreferrer" class="text-paper underline decoration-line hover:decoration-paper">Educação em cibersegurança: uma abordagem holística para a compreensão do phishing multifacetado e seus desdobramentos no ecossistema digital</a>. TCC, Sistemas de Informação, UTFPR.</li>
+          <li id="fonte-7"><span class="font-mono text-purple-light">[7]</span> Salata, T. S.; Pigatto, D. F. (2026). <a href="/assets/phishing/poster-vespascon26.pdf" target="_blank" rel="noopener noreferrer" class="text-paper underline decoration-line hover:decoration-paper">Uma viagem pelo tempo do phishing</a>. Pôster, VESPAS' Con 26.</li>
+          <li id="fonte-8"><span class="font-mono text-purple-light">[8]</span> Portal Sophia-CT, UTFPR. <a href="https://sophia.ct.utfpr.edu.br/" target="_blank" rel="noopener noreferrer" class="text-paper underline decoration-line hover:decoration-paper">Página inicial: números do portal e cursos em destaque</a>, <span data-i18n="sources.consulted">consultado em 28/10/2026</span>.</li>
+          <li id="fonte-9"><span class="font-mono text-purple-light">[9]</span> UTFPR Curitiba. "UTFPR Curitiba recebe mais de 3 mil visitantes na Feira de Cursos #Tecnológica 2026", <span data-i18n="sources.instagram">post no Instagram, 02/10/2026</span>. <a href="https://www.utfpr.edu.br/noticias/curitiba/tecnologica-2026-feira-de-cursos-abre-as-portas-do-campus-curitiba-da-utfpr-para-a-comunidade" target="_blank" rel="noopener noreferrer" class="text-paper underline decoration-line hover:decoration-paper"><span data-i18n="sources.news">notícia do evento</span></a>.</li>
+          <li id="fonte-10"><span class="font-mono text-purple-light">[10]</span> Ata de defesa do TCC, UTFPR (SEI), 14/07/2026: aprovação com nota 9,5; <span data-i18n="sources.internal">documento interno da UTFPR, disponível sob pedido</span>.</li>
+        </ol>
       </div>
     </section>
   </main>
@@ -287,5 +315,15 @@
     <span data-i18n="footer.text">Thales Sgarbi Salata · educação em cibersegurança</span>
     <a href="/" class="hover:text-paper" data-i18n="nav.back">← Voltar ao portfólio</a>
   </footer>
+  <dialog data-lightbox class="lightbox" aria-labelledby="lightbox-caption">
+    <img data-lightbox-img src="" alt="">
+    <div class="lightbox-bar">
+      <p id="lightbox-caption" class="text-sm text-[#334155]" data-lightbox-caption></p>
+      <div class="flex shrink-0 items-center gap-3 font-mono text-xs">
+        <a data-lightbox-original href="" target="_blank" rel="noopener noreferrer" class="text-[#1d4ed8] underline"><span data-i18n="lightbox.original">Abrir original</span> ↗</a>
+        <button type="button" data-lightbox-close class="rounded-full border border-[#cbd5e1] px-3 py-1 text-[#0f172a] hover:bg-[#f1f5f9]"><span data-i18n="lightbox.close">Fechar</span> ✕</button>
+      </div>
+    </div>
+  </dialog>
 </body>
 </html>

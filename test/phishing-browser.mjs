@@ -144,7 +144,7 @@ export async function verifyPhishing(browser, base) {
           reflections: document.querySelectorAll('#insights [data-insight]').length,
           stats: document.querySelectorAll('#insights [data-insight-stat]').length,
           figures: figures.map(img => loaded(img) && img.getAttribute('src')),
-          figureLinks: [...document.querySelectorAll('#insights figure a')].map(a => a.getAttribute('href')),
+          figureLinks: [...document.querySelectorAll('#insights figure a[data-lightbox-trigger]')].map(a => a.getAttribute('href')),
         };
       });
       assert.equal(extras.hero, '/assets/phishing/course-cover.webp', 'the course cover opens the journey and links to the course');
@@ -160,6 +160,32 @@ export async function verifyPhishing(browser, base) {
       assert.ok(shark.present && shark.loaded && shark.alt, `the challenge card shows the game shark and links to the game ${JSON.stringify(shark)}`);
       const order = await page.evaluate(() => [...document.querySelectorAll('#curso, #tcc, #poster, #desafio')].map(el => el.id));
       assert.deepEqual(order, ['tcc', 'curso', 'poster', 'desafio'], 'the cards follow research → course → poster → challenge');
+      const sources = await page.evaluate(() => {
+        const cites = [...document.querySelectorAll('a[href^="#fonte-"]')];
+        const items = [...document.querySelectorAll('#fontes li[id^="fonte-"]')];
+        return {
+          cites: cites.length,
+          dangling: cites.map(a => a.getAttribute('href').slice(1)).filter(id => !document.getElementById(id)),
+          items: items.length,
+          unsafe: [...document.querySelectorAll('#fontes a[href^="http"]')].filter(a => a.target !== '_blank' || !a.rel.includes('noopener')).length,
+          cited: ['insights', 'tcc', 'curso', 'poster', 'desafio'].filter(id => !document.querySelector(`#${id} a[href^="#fonte-"]`)),
+        };
+      });
+      assert.ok(sources.items >= 9, `every claim has a listed source (${sources.items})`);
+      assert.deepEqual(sources.dangling, [], 'every citation points to a listed source');
+      assert.equal(sources.unsafe, 0, 'source links open safely');
+      assert.deepEqual(sources.cited, [], 'every section with claims cites its sources');
+
+      await page.click('#insights figure a[data-lightbox-trigger]');
+      await page.waitForSelector('dialog[data-lightbox][open]');
+      const box = await page.evaluate(() => {
+        const r = document.querySelector('[data-lightbox-img]').getBoundingClientRect();
+        return { w: r.width, h: r.height, vw: innerWidth, vh: innerHeight, src: document.querySelector('[data-lightbox-img]').getAttribute('src') };
+      });
+      assert.ok(box.w <= box.vw && box.h <= box.vh, `the diagram fits the screen (${Math.round(box.w)}×${Math.round(box.h)} in ${box.vw}×${box.vh})`);
+      assert.equal(box.src, '/assets/phishing/figures/mapa-mental-evolucao.webp');
+      await page.keyboard.press('Escape');
+      assert.equal(await page.$('dialog[data-lightbox][open]'), null, 'Escape closes the viewer');
       scenarios.push('real product links are correct and safe');
 
       await page.focus('[data-journey-dial] button[aria-pressed="true"]');

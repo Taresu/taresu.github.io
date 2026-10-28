@@ -158,6 +158,25 @@
     try { saved = localStorage.getItem('lang'); } catch (e) { /* storage blocked: fall back to the browser language */ }
     const lang = resolveLang(saved, navigator.language);
     apply(document, lang);
+    const lightbox = document.querySelector('[data-lightbox]');
+    if (lightbox && typeof lightbox.showModal === 'function') {
+      const image = lightbox.querySelector('[data-lightbox-img]');
+      document.querySelectorAll('[data-lightbox-trigger]').forEach(trigger => {
+        trigger.addEventListener('click', event => {
+          event.preventDefault();
+          const thumb = trigger.querySelector('img');
+          image.src = trigger.getAttribute('href');
+          image.alt = thumb?.alt || '';
+          lightbox.querySelector('[data-lightbox-caption]').textContent =
+            trigger.closest('figure')?.querySelector('figcaption [data-i18n]')?.textContent || '';
+          lightbox.querySelector('[data-lightbox-original]').href = trigger.getAttribute('href');
+          lightbox.showModal();
+        });
+      });
+      lightbox.querySelector('[data-lightbox-close]').addEventListener('click', () => lightbox.close());
+      // A click on the backdrop lands on the dialog itself, outside its content.
+      lightbox.addEventListener('click', event => { if (event.target === lightbox) lightbox.close(); });
+    }
     const root = document.querySelector('[data-journey]');
     const journey = root ? mount(root, lang) : null;
     document.querySelectorAll('[data-lang-switch]').forEach(button => {
