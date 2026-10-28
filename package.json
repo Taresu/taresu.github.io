@@ -11,7 +11,8 @@
     "test:security": "node --test test/security-headers.test.mjs test/server-security.test.mjs",
     "test:seo": "node test/seo.test.mjs",
     "test:hygiene": "node --test test/repository-hygiene.test.mjs",
-    "verify:static": "node --check assets/js/tailwind-config.js && node --check worker.js && node --check serve.mjs && node --check verify.mjs && node --check screenshot.mjs && node --check render-social-cards.mjs",
+    "test:phishing": "node --test test/phishing-journey.test.mjs",
+    "verify:static": "node --check assets/js/tailwind-config.js && node --check assets/js/phishing-eras.js && node --check assets/js/phishing-i18n.js && node --check worker.js && node --check serve.mjs && node --check verify.mjs && node --check screenshot.mjs && node --check render-social-cards.mjs",
     "build:pages": "rm -rf public && mkdir -p public && cp -r favicon.ico index.html servicos.html phishing assets robots.txt sitemap.xml index.md _headers .well-known public/",
     "deploy:cloudflare": "npx wrangler@latest deploy"
   },
