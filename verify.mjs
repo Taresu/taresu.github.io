@@ -1212,7 +1212,7 @@ const assertions = [
     'browser language selects the first-visit locale while a saved manual choice takes precedence',
   ],
   [
-    ['security', 'react', 'utfpr', 'portal', 'projects'].every(keyword =>
+    ['cybersecurity', 'full stack', 'automation', 'projects'].every(keyword =>
       [results.en.seo.title, results.en.seo.description, results.en.seo.projectsHeading]
         .every(value => value?.toLowerCase().includes(keyword))
     ),
