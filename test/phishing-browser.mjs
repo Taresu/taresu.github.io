@@ -158,6 +158,8 @@ export async function verifyPhishing(browser, base) {
         return { present: Boolean(img), loaded: Boolean(img?.complete && img.naturalWidth > 0), alt: img?.alt };
       });
       assert.ok(shark.present && shark.loaded && shark.alt, `the challenge card shows the game shark and links to the game ${JSON.stringify(shark)}`);
+      const order = await page.evaluate(() => [...document.querySelectorAll('#curso, #tcc, #poster, #desafio')].map(el => el.id));
+      assert.deepEqual(order, ['tcc', 'curso', 'poster', 'desafio'], 'the cards follow research → course → poster → challenge');
       scenarios.push('real product links are correct and safe');
 
       await page.focus('[data-journey-dial] button[aria-pressed="true"]');

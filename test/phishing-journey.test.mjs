@@ -183,3 +183,11 @@ test('quick insights quote the poster reflections and stats', () => {
   assert.equal(DICT.pt['insights.stat1Value'], '553 mi');
   assert.equal(DICT.pt['insights.stat2Value'], '68–95%');
 });
+
+test('the "what I built" cards read as numbered first-person steps', () => {
+  const { DICT } = loadJourney(['phishing-i18n.js']).PhishingI18n;
+  const steps = ['tcc', 'curso', 'poster', 'desafio'];
+  steps.forEach((key, i) => assert.ok(DICT.pt[`${key}.kicker`].startsWith(`0${i + 1} ·`), `${key} is step ${i + 1}`));
+  assert.deepEqual(steps.map(key => DICT.pt[`${key}.title`].split(' ')[0]), ['Pesquisei', 'Criei', 'Levei', 'Coloquei']);
+  assert.deepEqual(steps.map(key => DICT.en[`${key}.title`].split(' ')[0]), ['I', 'I', 'I', 'I']);
+});
