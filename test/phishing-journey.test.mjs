@@ -206,3 +206,10 @@ test('the 3,000-visitor claim links to the UTFPR Curitiba post', () => {
   const source = page.slice(page.indexOf('id="fonte-9"'), page.indexOf('id="fonte-10"'));
   assert.match(source, /<a href="https:\/\/www\.instagram\.com\/p\/DeANToDlpeT\/" target="_blank" rel="noopener noreferrer"/);
 });
+
+test('the human-error and generative-AI sources link to the papers cited in the TCC', () => {
+  const page = readFileSync(path.join(projectRoot, 'phishing', 'index.html'), 'utf8');
+  const source = (from, to) => page.slice(page.indexOf(`id="fonte-${from}"`), page.indexOf(`id="fonte-${to}"`));
+  assert.match(source(2, 3), /<a href="https:\/\/www\.ncbi\.nlm\.nih\.gov\/pmc\/articles\/PMC9123525\/" target="_blank" rel="noopener noreferrer"/);
+  assert.match(source(5, 6), /<a href="https:\/\/www\.sciencedirect\.com\/science\/article\/pii\/S2667345225000082" target="_blank" rel="noopener noreferrer"/);
+});
