@@ -122,3 +122,11 @@ test('select clamps to the six eras', () => {
   assert.equal(select(createState(), 9).index, 5);
   assert.equal(select(createState(), -1).index, 0);
 });
+
+test('the challenge title strikes through the shark', () => {
+  const { DICT } = loadJourney(['phishing-i18n.js']).PhishingI18n;
+  assert.equal(DICT.pt['desafio.titleStrike'], 'tubarão');
+  assert.equal(DICT.en['desafio.titleStrike'], 'shark');
+  const page = readFileSync(path.join(projectRoot, 'phishing', 'index.html'), 'utf8');
+  assert.match(page, /<s data-i18n="desafio\.titleStrike">tubarão<\/s>/);
+});
