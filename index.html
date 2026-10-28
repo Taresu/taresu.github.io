@@ -1308,30 +1308,38 @@
         </article>
 
         <!-- CMC -->
-        <article class="tl-item reveal pl-8" data-org-network="cmc" data-open="false">
+        <article class="tl-item reveal pl-8" data-employer-group="cmc" data-org-network="cmc" data-open="false">
           <div class="org-network-control">
             <a data-org-primary-logo href="https://www.curitiba.pr.leg.br/" target="_blank" rel="noopener noreferrer" class="org-logo-link" aria-label="Abrir site da Câmara Municipal de Curitiba" data-i18n-aria-label="exp.orgPrimary.cmc">
               <img src="assets/camara-curitiba.png" alt="Câmara Municipal de Curitiba" class="employer-logo" data-logo-bg="dark" data-i18n-alt="exp.cmcEmployer">
             </a>
             <button type="button" class="org-network-toggle" data-org-toggle aria-expanded="false" aria-controls="org-branches-cmc" aria-label="Mostrar links relacionados à Câmara Municipal de Curitiba" data-i18n-aria-label="exp.orgLinks.cmc"></button>
           </div>
-          <p class="font-mono text-xs text-fog mb-1.5"><span data-experience-date="cmc" data-i18n="exp.cmcDate">mar 2025</span> — <span data-i18n="exp.present">jul 2026</span> <span class="text-fog/60 ml-2">· a3f9c21</span></p>
-          <h3 class="font-display font-semibold text-xl text-paper"><span data-i18n="exp.cmcRole">Estagiário DevOps</span> <span class="text-purple-light font-normal">· <a data-org-primary-name href="https://www.curitiba.pr.leg.br/" target="_blank" rel="noopener noreferrer" class="org-primary-name" data-i18n="exp.cmcEmployer">Câmara Municipal de Curitiba</a></span></h3>
+          <header class="experience-employer">
+            <p class="font-mono text-[10px] uppercase tracking-[0.14em] text-purple-light mb-1" data-i18n="exp.employer">organização</p>
+            <h3 class="font-display font-semibold text-xl text-paper" data-employer-name><a data-org-primary-name href="https://www.curitiba.pr.leg.br/" target="_blank" rel="noopener noreferrer" class="org-primary-name" data-i18n="exp.cmcEmployer">Câmara Municipal de Curitiba</a></h3>
+          </header>
           <nav id="org-branches-cmc" class="org-branches" data-org-branches aria-hidden="true" aria-label="Links relacionados à Câmara Municipal de Curitiba" data-i18n-aria-label="exp.orgLinks.cmc" inert>
             <a data-org-link="project" href="#project-voip" class="org-branch-link"><span data-i18n="exp.org.cmc.project">Projeto VoIP</span><span class="org-branch-arrow" aria-hidden="true">↓</span></a>
             <a data-org-link="resource" href="https://github.com/CMCuritiba" target="_blank" rel="noopener noreferrer" class="org-branch-link"><span data-i18n="exp.org.cmc.github">GitHub CMC</span><span class="org-branch-arrow" aria-hidden="true">↗</span></a>
           </nav>
-          <ul class="mt-3 space-y-2 text-fog font-light text-[15px] list-none">
-            <li class="flex gap-2"><span class="text-purple mt-0.5" aria-hidden="true">▹</span><span data-i18n="exp.cmc1">Arquitetei e desenvolvi soluções open-source Unix-based com Ansible, Vagrant e Molecule, em ambiente Linux com SSO e LDAP para autenticação de serviços.</span></li>
-            <li class="flex gap-2"><span class="text-purple mt-0.5" aria-hidden="true">▹</span><span data-i18n="exp.cmc2">Implementei correções de vulnerabilidades conhecidas com base no OWASP Top 10, seguindo Conventional Commits (commitizen + commitlint).</span></li>
-            <li class="flex gap-2"><span class="text-terminal mt-0.5" aria-hidden="true">★</span><span data-i18n="exp.cmc3">Milestone: migração automatizada de ~370 telefones VoIP de IP estático para DHCP, com Python, Selenium e requests.</span></li>
-          </ul>
-          <div class="flex flex-wrap gap-2 mt-4">
-            <span class="chip font-mono text-[11px] px-2.5 py-1 rounded text-fog">Python</span>
-            <span class="chip font-mono text-[11px] px-2.5 py-1 rounded text-fog">Ansible</span>
-            <span class="chip font-mono text-[11px] px-2.5 py-1 rounded text-fog">Vagrant</span>
-            <span class="chip font-mono text-[11px] px-2.5 py-1 rounded text-fog">Molecule</span>
-            <span class="chip font-mono text-[11px] px-2.5 py-1 rounded text-fog">OWASP</span>
+          <div class="experience-role-stack">
+            <section class="experience-role" data-experience-role="cmc-devops">
+              <p class="font-mono text-xs text-fog mb-1.5"><span data-experience-date="cmc" data-i18n="exp.cmcDate">mar 2025</span> — <span data-i18n="exp.present">jul 2026</span> <span class="text-fog/60 ml-2">· a3f9c21</span></p>
+              <h4 class="font-display font-semibold text-xl text-paper" data-role-title data-i18n="exp.cmcRole">Estagiário DevOps</h4>
+              <ul class="mt-3 space-y-2 text-fog font-light text-[15px] list-none">
+                <li class="flex gap-2"><span class="text-purple mt-0.5" aria-hidden="true">▹</span><span data-i18n="exp.cmc1">Arquitetei e desenvolvi soluções open-source Unix-based com Ansible, Vagrant e Molecule, em ambiente Linux com SSO e LDAP para autenticação de serviços.</span></li>
+                <li class="flex gap-2"><span class="text-purple mt-0.5" aria-hidden="true">▹</span><span data-i18n="exp.cmc2">Implementei correções de vulnerabilidades conhecidas com base no OWASP Top 10, seguindo Conventional Commits (commitizen + commitlint).</span></li>
+                <li class="flex gap-2"><span class="text-terminal mt-0.5" aria-hidden="true">★</span><span data-i18n="exp.cmc3">Milestone: migração automatizada de ~370 telefones VoIP de IP estático para DHCP, com Python, Selenium e requests.</span></li>
+              </ul>
+              <div class="flex flex-wrap gap-2 mt-4">
+                <span class="chip font-mono text-[11px] px-2.5 py-1 rounded text-fog">Python</span>
+                <span class="chip font-mono text-[11px] px-2.5 py-1 rounded text-fog">Ansible</span>
+                <span class="chip font-mono text-[11px] px-2.5 py-1 rounded text-fog">Vagrant</span>
+                <span class="chip font-mono text-[11px] px-2.5 py-1 rounded text-fog">Molecule</span>
+                <span class="chip font-mono text-[11px] px-2.5 py-1 rounded text-fog">OWASP</span>
+              </div>
+            </section>
           </div>
         </article>
 

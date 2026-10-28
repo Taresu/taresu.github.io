@@ -188,7 +188,7 @@ results.profile = await page.evaluate(() => ({
       rel: document.querySelector('[data-project="tcc"] [data-course-link]')?.rel,
     },
   },
-  experienceGroups: Object.fromEntries(['utfpr', 'volkswagen'].map(employer => {
+  experienceGroups: Object.fromEntries(['utfpr', 'cmc', 'volkswagen'].map(employer => {
     const group = document.querySelector(`[data-employer-group="${employer}"]`);
     return [employer, {
       present: Boolean(group),
@@ -1346,6 +1346,13 @@ const assertions = [
         'Estagiário de Segurança da Informação', 'Estagiário de TI',
       ]),
     'the two Volkswagen internships are correlated chronologically inside one employer group',
+  ],
+  [
+    results.profile.experienceGroups.cmc.present &&
+      results.profile.experienceGroups.cmc.employer === 'Câmara Municipal de Curitiba' &&
+      results.profile.experienceGroups.cmc.logoCount === 1 &&
+      JSON.stringify(results.profile.experienceGroups.cmc.roles) === JSON.stringify(['Estagiário DevOps']),
+    'the CMC internship sits inside its own employer group like the other organizations',
   ],
   [results.profile.assistantWebmasterCount === 0, 'the unrelated legacy Webmaster entry remains absent'],
   [results.profile.cmcRole === 'Estagiário DevOps', 'the CMC role is written naturally in Portuguese'],
