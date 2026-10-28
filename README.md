@@ -9,7 +9,7 @@ I build and maintain web and mobile products, automate infrastructure, and bring
 
 ## Profile
 
-I am an Information Systems graduate from UTFPR working across application development, platform integration, cloud operations, and cybersecurity. My work spans the UTFPR institutional portal (Full Stack, through Sep 2026), the Nerdz cross-platform product (maintainer), VESPAS security research where I coordinate the Alerts Channel and mentor members in Blue Team, and AI-assisted engineering with careful human review.
+I am an Information Systems graduate from UTFPR working across application development, platform integration, cloud operations, and cybersecurity. My work spans the UTFPR institutional portal (Full Stack, through Sep 2026), Possamai Software Studio (co-founder) and its Preço Afiado product, VESPAS security research where I coordinate the Alerts Channel and mentor members in Blue Team, and AI-assisted engineering with careful human review.
 
 ## Selected work
 
@@ -19,11 +19,11 @@ React and Volto interfaces integrated with Plone 6, aligned with the Gov.br Desi
 
 [Visit UTFPR](https://www.utfpr.edu.br/)
 
-### Nerdz
+### Preço Afiado
 
-A group-study product for web, Android, and iOS built with React Native, Expo, NestJS, Prisma, PostgreSQL, and AWS delivery services.
+A live supplement price comparison built at Possamai Software Studio: automated Amazon and Mercado Livre collection in Python, ranking by real cost per 25 g of protein or per 3 g dose, and an Astro site on Cloudflare Workers that redeploys after every run.
 
-[View product](https://landing.nerdz.aurasec.dev/)
+[Visit Preço Afiado](https://precoafiado.com.br/)
 
 ### VeriPkg
 

@@ -14,13 +14,13 @@ I build and maintain web and mobile applications, integrate services and automat
 
 ## About
 
-I'm an Information Systems graduate from UTFPR, a public federal university whose program is rated top marks (5 stars) by the Guia do Estudante. I worked as a Full Stack developer on the university's institutional portal (until Sep 2026) and I am one of the maintainers of Nerdz, a cross-platform mobile and web application. At VESPAS I volunteer: I coordinate the cybersecurity Alerts Channel, mentor members with a focus on Blue Team, co-maintain the initiative's website, and contribute to its CTF labs and challenges.
+I'm an Information Systems graduate from UTFPR, a public federal university whose program is rated top marks (5 stars) by the Guia do Estudante. I worked as a Full Stack developer on the university's institutional portal (until Sep 2026) and I co-founded Possamai Software Studio, where I built Preço Afiado. At VESPAS I volunteer: I coordinate the cybersecurity Alerts Channel, mentor members with a focus on Blue Team, co-maintain the initiative's website, and contribute to its CTF labs and challenges.
 
-My experience connects development, operations and security: React/TypeScript and Python on the UTFPR Portal; React Native, Expo and NestJS on Nerdz; automation, CI/CD, cloud and vulnerability investigation in corporate environments.
+My experience connects development, operations and security: React/TypeScript and Python on the UTFPR Portal; Python, Astro and Cloudflare on Preço Afiado; automation, CI/CD, cloud and vulnerability investigation in corporate environments.
 
 I also use generative and agentic AI in software development and implemented a multi-agent orchestrator with the Anthropic API and MCP, while maintaining critical review of AI-assisted code.
 
-**Stats:** TCC pilot score 7.54 → 9.85 · 370 VoIP devices migrated · 3 Nerdz platforms · 4 Cisco Networking Academy courses
+**Stats:** 3+ years in IT · 370 VoIP devices migrated · 5 organizations · 4 Cisco Networking Academy courses
 
 ---
 
@@ -51,17 +51,17 @@ Supported IT operations at the FIS Competence Center, handling operational routi
 ### [Education in Cybersecurity](https://thales-salata.dev/assets/TCC_Thales_Sgarbi_Salata_corrigido_revisado-1.pdf) (TCC / Final Course Project — UTFPR, 2026)
 *Tags: Generative AI, Mixed methods, MITRE ATT&CK, Phishing, MOOC*
 
-Mixed-methods applied research that developed and evaluated a cybersecurity education intervention on Portal Sophia-CT, combining a MOOC, historical narrative, practical activities and phishing simulations mapped with MITRE ATT&CK. In the pilot, the mean score increased from 7.54 to 9.85.
+Mixed-methods applied research that developed and evaluated a cybersecurity education intervention on Portal Sophia-CT, combining a MOOC, historical narrative, practical activities and phishing simulations mapped with MITRE ATT&CK. The research poster was accepted for VESPAS Con 26 (10 Nov 2026).
 
 ### [VeriPkg](https://github.com/Taresu/veripkg) — Honest download verification
 *Stack: Go, Supply Chain Security, OpenPGP, SHA-256*
 
 Dependency-free Go CLI that verifies files downloaded outside the package manager against trusted sources. Every result reports its trust tier: OpenPGP signature, pinned hash, or unverified.
 
-### [Nerdz](https://landing.nerdz.aurasec.dev/) — Mobile and web application
-*Stack: React Native, Expo, NestJS, Prisma, PostgreSQL, Clerk, AWS S3/CloudFront*
+### [Preço Afiado](https://precoafiado.com.br/) — Supplement price comparison (Possamai Software Studio)
+*Stack: Python, SQLite, Astro, Cloudflare Workers, Pagefind*
 
-Maintenance and evolution of a group-study product for web, Android and iOS, with a React Native/Expo frontend, NestJS API, Prisma/PostgreSQL, Clerk authentication and distribution through AWS S3/CloudFront.
+A live product that collects whey protein and creatine offers from Amazon and Mercado Livre and ranks them by real cost: price per 25 g of protein or per 3 g dose. It keeps price history, static search and deploys automatically after every collection run. My role: concept, data collection, backend, frontend and deploy.
 
 ### VoIP migration at scale
 *Stack: Python, Selenium, requests*

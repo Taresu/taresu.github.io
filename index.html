@@ -988,10 +988,6 @@
       <path d="M22 10v6" />
       <path d="M6 12.5V16a6 3 0 0 0 12 0v-3.5" />
     </symbol>
-    <symbol id="icon-smartphone" viewBox="0 0 24 24">
-      <rect width="14" height="20" x="5" y="2" rx="2" ry="2" />
-      <path d="M12 18h.01" />
-    </symbol>
     <symbol id="icon-phone-call" viewBox="0 0 24 24">
       <path d="M13 2a9 9 0 0 1 9 9" />
       <path d="M13 6a5 5 0 0 1 5 5" />
@@ -1157,10 +1153,10 @@
     <div class="grid lg:grid-cols-[1.15fr,0.85fr] gap-12 items-start">
       <div class="reveal space-y-5 text-fog font-light">
         <p data-i18n="about.p1">
-          Sou bacharel em Sistemas de Informação pela UTFPR, universidade pública federal, com o curso avaliado com nota máxima (5 estrelas) pelo Guia do Estudante. Atuei como desenvolvedor Full Stack no portal institucional da universidade (até set/2026) e sou um dos mantenedores do Nerdz, aplicação mobile e web multiplataforma. No VESPAS, sou membro voluntário: coordeno o Canal de Alertas de cibersegurança, mentoro integrantes com foco em Blue Team, ajudo a manter o site da iniciativa e colaboro no desenvolvimento de labs e desafios de CTF.
+          Sou bacharel em Sistemas de Informação pela UTFPR, universidade pública federal, com o curso avaliado com nota máxima (5 estrelas) pelo Guia do Estudante. Atuei como desenvolvedor Full Stack no portal institucional da universidade (até set/2026) e sou sócio-fundador da Possamai Software Studio, onde criei o Preço Afiado. No VESPAS, sou membro voluntário: coordeno o Canal de Alertas de cibersegurança, mentoro integrantes com foco em Blue Team, ajudo a manter o site da iniciativa e colaboro no desenvolvimento de labs e desafios de CTF.
         </p>
         <p data-i18n="about.p2">
-          Faço as três coisas no mesmo trabalho: desenvolvimento, operações e segurança. React/TypeScript e Python no Portal da UTFPR; React Native, Expo e NestJS no Nerdz; automação, CI/CD, cloud e investigação de vulnerabilidades em ambiente corporativo.
+          Faço as três coisas no mesmo trabalho: desenvolvimento, operações e segurança. React/TypeScript e Python no Portal da UTFPR; Python, Astro e Cloudflare no Preço Afiado; automação, CI/CD, cloud e investigação de vulnerabilidades em ambiente corporativo.
         </p>
         <p data-i18n="about.p3">
           Uso IA generativa e agêntica no desenvolvimento e implementei um orquestrador multiagente com Anthropic API e MCP. Mas não largo na mão da IA: reviso de perto tudo o que ela escreve.
@@ -1175,8 +1171,8 @@
             <span class="block text-fog/80 mt-0.5" data-i18n="about.stat2">dispositivos VoIP migrados</span>
           </div>
           <div>
-            <span class="text-terminal text-xl font-semibold">3</span>
-            <span class="block text-fog/80 mt-0.5" data-i18n="about.stat3">plataformas no Nerdz</span>
+            <span class="text-terminal text-xl font-semibold">5</span>
+            <span class="block text-fog/80 mt-0.5" data-i18n="about.stat3">organizações</span>
           </div>
           <div>
             <span class="text-terminal text-xl font-semibold">3+</span>
@@ -1524,25 +1520,6 @@
           <span class="chip font-mono text-[11px] px-2.5 py-1 rounded text-fog">Supply Chain Security</span>
           <span class="chip font-mono text-[11px] px-2.5 py-1 rounded text-fog">OpenPGP</span>
           <span class="chip font-mono text-[11px] px-2.5 py-1 rounded text-fog">SHA-256</span>
-        </div>
-      </article>
-
-      <!-- Nerdz -->
-      <article class="group reveal card-hover block bg-card border border-line rounded-xl p-6" data-project="nerdz">
-        <div class="flex min-w-0 flex-wrap items-start gap-x-2 gap-y-1 mb-4">
-          <svg class="line-icon line-icon--project shrink-0" data-icon="smartphone" data-icon-context="project" aria-hidden="true" focusable="false"><use href="#icon-smartphone"></use></svg>
-          <p class="min-w-0 flex-1 break-words font-mono text-[11px] text-fog">~/projects/<span class="text-terminal">nerdz</span></p>
-          <a data-project-link href="https://landing.nerdz.aurasec.dev/" target="_blank" rel="noopener noreferrer" class="basis-full shrink-0 text-purple-light hover:text-purple font-mono text-[11px] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-purple rounded-sm sm:ml-auto sm:basis-auto"><span data-i18n="proj.nerdz.cta">ver produto</span> ↗</a>
-        </div>
-        <h3 class="font-display font-semibold text-lg text-paper mb-2" data-i18n="proj.nerdz.t">Nerdz - Aplicação mobile e web</h3>
-        <p class="text-fog font-light text-[15px] mb-5" data-i18n="proj.nerdz.d">
-          Manutenção e evolução de um produto de estudo em grupo para web, Android e iOS, com frontend React Native/Expo, API NestJS, Prisma/PostgreSQL, autenticação Clerk e distribuição por AWS S3/CloudFront.
-        </p>
-        <div class="flex flex-wrap gap-2">
-          <span class="chip font-mono text-[11px] px-2.5 py-1 rounded text-fog">React Native</span>
-          <span class="chip font-mono text-[11px] px-2.5 py-1 rounded text-fog">Expo</span>
-          <span class="chip font-mono text-[11px] px-2.5 py-1 rounded text-fog">NestJS</span>
-          <span class="chip font-mono text-[11px] px-2.5 py-1 rounded text-fog">PostgreSQL</span>
         </div>
       </article>
 
@@ -2005,10 +1982,10 @@
         'ambient.ready': 'Música ambiente pronta', 'ambient.loading': 'Carregando música ambiente', 'ambient.playing': 'Música ambiente em reprodução', 'ambient.paused': 'Música ambiente pausada', 'ambient.error': 'Não foi possível reproduzir a música ambiente',
         'ambient.scene.top': 'signal://início', 'ambient.scene.sobre': 'signal://sobre', 'ambient.scene.experiencia': 'signal://experiência', 'ambient.scene.projetos': 'signal://projetos', 'ambient.scene.skills': 'signal://formação', 'ambient.scene.contato': 'signal://contato',
         'about.title': 'Sobre',
-        'about.p1': 'Sou bacharel em Sistemas de Informação pela UTFPR, universidade pública federal, com o curso avaliado com nota máxima (5 estrelas) pelo Guia do Estudante. Atuei como desenvolvedor Full Stack no portal institucional da universidade (até set/2026) e sou um dos mantenedores do Nerdz, aplicação mobile e web multiplataforma. No VESPAS, sou membro voluntário: coordeno o Canal de Alertas de cibersegurança, mentoro integrantes com foco em Blue Team, ajudo a manter o site da iniciativa e colaboro no desenvolvimento de labs e desafios de CTF.',
-        'about.p2': 'Faço as três coisas no mesmo trabalho: desenvolvimento, operações e segurança. React/TypeScript e Python no Portal da UTFPR; React Native, Expo e NestJS no Nerdz; automação, CI/CD, cloud e investigação de vulnerabilidades em ambiente corporativo.',
+        'about.p1': 'Sou bacharel em Sistemas de Informação pela UTFPR, universidade pública federal, com o curso avaliado com nota máxima (5 estrelas) pelo Guia do Estudante. Atuei como desenvolvedor Full Stack no portal institucional da universidade (até set/2026) e sou sócio-fundador da Possamai Software Studio, onde criei o Preço Afiado. No VESPAS, sou membro voluntário: coordeno o Canal de Alertas de cibersegurança, mentoro integrantes com foco em Blue Team, ajudo a manter o site da iniciativa e colaboro no desenvolvimento de labs e desafios de CTF.',
+        'about.p2': 'Faço as três coisas no mesmo trabalho: desenvolvimento, operações e segurança. React/TypeScript e Python no Portal da UTFPR; Python, Astro e Cloudflare no Preço Afiado; automação, CI/CD, cloud e investigação de vulnerabilidades em ambiente corporativo.',
         'about.p3': 'Uso IA generativa e agêntica no desenvolvimento e implementei um orquestrador multiagente com Anthropic API e MCP. Mas não largo na mão da IA: reviso de perto tudo o que ela escreve.',
-        'about.stat1': 'cursos Cisco Networking Academy', 'about.stat2': 'dispositivos VoIP migrados', 'about.stat3': 'plataformas no Nerdz', 'about.stat4': 'anos em TI',
+        'about.stat1': 'cursos Cisco Networking Academy', 'about.stat2': 'dispositivos VoIP migrados', 'about.stat3': 'organizações', 'about.stat4': 'anos em TI',
         'about.asciiTitle': 'autorretrato ASCII autoral',
         'about.asciiCaption': 'Autorretrato construído em caracteres — uma assinatura visual entre identidade, código e segurança.',
         'about.asciiAlt': 'Autorretrato ASCII autoral de Thales Sgarbi Salata formado por caracteres claros sobre fundo escuro.',
@@ -2056,9 +2033,6 @@
         'proj.preco.role': 'Meu papel: concepção, coleta de dados, backend, frontend e deploy · Possamai Software Studio',
         'proj.veripkg.t': 'VeriPkg — verificação honesta de downloads',
         'proj.veripkg.d': 'CLI em Go, sem dependências de runtime, que verifica arquivos baixados fora do gerenciador de pacotes contra fontes confiáveis. Cada resultado informa seu nível de confiança: assinatura OpenPGP, hash fixado ou não verificado.',
-        'proj.nerdz.t': 'Nerdz - Aplicação mobile e web',
-        'proj.nerdz.d': 'Manutenção e evolução de um produto de estudo em grupo para web, Android e iOS, com frontend React Native/Expo, API NestJS, Prisma/PostgreSQL, autenticação Clerk e distribuição por AWS S3/CloudFront.',
-        'proj.nerdz.cta': 'ver produto',
         'proj.voip.t': 'Migração VoIP em escala',
         'proj.voip.d': 'Bot de web scraping em Python que permitiu reconfigurar ~370 telefones VoIP da Câmara Municipal de Curitiba, migrando-os de IP estático para DHCP — Selenium para automação web e requests com cookies de sessão para os métodos POST.',
         'proj.voip.visibility': 'projeto interno · CMC',
@@ -2093,10 +2067,10 @@
         'ambient.ready': 'Ambient music ready', 'ambient.loading': 'Loading ambient music', 'ambient.playing': 'Ambient music playing', 'ambient.paused': 'Ambient music paused', 'ambient.error': 'Ambient music could not be played',
         'ambient.scene.top': 'signal://home', 'ambient.scene.sobre': 'signal://about', 'ambient.scene.experiencia': 'signal://experience', 'ambient.scene.projetos': 'signal://projects', 'ambient.scene.skills': 'signal://skills', 'ambient.scene.contato': 'signal://contact',
         'about.title': 'About',
-        'about.p1': "I hold a bachelor's degree in Information Systems from UTFPR, a public federal university, with the program rated top marks (5 stars) by the Guia do Estudante. I worked as a Full Stack developer on the university's institutional portal (until Sep 2026) and I am one of the maintainers of Nerdz, a cross-platform mobile and web application. At VESPAS I am a volunteer member: I coordinate the cybersecurity Alerts Channel, mentor members with a focus on Blue Team, help maintain the initiative's website, and contribute to its CTF labs and challenges.",
-        'about.p2': 'I do all three in the same job: development, operations and security. React/TypeScript and Python on the UTFPR Portal; React Native, Expo and NestJS on Nerdz; automation, CI/CD, cloud and vulnerability investigation in corporate environments.',
+        'about.p1': "I hold a bachelor's degree in Information Systems from UTFPR, a public federal university, with the program rated top marks (5 stars) by the Guia do Estudante. I worked as a Full Stack developer on the university's institutional portal (until Sep 2026) and I co-founded Possamai Software Studio, where I built Preço Afiado. At VESPAS I am a volunteer member: I coordinate the cybersecurity Alerts Channel, mentor members with a focus on Blue Team, help maintain the initiative's website, and contribute to its CTF labs and challenges.",
+        'about.p2': 'I do all three in the same job: development, operations and security. React/TypeScript and Python on the UTFPR Portal; Python, Astro and Cloudflare on Preço Afiado; automation, CI/CD, cloud and vulnerability investigation in corporate environments.',
         'about.p3': "I use generative and agentic AI in my work and built a multi-agent orchestrator with the Anthropic API and MCP. But I don't just trust it: I read every line it writes.",
-        'about.stat1': 'Cisco Networking Academy courses', 'about.stat2': 'VoIP devices migrated', 'about.stat3': 'Nerdz platforms', 'about.stat4': 'years in IT',
+        'about.stat1': 'Cisco Networking Academy courses', 'about.stat2': 'VoIP devices migrated', 'about.stat3': 'organizations', 'about.stat4': 'years in IT',
         'about.asciiTitle': 'authorial ASCII self-portrait',
         'about.asciiCaption': 'A self-portrait built from characters — a visual signature connecting identity, code and security.',
         'about.asciiAlt': 'Authorial ASCII self-portrait of Thales Sgarbi Salata formed by light characters on a dark background.',
@@ -2144,9 +2118,6 @@
         'proj.preco.role': 'My role: concept, data collection, backend, frontend and deploy · Possamai Software Studio',
         'proj.veripkg.t': 'VeriPkg — honest download verification',
         'proj.veripkg.d': 'Dependency-free Go CLI that verifies files downloaded outside the package manager against trusted sources. Every result reports its trust tier: OpenPGP signature, pinned hash, or unverified.',
-        'proj.nerdz.t': 'Nerdz - Mobile and web application',
-        'proj.nerdz.d': 'Maintenance and evolution of a group-study product for web, Android and iOS, with a React Native/Expo frontend, NestJS API, Prisma/PostgreSQL, Clerk authentication and distribution through AWS S3/CloudFront.',
-        'proj.nerdz.cta': 'View product',
         'proj.voip.t': 'VoIP migration at scale',
         'proj.voip.d': 'Python web-scraping bot that enabled the reconfiguration of ~370 VoIP phones at the Curitiba City Council, migrating them from static IP to DHCP — Selenium for web automation and requests with session cookies for POST methods.',
         'proj.voip.visibility': 'internal project · CMC',
@@ -3571,7 +3542,6 @@
                 { name: 'Education in Cybersecurity (final paper)', type: 'Academic research', year: 2026, description: 'For my final paper, I developed and evaluated a cybersecurity education intervention combining a MOOC, hands-on activities and MITRE ATT&CK-mapped phishing simulations. The research poster was accepted for VESPAS Con 26 (10 Nov 2026).' },
                 { name: 'Preço Afiado', type: 'Live product (Possamai Software Studio)', url: 'https://precoafiado.com.br/', stack: ['Python', 'SQLite', 'Astro', 'Cloudflare Workers', 'Pagefind'], description: 'Whey protein and creatine price comparison that collects Amazon and Mercado Livre offers and ranks them by real cost per 25 g of protein or per 3 g dose. Role: concept, data collection, backend, frontend and deploy.' },
                 { name: 'VeriPkg', type: 'Open-source CLI', url: 'https://github.com/Taresu/veripkg', stack: ['Go', 'OpenPGP', 'SHA-256'], description: 'Dependency-free Go CLI that verifies files downloaded outside the package manager and reports the trust tier of every result.' },
-                { name: 'Nerdz', type: 'Mobile & web app', stack: ['React Native', 'Expo', 'NestJS', 'PostgreSQL', 'Clerk', 'AWS'], description: 'Cross-platform group-study app for web, Android and iOS.' },
                 { name: 'VoIP migration at scale', type: 'Automation', stack: ['Python', 'Selenium', 'requests'], description: 'Python web-scraping bot that enabled ~370 VoIP phones to be migrated from static IP to DHCP at Curitiba City Council.' },
                 { name: 'UTFPR Portal restructuring', type: 'Web development', stack: ['Volto', 'Plone 6', 'GitLab CI/CD'], description: "New components for UTFPR's institutional portal aligned with Gov.br Design System 4.0." },
                 { name: 'VESPAS — CTF Labs & Alerts', type: 'Security', description: 'Contributes to CTF labs and challenges, co-coordinates the public cybersecurity Alerts Channel, and co-maintains the VESPAS website.' },

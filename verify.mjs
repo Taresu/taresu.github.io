@@ -92,11 +92,8 @@ results.profile = await page.evaluate(() => ({
   terminalRenderedLines: [...document.querySelectorAll('#terminal-body > div')]
     .map(line => line.textContent.trim())
     .filter(Boolean),
-  nerdz: {
-    card: Boolean(document.querySelector('[data-project="nerdz"]')),
-    link: document.querySelector('[data-project="nerdz"] a')?.href,
-  },
-  linkedProjects: ['veripkg', 'nerdz', 'portal', 'vespas'].map(name => {
+  nerdzAbsent: !document.querySelector('[data-project="nerdz"]') && !/Nerdz/.test(document.body.textContent),
+  linkedProjects: ['veripkg', 'portal', 'vespas'].map(name => {
     const card = document.querySelector(`[data-project="${name}"]`);
     const primaryLink = card?.querySelector('[data-project-link]');
     return {
@@ -217,6 +214,11 @@ results.profile = await page.evaluate(() => ({
     target: document.querySelector('[data-project="precoafiado"] [data-project-link]')?.target,
     rel: document.querySelector('[data-project="precoafiado"] [data-project-link]')?.rel,
     role: document.querySelector('[data-project="precoafiado"] [data-i18n="proj.preco.role"]')?.textContent.trim(),
+  },
+  organizationsStat: {
+    value: document.querySelector('[data-i18n="about.stat3"]')?.previousElementSibling?.textContent.trim(),
+    label: document.querySelector('[data-i18n="about.stat3"]')?.textContent.trim(),
+    groups: document.querySelectorAll('#experiencia [data-employer-group]').length,
   },
   yearsStat: {
     value: document.querySelector('[data-i18n="about.stat4"]')?.previousElementSibling?.textContent.trim(),
@@ -644,7 +646,6 @@ results.en = await page.evaluate(() => ({
   tcc: document.querySelector('[data-project="tcc"]')?.textContent,
   credentials: document.querySelector('[data-credentials]')?.textContent,
   veripkg: document.querySelector('[data-project="veripkg"]')?.textContent,
-  nerdzCta: document.querySelector('[data-project="nerdz"] [data-i18n="proj.nerdz.cta"]')?.textContent.trim(),
   voip: document.querySelector('[data-project="voip"]')?.textContent,
   vespas: document.querySelector('[data-project="vespas"]')?.textContent,
   vespasResponsibility: {
@@ -1243,10 +1244,9 @@ const assertions = [
       .every(line => results.en.terminalRenderedLines.includes(line)),
     'the English terminal mission remains localized',
   ],
-  [results.profile.nerdz.card, 'Nerdz appears as a featured project'],
+  [results.profile.nerdzAbsent, 'the discontinued Nerdz product no longer appears anywhere on the page'],
   [
     [
-      ['nerdz', 'https://landing.nerdz.aurasec.dev/'],
       ['veripkg', 'https://github.com/Taresu/veripkg'],
       ['portal', 'https://www.utfpr.edu.br/'],
       ['vespas', 'https://github.com/vespas-utfpr'],
@@ -1326,10 +1326,10 @@ const assertions = [
     'the Portuguese VESPAS copy states volunteer role, Alerts Channel coordination and Blue Team mentoring',
   ],
   [
-    results.profile.chipLinks.total === 117 && results.profile.chipLinks.linked === 117 &&
+    results.profile.chipLinks.total === 113 && results.profile.chipLinks.linked === 113 &&
       results.profile.chipLinks.allSafeExternal && results.profile.chipLinks.nestedInteractive.length === 0 &&
       results.profile.chipLinks.emptyLabels === 0,
-    'all 117 experience, project and skill chips are safe external documentation links without nested interactions',
+    'all 113 experience, project and skill chips are safe external documentation links without nested interactions',
   ],
   [
     results.profile.tcc.title?.includes('Educação em Cibersegurança') &&
@@ -1390,7 +1390,9 @@ const assertions = [
     'Preço Afiado follows the research as the live product, with a safe tracked link and the owner role',
   ],
   [
-    results.profile.yearsStat.value === '3+' && results.profile.yearsStat.label === 'anos em TI',
+    results.profile.yearsStat.value === '3+' && results.profile.yearsStat.label === 'anos em TI' &&
+      results.profile.organizationsStat.value === '5' && results.profile.organizationsStat.label === 'organizações' &&
+      results.profile.organizationsStat.groups === 5,
     'the About stats lead with verifiable experience instead of the pilot score',
   ],
   [
@@ -1457,7 +1459,6 @@ const assertions = [
       ['tcc', 'graduation-cap'],
       ['precoafiado', 'trending-down'],
       ['veripkg', 'shield-check'],
-      ['nerdz', 'smartphone'],
       ['voip', 'phone-call'],
       ['portal', 'panels-top-left'],
       ['vespas', 'flag'],
@@ -1599,7 +1600,6 @@ const assertions = [
     ['VeriPkg — honest download verification', 'Go CLI', 'trust tier'].every(text => results.en.veripkg?.includes(text)),
     'the VeriPkg project is translated in the English portfolio',
   ],
-  [results.en.nerdzCta === 'View product', 'the Nerdz project action is translated in English'],
   [
     JSON.stringify(results.en.experienceDates) === JSON.stringify({
       possamai: 'Mar 2026',
@@ -1689,7 +1689,7 @@ const assertions = [
     'the consolidated credential-verification note is translated in English',
   ],
   [
-    results.englishReloadChipLinks.total === 117 && results.englishReloadChipLinks.linked === 117,
+    results.englishReloadChipLinks.total === 113 && results.englishReloadChipLinks.linked === 113,
     'all documentation chips remain linked when English is the saved language at page load',
   ],
   [results.tccPdf.status === 200 && results.tccPdf.type === 'application/pdf', 'TCC PDF is readable from the portfolio'],
@@ -1739,8 +1739,8 @@ const assertions = [
   ],
   [results.mobileAiSkillGroup.graphHidden, 'the dense relationship graph remains hidden on mobile'],
   [
-    results.profile.lineIcons.length === 20 && results.profile.spriteSymbols.length === 17,
-    'the page renders 20 semantic instances from 17 unique local symbols',
+    results.profile.lineIcons.length === 19 && results.profile.spriteSymbols.length === 16,
+    'the page renders 19 semantic instances from 16 unique local symbols',
   ],
   [
     results.profile.lineIcons.every(icon => icon.href?.startsWith('#icon-')),
