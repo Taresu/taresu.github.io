@@ -25,11 +25,26 @@
     iso.box(g, 3.2, 4.5, 0.16, 1.0, 0.5, 0.02, '#9aa3af');
   }
 
-  function phoneOnStand(iso, g, glass) {
-    iso.box(g, 3.0, 3.2, 0, 1.6, 1.0, 0.2, '#374151');
-    iso.box(g, 3.2, 3.0, 0.2, 1.2, 0.2, 1.2, '#4b5563');
-    iso.box(g, 3.0, 3.2, 0.2, 1.6, 0.16, 3.0, '#0b1220');
-    iso.screen(g, 3.1, 3.361, 0.35, 1.4, 2.7, glass);
+  // A current smartphone on a slim stand: thin aluminium frame, edge-to-edge glass, camera island,
+  // status bar and home indicator. Screens hosting text start at y = 3.322, just in front of the glass.
+  function phoneOnStand(iso, g, glass, font) {
+    iso.box(g, 2.9, 2.9, 0, 1.8, 1.1, 0.08, '#4b5563');
+    iso.box(g, 3.25, 2.95, 0.08, 1.1, 0.25, 1.6, '#374151');
+    iso.box(g, 3.0, 3.2, 0.08, 1.6, 0.12, 3.1, '#9aa4b2');
+    iso.box(g, 4.6, 3.24, 2.2, 0.03, 0.05, 0.35, '#6b7280');
+    iso.screen(g, 3.04, 3.321, 0.12, 1.52, 3.02, '#05070b');
+    iso.screen(g, 3.07, 3.3215, 0.15, 1.46, 2.96, glass);
+    iso.screen(g, 3.1, 3.322, 2.84, 1.4, 0.2, glass, true);
+    iso.label(g, 3.14, 3.323, 2.88, '9:41', { fill: '#e6edf3', font, maxUnits: 0.4, size: 3, weight: 700 });
+    iso.screen(g, 3.6, 3.323, 2.9, 0.38, 0.09, '#000000');
+    [0.04, 0.07, 0.1].forEach((height, i) => iso.screen(g, 4.12 + i * 0.07, 3.323, 2.88, 0.04, height, '#e6edf3'));
+    iso.screen(g, 4.36, 3.323, 2.88, 0.13, 0.08, '#e6edf3');
+    iso.screen(g, 3.6, 3.323, 0.22, 0.4, 0.035, '#e5e7eb');
+  }
+
+  // Soft diagonal glare on the glass, drawn last so it sits over the content.
+  function glare(iso, g) {
+    iso.polygon(g, [[3.1, 3.324, 2.6], [3.55, 3.324, 2.8], [4.5, 3.324, 1.2], [4.5, 3.324, 0.8]], 'rgba(255,255,255,.05)');
   }
 
   // Visual identity of each course module (colors and type), reused by the scenes and the stop panel.
@@ -102,24 +117,30 @@
     '2020s': (iso, g) => {
       const font = THEMES['2020s'].font;
       desk(iso, g);
-      phoneOnStand(iso, g, '#161b22');
-      iso.screen(g, 3.2, 3.362, 1.62, 1.2, 0.7, '#21262d', true);
-      iso.label(g, 3.28, 3.363, 1.7, '▶ 0:12', { fill: '#8b949e', font, maxUnits: 1.0, size: 4.5 });
+      phoneOnStand(iso, g, '#161b22', font);
+      iso.screen(g, 3.1, 3.322, 2.48, 1.4, 0.28, '#21262d', true);
+      iso.label(g, 3.16, 3.323, 2.56, '● +55 41 9····', { fill: '#3fb950', font, maxUnits: 1.25, size: 4 });
+      iso.screen(g, 3.2, 3.322, 1.62, 1.2, 0.7, '#21262d', true);
+      iso.label(g, 3.28, 3.323, 1.7, '▶ 0:12', { fill: '#8b949e', font, maxUnits: 1.0, size: 4.5 });
       [0.12, 0.26, 0.18, 0.3, 0.22, 0.28, 0.14].forEach((height, i) => {
-        iso.screen(g, 3.3 + i * 0.13, 3.363, 2.07 - height / 2, 0.06, height, '#3fb950');
+        iso.screen(g, 3.3 + i * 0.13, 3.323, 2.07 - height / 2, 0.06, height, '#3fb950');
       });
-      iso.screen(g, 3.2, 3.362, 0.6, 1.2, 0.42, '#1f6feb', true);
-      iso.label(g, 3.28, 3.363, 0.7, 'PIX ?', { fill: '#e6edf3', font, maxUnits: 1.0, size: 5, weight: 700 });
+      iso.screen(g, 3.2, 3.322, 0.6, 1.2, 0.42, '#1f6feb', true);
+      iso.label(g, 3.28, 3.323, 0.7, 'PIX ?', { fill: '#e6edf3', font, maxUnits: 1.0, size: 5, weight: 700 });
+      glare(iso, g);
     },
     agora: (iso, g) => {
       const font = THEMES.agora.font;
       desk(iso, g);
-      phoneOnStand(iso, g, '#0d1a12');
-      iso.polygon(g, [[3.45, 3.362, 1.9], [4.25, 3.362, 1.9], [4.0, 3.362, 2.75]], '#4ade80');
-      iso.screen(g, 3.15, 3.362, 1.2, 1.3, 0.32, '#1a3326', true);
-      iso.label(g, 3.22, 3.363, 1.28, 'lojabela', { fill: '#d1fae5', font, maxUnits: 1.15, size: 5 });
-      iso.screen(g, 3.15, 3.362, 0.7, 1.3, 0.32, '#1a3326', true);
-      iso.label(g, 3.22, 3.363, 0.78, 'lojabbela', { fill: '#d1fae5', font, maxUnits: 1.15, size: 5 });
+      phoneOnStand(iso, g, '#0d1a12', font);
+      iso.screen(g, 3.12, 3.322, 2.46, 1.36, 0.28, '#1a3326', true);
+      iso.label(g, 3.18, 3.323, 2.54, '🔒 black friday', { fill: '#d1fae5', font, maxUnits: 1.2, size: 4 });
+      iso.polygon(g, [[3.45, 3.323, 1.75], [4.25, 3.323, 1.75], [4.0, 3.323, 2.35]], '#4ade80');
+      iso.screen(g, 3.15, 3.322, 1.2, 1.3, 0.32, '#1a3326', true);
+      iso.label(g, 3.22, 3.323, 1.28, 'lojabela', { fill: '#d1fae5', font, maxUnits: 1.15, size: 5 });
+      iso.screen(g, 3.15, 3.322, 0.7, 1.3, 0.32, '#1a3326', true);
+      iso.label(g, 3.22, 3.323, 0.78, 'lojabeia', { fill: '#d1fae5', font, maxUnits: 1.15, size: 5 });
+      glare(iso, g);
     },
   };
 
@@ -135,20 +156,20 @@
           milestone: 'BBS',
           chapter: 'A curiosidade vira ameaça: BBS, phreaks e as primeiras senhas roubadas.',
           sceneLabel: 'Terminal com monitor de fósforo verde e teclado sobre a mesa, pedindo login.',
-          question: 'Mensagem no BBS. Qual destas é golpe?',
-          options: ['"Sou o sysop. Me passe sua senha para manutenção."', 'Aviso no mural: manutenção às 22h, nenhuma ação necessária.'],
+          question: 'Dois avisos do sysop no BBS. Qual é golpe?',
+          options: ['SYSOP: migramos o BBS para um disco novo e algumas contas foram corrompidas. Responda esta mensagem com seu login e senha para restaurarmos o seu acesso.', 'SYSOP: migramos o BBS para um disco novo. Se a sua conta falhar, troque a senha no menu Usuário > Senha ao entrar.'],
           scamIndex: 0,
-          why: 'O administrador do sistema (sysop) já tem acesso a tudo e nunca precisa pedir a sua senha. Quem pede senha por mensagem está tentando roubá-la.',
+          why: 'Os dois falam da mesma migração, mas o golpe pede a senha por mensagem. O sysop de verdade já tem acesso a tudo e manda você trocar a senha no próprio sistema.',
         },
         en: {
           title: 'The dawn of cybercrime',
           milestone: 'BBS',
           chapter: 'Curiosity turns into threat: BBSs, phreaks and the first stolen passwords.',
           sceneLabel: 'Green-phosphor terminal and keyboard on the desk, asking for a login.',
-          question: 'A BBS message. Which one is the scam?',
-          options: ['"I\'m the sysop. Send me your password for maintenance."', 'Board notice: maintenance at 10 pm, no action needed.'],
+          question: 'Two notices from the BBS sysop. Which one is the scam?',
+          options: ['SYSOP: we moved the BBS to a new disk and some accounts were corrupted. Reply to this message with your login and password so we can restore your access.', 'SYSOP: we moved the BBS to a new disk. If your account fails, change your password in the User > Password menu when you log in.'],
           scamIndex: 0,
-          why: 'A system administrator (sysop) already has full access and never needs to ask for your password. Anyone asking for it by message is trying to steal it.',
+          why: 'Both mention the same migration, but the scam asks for your password by message. A real sysop already has full access and sends you to change it in the system itself.',
         },
       },
     },
@@ -163,20 +184,20 @@
           milestone: 'AOL',
           chapter: 'Contas AOL, AOHell e falsos funcionários pedindo senha.',
           sceneLabel: 'PC bege com monitor de tubo e disquetes, com uma janela pedindo a senha da conta.',
-          question: 'Janela de mensagem da AOL. Qual destas é golpe?',
-          options: ['Sua fatura está disponível na área do assinante.', '"Verifique sua conta: digite sua senha abaixo."'],
+          question: 'Duas mensagens instantâneas da AOL sobre cobrança. Qual é golpe?',
+          options: ['AOL Billing: o cartão cadastrado vence este mês. Atualize os dados em Keyword: Billing antes de 31/12.', 'AOL Member Services: houve um erro no cadastro do seu cartão. Para evitar o cancelamento, confirme aqui na conversa a sua senha e o número do cartão.'],
           scamIndex: 1,
-          why: 'Pedido de senha por mensagem: a isca clássica dos anos 90.',
+          why: 'As duas tratam de cobrança, mas só o golpe pede senha e cartão dentro da conversa. A legítima manda você para a área oficial da AOL.',
         },
         en: {
           title: 'The origin of phishing',
           milestone: 'AOL',
           chapter: 'AOL accounts, AOHell and fake staff asking for passwords.',
           sceneLabel: 'Beige PC with a CRT monitor and floppy disks, showing a window that asks for the account password.',
-          question: 'An AOL message window. Which one is the scam?',
-          options: ['Your bill is available in the member area.', '"Verify your account: type your password below."'],
+          question: 'Two AOL instant messages about billing. Which one is the scam?',
+          options: ['AOL Billing: the card on file expires this month. Update it at Keyword: Billing before 12/31.', 'AOL Member Services: there was an error with your card on file. To avoid cancellation, confirm your password and card number here in the chat.'],
           scamIndex: 1,
-          why: 'A password request by message: the classic 90s bait.',
+          why: 'Both are about billing, but only the scam asks for your password and card in the chat. The real one sends you to AOL\'s official area.',
         },
       },
     },
@@ -191,20 +212,20 @@
           milestone: 'PayPal',
           chapter: 'Bancos on-line, PayPal e eBay falsos: o golpe vira negócio.',
           sceneLabel: 'Notebook prata aberto com um e-mail de banco pedindo atualização de dados.',
-          question: 'E-mail do "PayPal". Qual destes é golpe?',
-          options: ['"Conta limitada! Acesse paypa1-seguro.com"', 'Recibo de pagamento de R$ 49,90, sem link e sem pedido de dados.'],
+          question: 'Dois e-mails do "PayPal" sobre acesso incomum. Qual é golpe?',
+          options: ['Detectamos um acesso incomum e limitamos a sua conta. Restaure o acesso em https://www.paypal.com.br.secure-login.net/br', 'Detectamos um acesso incomum. Se não foi você, entre pelo app ou digite paypal.com no navegador e troque a sua senha.'],
           scamIndex: 0,
-          why: 'paypa1, com o número 1 no lugar do L: domínio falso.',
+          why: 'O link começa com paypal.com.br, mas o domínio de verdade é secure-login.net, o que vem antes é só subdomínio. A mensagem legítima não manda link: pede que você entre por conta própria.',
         },
         en: {
           title: 'The rise of phishing',
           milestone: 'PayPal',
           chapter: 'Online banking, fake PayPal and eBay: the scam becomes a business.',
           sceneLabel: 'Open silver laptop with a bank e-mail asking you to update your details.',
-          question: 'A "PayPal" e-mail. Which one is the scam?',
-          options: ['"Account limited! Go to paypa1-seguro.com"', 'Payment receipt for R$ 49.90, with no link and no request for your details.'],
+          question: 'Two "PayPal" e-mails about unusual activity. Which one is the scam?',
+          options: ['We detected unusual activity and limited your account. Restore access at https://www.paypal.com.br.secure-login.net/br', 'We detected unusual activity. If it wasn\'t you, open the app or type paypal.com in your browser and change your password.'],
           scamIndex: 0,
-          why: 'paypa1, with the digit 1 instead of an L: a fake domain.',
+          why: 'The link starts with paypal.com.br, but the real domain is secure-login.net; everything before it is just a subdomain. The real message has no link: it asks you to go there yourself.',
         },
       },
     },
@@ -219,20 +240,20 @@
           milestone: 'RSA',
           chapter: 'Spear phishing, OSINT e ransomware: o ataque fica direcionado.',
           sceneLabel: 'Notebook e celular sobre a mesa, com um anexo de fatura suspeito na tela.',
-          question: 'Mensagem do "diretor". Qual destas é golpe?',
-          options: ['Reunião de alinhamento na sexta, sala 3.', '"Pague esta fatura hoje, urgente, e não comente com ninguém."'],
+          question: 'Dois e-mails da diretora financeira, Carla Mendes. Qual é golpe?',
+          options: ['De carla.mendes@empresa.com.br: a NF do fornecedor já está no sistema de pagamentos para aprovação. Consegue conferir até sexta?', 'De carla.mendes@empresa-grupo.com: estou entrando em reunião com o cliente. Pague hoje a NF anexa; o fornecedor mudou de banco e os dados novos estão no PDF.'],
           scamIndex: 1,
-          why: 'Urgência, sigilo e dinheiro: o padrão da fraude do CEO.',
+          why: 'Mesmo nome, domínio parecido (empresa-grupo.com no lugar de empresa.com.br), troca de conta bancária e pressa fora do processo: o padrão da fraude do CEO.',
         },
         en: {
           title: 'The targeted attack',
           milestone: 'RSA',
           chapter: 'Spear phishing, OSINT and ransomware: attacks get targeted.',
           sceneLabel: 'Laptop and phone on the desk, with a suspicious invoice attachment on screen.',
-          question: 'A message from the "director". Which one is the scam?',
-          options: ['Alignment meeting on Friday, room 3.', '"Pay this invoice today, it\'s urgent, and don\'t tell anyone."'],
+          question: 'Two e-mails from the CFO, Carla Mendes. Which one is the scam?',
+          options: ['From carla.mendes@empresa.com.br: the supplier invoice is in the payment system awaiting approval. Can you check it by Friday?', 'From carla.mendes@empresa-grupo.com: I\'m heading into a client meeting. Pay the attached invoice today; the supplier changed banks and the new details are in the PDF.'],
           scamIndex: 1,
-          why: 'Urgency, secrecy and money: the CEO fraud pattern.',
+          why: 'Same name, a look-alike domain (empresa-grupo.com instead of empresa.com.br), a bank change and rush outside the process: the CEO fraud pattern.',
         },
       },
     },
@@ -247,20 +268,20 @@
           milestone: 'IA',
           chapter: 'Kits de phishing, páginas realistas, IA generativa e deepfake de voz.',
           sceneLabel: 'Smartphone sobre a mesa recebendo um áudio que pede um PIX urgente.',
-          question: 'Dois áudios no WhatsApp. Qual destes é golpe?',
-          options: ['Áudio com a voz do seu chefe pedindo um PIX urgente para um fornecedor novo.', 'Áudio do seu chefe avisando que a reunião mudou para as 15h.'],
+          question: 'Dois áudios no WhatsApp com a voz do seu chefe. Qual é golpe?',
+          options: ['De um número novo, com a foto dele: "Troquei de número. Consegue fazer um PIX de R$ 4.800 para o fornecedor agora? Depois te explico."', 'Do número que você já tem salvo: "Pode aprovar o pedido de compra 4521 no sistema? A cotação está anexada lá."'],
           scamIndex: 0,
-          why: 'Mesmo com a voz certa, PIX urgente é sinal de golpe: a IA já clona vozes. Confirme por outro canal.',
+          why: 'Foto e voz convincentes não bastam: número novo e PIX fora do processo são o sinal. Ligue para o número que você já conhece antes de pagar.',
         },
         en: {
           title: 'Phishing farms and AI',
           milestone: 'AI',
           chapter: 'Phishing kits, realistic pages, generative AI and voice deepfakes.',
           sceneLabel: 'Smartphone on the desk receiving a voice message asking for an urgent transfer.',
-          question: 'Two WhatsApp voice notes. Which one is the scam?',
-          options: ['Your boss\'s voice asking for an urgent PIX transfer to a new supplier.', 'Your boss letting you know the meeting moved to 3 pm.'],
+          question: 'Two WhatsApp voice notes in your boss\'s voice. Which one is the scam?',
+          options: ['From a new number, with his photo: "I changed numbers. Can you send a R$ 4,800 PIX to the supplier now? I\'ll explain later."', 'From the number you already have saved: "Can you approve purchase order 4521 in the system? The quote is attached there."'],
           scamIndex: 0,
-          why: 'Even with the right voice, an urgent transfer is a red flag: AI can already clone voices. Confirm through another channel.',
+          why: 'A convincing photo and voice are not enough: a new number and a transfer outside the process are the tell. Call the number you already know before paying.',
         },
       },
     },
@@ -275,20 +296,20 @@
           milestone: 'você',
           chapter: '40 anos, a mesma isca: urgência, autoridade e confiança. Confirme por outro canal.',
           sceneLabel: 'Smartphone com o tubarão do desafio e dois links lado a lado para escolher.',
-          question: 'Promoção da Loja Bela (site oficial: lojabela.com.br). Qual link é golpe?',
-          options: ['lojabela.com.br/promo', 'lojabbela.com.br/promo'],
+          question: 'Black Friday da Loja Bela (site oficial: lojabela.com.br). Qual link é golpe?',
+          options: ['lojabela.com.br/black-friday', 'lojabeia.com.br/black-friday'],
           scamIndex: 1,
-          why: 'Uma letra a mais: typosquatting.',
+          why: 'lojabeia troca o L por um i: em muitas fontes quase não se nota. É typosquatting.',
         },
         en: {
           title: 'How to protect yourself',
           milestone: 'you',
           chapter: '40 years, the same bait: urgency, authority and trust. Confirm through another channel.',
           sceneLabel: 'Smartphone with the challenge shark and two links side by side to choose from.',
-          question: 'A Loja Bela promotion (official site: lojabela.com.br). Which link is the scam?',
-          options: ['lojabela.com.br/promo', 'lojabbela.com.br/promo'],
+          question: 'Loja Bela\'s Black Friday (official site: lojabela.com.br). Which link is the scam?',
+          options: ['lojabela.com.br/black-friday', 'lojabeia.com.br/black-friday'],
           scamIndex: 1,
-          why: 'One extra letter: typosquatting.',
+          why: 'lojabeia swaps the L for an i: in many fonts you barely notice. That is typosquatting.',
         },
       },
     },

@@ -44,8 +44,8 @@ test('every era is fully written in both languages', () => {
 test('mini-challenges match the reviewed draft', () => {
   const { PhishingEras } = loadJourney(['phishing-eras.js']);
   const scam = era => era.text.pt.options[era.text.pt.scamIndex];
-  assert.match(scam(PhishingEras.ERAS[2]), /paypa1/);
-  assert.match(scam(PhishingEras.ERAS[5]), /lojabbela\.com\.br/);
+  assert.match(scam(PhishingEras.ERAS[2]), /secure-login\.net/);
+  assert.match(scam(PhishingEras.ERAS[5]), /lojabeia\.com\.br/);
 });
 
 test('no pilot score anywhere', () => {
@@ -190,4 +190,13 @@ test('the "what I built" cards read as numbered first-person steps', () => {
   steps.forEach((key, i) => assert.ok(DICT.pt[`${key}.kicker`].startsWith(`0${i + 1} ·`), `${key} is step ${i + 1}`));
   assert.deepEqual(steps.map(key => DICT.pt[`${key}.title`].split(' ')[0]), ['Pesquisei', 'Criei', 'Levei', 'Coloquei']);
   assert.deepEqual(steps.map(key => DICT.en[`${key}.title`].split(' ')[0]), ['I', 'I', 'I', 'I']);
+});
+
+test('both options of every mini-challenge are about the same thing', () => {
+  const { ERAS } = loadJourney(['phishing-eras.js']).PhishingEras;
+  for (const era of ERAS) {
+    const [a, b] = era.text.pt.options;
+    const ratio = Math.min(a.length, b.length) / Math.max(a.length, b.length);
+    assert.ok(ratio > 0.55, `${era.key}: the scam is not given away by length alone (${ratio.toFixed(2)})`);
+  }
 });
